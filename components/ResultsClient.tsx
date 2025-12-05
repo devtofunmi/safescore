@@ -215,7 +215,7 @@ export default function ResultsClient() {
             <Link href="/">
               <button className="rounded-full cursor-pointer border-2 border-black bg-black dark:bg-white dark:text-black dark:hover:bg-[#18181b] dark:hover:text-white px-8 py-3 font-extrabold text-white hover:bg-gray-800 transition-all">New Prediction</button>
             </Link>
-            <button className="rounded-full cursor-pointer border-2 border-black bg-white px-8 py-3 font-extrabold text-black hover:bg-gray-100 transition-all">Save Results</button>
+            {/* <button className="rounded-full cursor-pointer border-2 border-black bg-white px-8 py-3 font-extrabold text-black hover:bg-gray-100 transition-all">Save Results</button> */}
           </div>
 
       <footer className="border-t-2 mt-10 border-gray-200 dark:border-[#18181b]  bg-white px-4 py-8 sm:px-6 lg:px-8 dark:bg-black">
