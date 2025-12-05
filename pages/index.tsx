@@ -1,78 +1,267 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { MdShield, MdCheckCircle, MdThunderstorm, MdCalendarToday, MdDateRange, MdEmojiEvents } from 'react-icons/md';
+import { FiCoffee } from 'react-icons/fi';
+import { AiOutlineHeart } from 'react-icons/ai';
+import { FaXTwitter } from 'react-icons/fa6';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const Home: NextPage = () => {
+  const router = useRouter();
+  const [oddsType, setOddsType] = useState('safe');
+  const [day, setDay] = useState('today');
+  const [loading, setLoading] = useState(false);
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  const leagues = [
+    'Premier League',
+    'La Liga',
+    'Bundesliga',
+    'Serie A',
+    'Ligue 1',
+    'Champions League',
+    'Europa League',
+  ];
 
-export default function Home() {
+  const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+
+  const handleLeagueChange = (league: string) => {
+    setSelectedLeagues((prev) =>
+      prev.includes(league)
+        ? prev.filter((l) => l !== league)
+        : [...prev, league]
+    );
+  };
+
+  const handleGeneratePredictions = async () => {
+    if (selectedLeagues.length === 0) {
+      alert('Please select at least one league');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oddsType,
+          leagues: selectedLeagues,
+          day,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Log the raw API response for debugging in the browser console
+      try {
+        console.debug('API /api/predictions response status:', response.status, 'body:', data);
+      } catch (e) {
+        console.debug('Failed to log API response', e);
+      }
+
+      // Store predictions in session and navigate to results
+      sessionStorage.setItem('predictions', JSON.stringify(data.predictions));
+      sessionStorage.setItem('filters', JSON.stringify({
+        oddsType,
+        leagues: selectedLeagues,
+        day,
+      }));
+
+      router.push('/results');
+    } catch (error) {
+      console.error('Error generating predictions:', error);
+      alert('Error generating predictions. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-white text-black">
+      <Head>
+        <title>SafeScore - AI Football Predictions</title>
+        <meta
+          name="description"
+          content="AI-powered football predictions for safe bets."
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Header */}
+      <header className="border-b-2 py-2 border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-extrabold tracking-tight">
+                SafeScore
+              </h1>
+              <p className="mt-2 text-md font-bold text-gray-700">
+                AI-Powered Football Predictions
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-gray-600">
+                Low-Risk Betting Intelligence
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="space-y-12">
+          {/* Risk Level Selection */}
+          <section className="card">
+            <h2 className="mb-6 text-2xl font-extrabold">
+              1. Select Risk Level
+            </h2>
+            <p className="mb-6 font-bold text-gray-700">
+              Choose your preferred betting risk profile
+            </p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { id: 'verysafe', label: 'Very Safe', icon: MdShield },
+                { id: 'safe', label: 'Safe', icon: MdCheckCircle },
+                { id: 'mediumsafe', label: 'Medium-Safe', icon: MdThunderstorm },
+              ].map((option) => {
+                const IconComponent = option.icon;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => setOddsType(option.id)}
+                    className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
+                      oddsType === option.id
+                        ? 'border-gray-200 bg-black text-white'
+                        : 'border-gray-200 bg-white text-black hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2 flex justify-center">
+                      <IconComponent />
+                    </div>
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* League Selection */}
+          <section className="card">
+            <h2 className="mb-6 text-2xl font-extrabold">
+              2. Select Leagues
+            </h2>
+            <p className="mb-6 font-bold text-gray-700">
+              Choose one or more leagues
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {leagues.map((league) => (
+                <label
+                  key={league}
+                  className={`flex cursor-pointer items-center space-x-3 rounded-full border-2 px-4 py-3 font-bold transition-all ${
+                    selectedLeagues.includes(league)
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-300 bg-white text-black hover:border-black'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="h-5 w-5 cursor-pointer rounded accent-black"
+                    checked={selectedLeagues.includes(league)}
+                    onChange={() => handleLeagueChange(league)}
+                  />
+                  <span>{league}</span>
+                </label>
+              ))}
+            </div>
+            {selectedLeagues.length > 0 && (
+              <p className="mt-4 font-bold text-gray-700">
+                Selected: {selectedLeagues.length} league{selectedLeagues.length !== 1 ? 's' : ''}
+              </p>
+            )}
+          </section>
+
+          {/* Match Day Selection */}
+          <section className="card">
+            <h2 className="mb-6 text-2xl font-extrabold">3. Select Match Day</h2>
+            <p className="mb-6 font-bold text-gray-700">Choose when to search matches</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { id: 'today', label: 'Today', icon: MdCalendarToday },
+                { id: 'tomorrow', label: 'Tomorrow', icon: MdDateRange },
+                { id: 'weekend', label: 'Weekend', icon: MdEmojiEvents },
+              ].map((option) => {
+                const IconComponent = option.icon;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => setDay(option.id)}
+                    className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
+                      day === option.id
+                        ? 'border-gray-200 bg-black text-white'
+                        : 'border-gray-200 bg-white text-black hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2 flex justify-center">
+                      <IconComponent />
+                    </div>
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Summary and Generate Button */}
+          <section className="card bg-black text-white border-gray-200 p-5 rounded-xl">
+            <h3 className="mb-4 text-xl font-extrabold">Your Selection</h3>
+            <div className="mb-6 space-y-2 font-bold">
+              <p>Risk Level: <span className="text-white font-extrabold">{oddsType.toUpperCase()}</span></p>
+              <p>Leagues: <span className="text-white font-extrabold">{selectedLeagues.length} selected</span></p>
+              <p>Match Day: <span className="text-white font-extrabold">{day.charAt(0).toUpperCase() + day.slice(1)}</span></p>
+            </div>
+            <button
+              onClick={handleGeneratePredictions}
+              disabled={loading}
+              className="w-full rounded-xl cursor-pointer border-2 border-white bg-white px-8 py-4 text-xl font-extrabold text-black transition-all hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Generating Predictions...' : 'Generate Predictions'}
+            </button>
+          </section>
+
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t-2 border-gray-200 bg-white px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            
+            <div className="mt-4 flex items-center justify-center space-x-2 font-bold text-gray-600">
+              <span>Made with</span>
+              <FiCoffee className="text-lg" />
+              <span>and</span>
+              <AiOutlineHeart className="text-lg text-red-600" />
+              <span>by</span>
+              <a
+                href="https://twitter.com/codebreak_er"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-black transition-colors"
+              >
+                <FaXTwitter className="text-lg" />
+                <span>codebreak_er</span>
+              </a>
+            </div>
+            <p className="mt-2 text-sm font-bold text-gray-600">
+              © 2025 SafeScore. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-}
+};
+
+export default Home;
