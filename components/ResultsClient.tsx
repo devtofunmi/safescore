@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import Link from 'next/link';
 import { FiCoffee } from 'react-icons/fi';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { FaXTwitter } from 'react-icons/fa6';
+import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar } from 'react-icons/fa';
 
 interface Prediction {
   id: string;
@@ -55,14 +56,14 @@ const getConfidenceColor = (confidence: number) => {
 };
 
 const getBetTypeBadge = (betType: string) => {
-  const badges: { [key: string]: string } = {
-    'Over 0.5 goals': '⚽',
-    'Double chance': '🎲',
-    'Home win': '🏆',
-    'Away win': '✈️',
-    'Both teams score': '🥅',
+  const badges: { [key: string]: JSX.Element } = {
+    'Over 0.5 goals': <FaFutbol />,
+    'Double chance': <FaDice />,
+    'Home win': <FaTrophy />,
+    'Away win': <FaPlaneDeparture />,
+    'Both teams score': <FaBullseye />,
   };
-  return badges[betType] || '📊';
+  return badges[betType] || <FaChartBar />;
 };
 
 export default function ResultsClient() {
@@ -134,27 +135,27 @@ export default function ResultsClient() {
                 </div>
                 <div className="mb-6">
                   <div className="grid grid-cols-3 items-center gap-4">
-                    <div className="text-center"><p className="font-extrabold text-lg">{prediction.team1}</p></div>
-                    <div className="text-center"><p className="text-3xl">vs</p></div>
-                    <div className="text-center"><p className="font-extrabold text-lg">{prediction.team2}</p></div>
+                    <div className="text-center"><p className="font-bold text-md">{prediction.team1}</p></div>
+                    <div className="text-center"><p className="text-xl">vs</p></div>
+                    <div className="text-center"><p className="font-bold text-md">{prediction.team2}</p></div>
                   </div>
                 </div>
                 <div className="mb-6 space-y-4">
                   <div className="rounded-lg bg-black p-4 text-white">
                     <p className="text-xs font-bold text-gray-300">BET TYPE</p>
                     <div className="flex items-center space-x-3">
-                      <span className="text-3xl">{getBetTypeBadge(prediction.betType)}</span>
-                      <p className="text-2xl font-extrabold">{prediction.betType}</p>
+                      <span className="text-xl">{getBetTypeBadge(prediction.betType)}</span>
+                      <p className="text-md font-bold">{prediction.betType}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
                       <p className="text-xs font-bold text-gray-600">CONFIDENCE</p>
-                      <p className="text-3xl font-extrabold text-black">{prediction.confidence}%</p>
+                      <p className="text-2xl font-bold text-black">{prediction.confidence}%</p>
                     </div>
                     <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
                       <p className="text-xs font-bold text-gray-600">ODDS</p>
-                      <p className="text-3xl font-extrabold text-black">{prediction.odds.toFixed(2)}</p>
+                      <p className="text-2xl font-bold text-black">{prediction.odds.toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
