@@ -198,6 +198,16 @@ Provide descriptive bet types that are easy to understand. Here are some example
 - "Under 3.5 Goals"
 - "Both Teams to Score: Yes"
 - "Both Teams to Score: No"
+- "Highest Scoring Half: 1st"
+- "Highest Scoring Half: 2nd"
+- "Handicap (-1.5) Home Team"
+- "Handicap (+1.5) Away Team"
+- "Home Team to Score in 1st Half: Yes"
+- "Away Team to Score in 2nd Half: Yes"
+- "Team to Score: Home"
+- "Team to Score: Away"
+
+Do not use ambiguous terms like "1X" or "X2". Use the full descriptive text.
 
 Focus on providing predictions that have a high likelihood of being correct, reflected by a good confidence score. ALWAYS provide a "betType". If confidence is very low, you may indicate it in the "confidence" and "reason" fields, but still provide a plausible betType.
 
