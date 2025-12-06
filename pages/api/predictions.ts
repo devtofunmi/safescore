@@ -185,9 +185,21 @@ async function analyzeWithGemini(
 Analyze the following matches and provide a prediction for each one. The user's requested risk level is "${oddsType}" with odds between ${oddsRange} for matches on ${requestedDate}.
 For each match, return a JSON object in a JSON array. Each object must include: { "idx": number, "team1": string, "team2": string, "betType": string, "confidence": number, "league": string, "reason": string }.
 
-Bet types can include: "1X", "X2", "Over 1.5", "Over 2.5", "Under 2.5", "Both Teams to Score", or a specific team to win.
+Provide descriptive bet types that are easy to understand. Here are some examples of bet types to use:
+- "Home Team to Win or Draw"
+- "Away Team to Win or Draw"
+- "Home Team to Win"
+- "Away Team to Win"
+- "Draw"
+- "Over 0.5 Goals"
+- "Over 1.5 Goals"
+- "Over 2.5 Goals"
+- "Under 2.5 Goals"
+- "Under 3.5 Goals"
+- "Both Teams to Score: Yes"
+- "Both Teams to Score: No"
 
-ALWAYS provide a "betType". If confidence is very low, you may indicate it in the "confidence" and "reason" fields, but still provide a plausible betType.
+Focus on providing predictions that have a high likelihood of being correct, reflected by a good confidence score. ALWAYS provide a "betType". If confidence is very low, you may indicate it in the "confidence" and "reason" fields, but still provide a plausible betType.
 
 Return ONLY the JSON array (no explanatory text).
 Matches: ${fixturesSnippet}`;
