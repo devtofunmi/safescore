@@ -181,7 +181,16 @@ async function analyzeWithGemini(
         }))
       );
 
-      const prompt = `You are an assistant that returns the safest low-risk betting picks.\nRisk Level: ${oddsType}\nUser asked: odds ${oddsRange}, date: ${requestedDate}.\nBelow is an array of match objects (each object has idx, home, away, league). RETURN A JSON ARRAY with ONE object for EACH match in the SAME ORDER. Each object must include: { "idx": number, "team1": string|null, "team2": string|null, "betType": string|null, "confidence": number, "league": string|null, "reason": string|null }.\nIf you cannot recommend a pick for a match, set "betType": null, "confidence": 0, and "reason": "No pick".\nReturn ONLY the JSON array (no explanatory text).\nMatches: ${fixturesSnippet}`;
+      const prompt = `You are an expert sports analyst providing betting picks.
+Analyze the following matches and provide a prediction for each one. The user's requested risk level is "${oddsType}" with odds between ${oddsRange} for matches on ${requestedDate}.
+For each match, return a JSON object in a JSON array. Each object must include: { "idx": number, "team1": string, "team2": string, "betType": string, "confidence": number, "league": string, "reason": string }.
+
+Bet types can include: "1X", "X2", "Over 1.5", "Over 2.5", "Under 2.5", "Both Teams to Score", or a specific team to win.
+
+ALWAYS provide a "betType". If confidence is very low, you may indicate it in the "confidence" and "reason" fields, but still provide a plausible betType.
+
+Return ONLY the JSON array (no explanatory text).
+Matches: ${fixturesSnippet}`;
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
       const body = {

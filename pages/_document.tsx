@@ -1,10 +1,7 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import React from 'react';
 
 export default function Document() {
-  // Inline script to set initial theme class before React hydration
-  const setInitialTheme = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark');}else if(t==='light'){document.documentElement.classList.remove('dark');}else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark');}}catch(e){} })()`;
-
+  const setInitialTheme = `(function(){if(typeof window!=="undefined"){try{var e=localStorage.getItem("theme");if(e==="dark"||!e&&window.matchMedia("(prefers-color-scheme: dark)").matches){document.documentElement.classList.add("dark")}else{document.documentElement.classList.remove("dark")}}catch(e){console.warn("failed to set initial theme from localStorage",e)}}})()`;
   return (
     <Html lang="en">
       <Head>

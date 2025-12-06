@@ -89,19 +89,7 @@ export default function ResultsClient() {
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    try {
-      if (newTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      }
-    } catch {
-      // ignore
-    }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -158,11 +146,11 @@ export default function ResultsClient() {
 
       <main className="mx-auto max-w-3xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
         {predictions.length === 0 ? (
-          <div className="rounded-lg border-2 border-gray-200 bg-gray-50 dark:bg-white p-12 text-center">
-            <p className="text-2xl font-extrabold text-black dark:bg-white mb-4">No Predictions Found</p>
+          <div className="rounded-xl border-2 border-gray-200 dark:border-[#18181b] bg-gray-50 dark:bg-[#18181b] p-12 text-center">
+            <p className="text-2xl font-extrabold text-black dark:text-white  mb-4">No Predictions Found</p>
             <p className="font-bold text-gray-700 dark:text-white mb-6">Try adjusting your filters and generating predictions again.</p>
             <Link href="/">
-              <button className="rounded-xl cursor-pointer border-2 border-gray-200 bg-black dark:bg-white px-8 py-3 font-extrabold dark:text-black text-white hover:bg-gray-800 transition-all">Create New Prediction</button>
+              <button className="rounded-xl cursor-pointer border-2 border-gray-200 bg-black dark:bg-white px-8 py-3 font-extrabold dark:text-black text-white hover:bg-gray-800 dark:hover:bg-white dark:border-[#18181b]  transition-all">Create New Prediction</button>
             </Link>
           </div>
         ) : (
@@ -213,7 +201,7 @@ export default function ResultsClient() {
       </main>
       <div className="flex gap-4 justify-center">
             <Link href="/">
-              <button className="rounded-full cursor-pointer border-2 border-black bg-black dark:bg-white dark:text-black dark:hover:bg-[#18181b] dark:hover:text-white px-8 py-3 font-extrabold text-white hover:bg-gray-800 transition-all">New Prediction</button>
+              <button className="rounded-xl cursor-pointer border-2 border-black bg-black dark:bg-white dark:text-black dark:hover:bg-[#18181b] dark:hover:text-white px-8 py-3 font-extrabold text-white hover:bg-gray-800 transition-all">New Prediction</button>
             </Link>
             {/* <button className="rounded-full cursor-pointer border-2 border-black bg-white px-8 py-3 font-extrabold text-black hover:bg-gray-100 transition-all">Save Results</button> */}
           </div>

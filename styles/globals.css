@@ -2,7 +2,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-black font-bold;
+    @apply bg-white text-black dark:bg-black dark:text-white font-bold;
   }
 
   h1, h2, h3, h4, h5, h6 {
