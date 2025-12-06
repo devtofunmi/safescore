@@ -70,6 +70,17 @@ const getBetTypeBadge = (betType: string) => {
 export default function ResultsClient() {
   const [predictions] = React.useState<Prediction[]>(() => readStoredPredictions());
   const [filters] = React.useState<Filters | null>(() => readStoredFilters());
+  const [safestFilter, setSafestFilter] = React.useState<number | null>(null);
+
+  const displayedPredictions = React.useMemo(() => {
+    if (safestFilter === null) {
+      return predictions;
+    }
+    return [...predictions]
+      .sort((a, b) => b.confidence - a.confidence)
+      .slice(0, safestFilter);
+  }, [predictions, safestFilter]);
+
   const [theme, setTheme] = React.useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'light';
     const stored = localStorage.getItem('theme');
@@ -145,7 +156,41 @@ export default function ResultsClient() {
       )}
 
       <main className="mx-auto max-w-3xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
-        {predictions.length === 0 ? (
+        {predictions.length > 0 && (
+          <div className="flex justify-center gap-4 mb-6">
+            <button
+              onClick={() => setSafestFilter(5)}
+              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+                safestFilter === 5
+                  ? 'bg-black text-white dark:bg-white dark:text-black'
+                  : 'bg-white text-black dark:bg-black dark:text-white border-gray-200 dark:border-[#18181b]'
+              }`}
+            >
+              Top 5
+            </button>
+            <button
+              onClick={() => setSafestFilter(10)}
+              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+                safestFilter === 10
+                  ? 'bg-black text-white dark:bg-white dark:text-black'
+                  : 'bg-white text-black dark:bg-black dark:text-white border-gray-200 dark:border-[#18181b]'
+              }`}
+            >
+              Top 10
+            </button>
+            <button
+              onClick={() => setSafestFilter(null)}
+              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+                safestFilter === null
+                  ? 'bg-black text-white dark:bg-white dark:text-black'
+                  : 'bg-white text-black dark:bg-black dark:text-white border-gray-200 dark:border-[#18181b]'
+              }`}
+            >
+              All
+            </button>
+          </div>
+        )}
+        {displayedPredictions.length === 0 ? (
           <div className="rounded-xl border-2 border-gray-200 dark:border-[#18181b] bg-gray-50 dark:bg-[#18181b] p-12 text-center">
             <p className="text-2xl font-extrabold text-black dark:text-white  mb-4">No Predictions Found</p>
             <p className="font-bold text-gray-700 dark:text-white mb-6">Try adjusting your filters and generating predictions again.</p>
@@ -155,7 +200,7 @@ export default function ResultsClient() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {predictions.map((prediction, index) => (
+            {displayedPredictions.map((prediction, index) => (
               <div key={prediction.id || index} className="card border dark:border-[#18181b] border-gray-200 p-5 rounded-xl">
                 <div className="mb-4 flex items-center justify-between border-b-2 dark:border-[#18181b] border-gray-200 pb-4">
                   <div>
