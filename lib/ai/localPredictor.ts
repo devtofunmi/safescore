@@ -82,24 +82,80 @@ function selectBetType(analysis: MatchAnalysis): typeof ALLOWED_BET_TYPES[number
   const totalGoals = expectedGoalsHome + expectedGoalsAway;
   const scoreDiff = homeScore - awayScore;
 
-  // --- Goal-based bets ---
-  if (totalGoals <= 0.5) return 'Under 2.5 Goals';
-  if (totalGoals <= 1.5) return 'Under 2.5 Goals';
-  if (totalGoals > 0.5 && totalGoals <= 1.5) return 'Over 0.5 Goals';
-  if (totalGoals > 1.5 && totalGoals <= 2.5) return 'Over 1.5 Goals';
-  if (totalGoals > 2.5) return 'Over 2.5 Goals';
-  if (totalGoals > 3.5) return 'Under 3.5 Goals';
-
-  // --- BTTS ---
-  if (bttsProbability > 0.65) return 'Both Teams to Score: Yes';
-  if (bttsProbability < 0.35) return 'Both Teams to Score: No';
+  const candidates: (typeof ALLOWED_BET_TYPES[number])[] = [];
 
   // --- Team win / draw ---
-  if (scoreDiff > 25) return 'Home Team to Win';
-  if (scoreDiff < -25) return 'Away Team to Win';
-  if (scoreDiff > 10) return 'Home Team to Win or Draw';
-  if (scoreDiff < -10) return 'Away Team to Win or Draw';
-  return 'Draw';
+  if (scoreDiff > 25) {
+      candidates.push('Home Team to Win');
+      candidates.push('Handicap (-1.5) Home Team'); // Strong home win
+  }
+  if (scoreDiff < -25) {
+      candidates.push('Away Team to Win');
+  }
+  if (scoreDiff > 10) {
+      candidates.push('Home Team to Win or Draw');
+  }
+  if (scoreDiff < -10) {
+      candidates.push('Away Team to Win or Draw');
+  }
+  if (Math.abs(scoreDiff) < 10) {
+      candidates.push('Draw');
+  }
+  if (homeScore > 60) { // arbitrary threshold for a team being generally strong
+      candidates.push('Team to Score: Home');
+      candidates.push('Home Team to Score in 1st Half: Yes');
+  }
+  if (awayScore > 60) {
+      candidates.push('Team to Score: Away');
+      candidates.push('Away Team to Score in 2nd Half: Yes');
+  }
+
+
+  // --- BTTS ---
+  if (bttsProbability > 0.65) {
+      candidates.push('Both Teams to Score: Yes');
+  }
+  if (bttsProbability < 0.35) {
+      candidates.push('Both Teams to Score: No');
+  }
+
+  // --- Goal-based bets ---
+  if (totalGoals > 3.5) {
+      candidates.push('Over 2.5 Goals'); // It is also over 2.5
+  }
+  if (totalGoals > 2.5) {
+      candidates.push('Over 2.5 Goals');
+  }
+  if (totalGoals > 1.5) {
+      candidates.push('Over 1.5 Goals');
+  }
+  if (totalGoals > 0.5) {
+      candidates.push('Over 0.5 Goals');
+  }
+  if (totalGoals < 2.5) {
+      candidates.push('Under 2.5 Goals');
+  }
+  if (totalGoals < 3.5) {
+      candidates.push('Under 3.5 Goals');
+  }
+
+  // A simple logic for Highest scoring half. More data would be needed for a better prediction.
+  if (expectedGoalsHome > 1.5 || expectedGoalsAway > 1.5) {
+      candidates.push('Highest Scoring Half: 2nd'); // More goals are often scored in the 2nd half
+  } else {
+      candidates.push('Highest Scoring Half: 1st');
+  }
+  
+  // De-duplicate candidates
+  const uniqueCandidates = [...new Set(candidates)];
+  
+  // Fallback if no candidates
+  if (uniqueCandidates.length === 0) {
+      return 'No Pick';
+  }
+
+  // Simple strategy: pick a random candidate to provide more variety
+  return uniqueCandidates[Math.floor(Math.random() * uniqueCandidates.length)];
 }
 
 // --- Generate single prediction ---
