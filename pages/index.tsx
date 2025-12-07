@@ -37,10 +37,17 @@ const Home: NextPage = () => {
 
   const leagues = [
     'Premier League',
+    'Championship',
     'La Liga',
     'Bundesliga',
     'Serie A',
+    'Serie B',
     'Ligue 1',
+    'Eredivisie',
+    'Primeira Liga',
+    'Super Lig',
+    'Greek Super League',
+    'Allsvenskan',
     'Champions League',
     'Europa League',
   ];
@@ -279,7 +286,7 @@ const Home: NextPage = () => {
                 href="https://twitter.com/codebreak_er"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-1 hover:text-black transition-colors"
+                className="flex items-center space-x-1 hover:text-black dark:hover:text-white transition-colors"
               >
                 <FaXTwitter className="text-lg" />
                 <span>codebreak_er</span>
