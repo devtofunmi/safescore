@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { MdShield, MdCheckCircle, MdThunderstorm, MdCalendarToday, MdDateRange, MdEmojiEvents, MdOutlineLightMode, MdDarkMode } from 'react-icons/md';
+import { MdShield, MdCheckCircle, MdThunderstorm, MdCalendarToday, MdDateRange, MdEmojiEvents } from 'react-icons/md';
 import { FiCoffee } from 'react-icons/fi';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -13,27 +13,9 @@ const Home: NextPage = () => {
   const [oddsType, setOddsType] = useState('safe');
   const [day, setDay] = useState('today');
   const [loading, setLoading] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light';
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') return stored as 'light' | 'dark';
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
+  
 
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  
 
   const leagues = [
     'Premier League',
@@ -150,13 +132,7 @@ const Home: NextPage = () => {
                   Low-Risk Betting Intelligence
                 </p>
               </div>
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                className="rounded-full p-2 text-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                {theme === 'dark' ? <MdOutlineLightMode /> : <MdDarkMode />}
-              </button>
+             
             </div>
           </div>
         </div>
@@ -170,7 +146,7 @@ const Home: NextPage = () => {
             <h2 className="mb-6 text-2xl font-extrabold">
               1. Select Risk Level
             </h2>
-            <p className="mb-6 font-bold text-gray-700 dark:text-gray-300">
+            <p className="mb-6 font-bold text-gray-300">
               Choose your preferred betting risk profile
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -186,8 +162,8 @@ const Home: NextPage = () => {
                     onClick={() => setOddsType(option.id)}
                     className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
                       oddsType === option.id
-                        ? 'border-gray-800 dark:border-[#18181b] bg-black dark:bg-[#18181b] text-white dark:text-gray-100'
-                        : 'border-gray-200 dark:border-[#18181b] bg-white dark:bg-black text-black dark:text-white dark:hover:bg-[#18181b]'
+                        ? 'border-[#18181b] bg-[#18181b] text-gray-100'
+                        : 'border-[#18181b] bg-black hover:bg-[#18181b]'
                     }`}
                   >
                     <div className="text-3xl mb-2 flex justify-center">
@@ -205,21 +181,21 @@ const Home: NextPage = () => {
             <h2 className="mb-6 text-2xl font-extrabold">
               2. Select Leagues
             </h2>
-            <p className="mb-6 font-bold text-gray-700 dark:text-gray-300">
+            <p className="mb-6 font-bold text-gray-300">
               Choose one or more leagues
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <label
                 key="select-all"
-                className={`flex cursor-pointer items-center space-x-3 rounded-full border-2 px-4 py-3 font-bold transition-all ${
+                className={`flex cursor-pointer  items-center space-x-3 rounded-full border-2 px-4 py-3 font-bold transition-all ${
                   selectedLeagues.length === leagues.length
-                    ? 'border-black bg-black text-white dark:border-gray-[#18181b] dark:bg-[#18181b] dark:text-gray-100'
-                    : 'border-gray-300 bg-white text-black hover:border-bl[#18181b] dark:border-[#18181b] dark:bg-black dark:text-white dark:hover:border-[#18181b]'
+                    ? 'border-gray-[#18181b] bg-[#18181b] text-gray-100'
+                    : 'border-gray-[#18181b] bg-black text-white hover:border-[#18181b]'
                 }`}
               >
                 <input
                   type="checkbox"
-                  className="h-5 w-5 cursor-pointer rounded dark:accent-white"
+                  className="h-5 w-5 cursor-pointer rounded accent-white"
                   checked={selectedLeagues.length === leagues.length}
                   onChange={handleSelectAllLeagues}
                 />
@@ -230,13 +206,13 @@ const Home: NextPage = () => {
                   key={league}
                   className={`flex cursor-pointer items-center space-x-3 rounded-full border-2 px-4 py-3 font-bold transition-all ${
                     selectedLeagues.includes(league)
-                      ? 'border-black bg-black text-white dark:border-gray-[#18181b] dark:bg-[#18181b] dark:text-gray-100'
-                      : 'border-gray-300 bg-white text-black hover:border-bl[#18181b] dark:border-[#18181b] dark:bg-black dark:text-white dark:hover:border-[#18181b]'
+                      ? 'border-[#18181b] bg-[#18181b] text-white border-gray-[#18181b] bg-[#18181b]text-gray-100'
+                      : '  border-[#18181b] bg-black text-white hover:border-[#18181b]'
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="h-5 w-5 cursor-pointer rounded dark:accent-white"
+                    className="h-5 w-5 cursor-pointer rounded accent-white"
                     checked={selectedLeagues.includes(league)}
                     onChange={() => handleLeagueChange(league)}
                   />
@@ -245,7 +221,7 @@ const Home: NextPage = () => {
               ))}
             </div>
             {selectedLeagues.length > 0 && (
-              <p className="mt-4 font-bold text-gray-700 dark:text-gray-300">
+              <p className="mt-4 font-boldtext-gray-300">
                 Selected: {selectedLeagues.length} league{selectedLeagues.length !== 1 ? 's' : ''}
               </p>
             )}
@@ -254,7 +230,7 @@ const Home: NextPage = () => {
           {/* Match Day Selection */}
           <section className="card">
             <h2 className="mb-6 text-2xl font-extrabold">3. Select Match Day</h2>
-            <p className="mb-6 font-bold text-gray-700 dark:text-gray-300">Choose when to search matches</p>
+            <p className="mb-6 font-bold text-gray-300">Choose when to search matches</p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {[
                 { id: 'today', label: 'Today', icon: MdCalendarToday },
@@ -268,8 +244,8 @@ const Home: NextPage = () => {
                     onClick={() => setDay(option.id)}
                     className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
                       day === option.id
-                        ? 'border-[#18181b] dark:border-gray-[[#18181b] bg-black dark:bg-[#18181b] text-white dark:text-gray-100'
-                        : 'border-gray-200 dark:border-[#18181b] bg-white dark:bg-black text-black dark:text-white  dark:hover:bg-[#18181b]'
+                        ? 'border-[#18181b] border-gray-[[#18181b] bg-[#18181b] text-gray-100'
+                        : 'border-[#18181b] bg-black text-white  hover:bg-[#18181b]'
                     }`}
                   >
                     <div className="text-3xl mb-2 flex justify-center">
@@ -283,7 +259,7 @@ const Home: NextPage = () => {
           </section>
 
           {/* Summary and Generate Button */}
-          <section className="card bg-black dark:bg-[#18181b] text-white dark:text-gray-100 border-gray-200 dark:border-gray-700 p-5 rounded-xl">
+          <section className="bg-[#18181b] text-gray-100 border-gray-700 p-5 rounded-xl">
             <h3 className="mb-4 text-xl font-extrabold">Your Selection</h3>
             <div className="mb-6 space-y-2 font-bold">
               <p>Risk Level: <span className="font-extrabold">{oddsType.toUpperCase()}</span></p>
@@ -293,7 +269,7 @@ const Home: NextPage = () => {
             <button
               onClick={handleGeneratePredictions}
               disabled={loading}
-              className="w-full rounded-xl cursor-pointer border-2 border-white dark:border-gray-200 bg-white dark:bg-gray-200 px-8 py-4 text-xl font-extrabold text-black transition-all hover:bg-gray-100 dark:hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-xl cursor-pointer border-2 border-gray-200 bg-gray-200 px-8 py-4 text-xl font-extrabold text-black transition-all hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Generating Predictions...' : 'Generate Predictions'}
             </button>
@@ -303,7 +279,7 @@ const Home: NextPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-gray-200 dark:border-[#18181b] bg-white px-4 py-8 sm:px-6 lg:px-8 dark:bg-black">
+      <footer className="border-t-2 border-[#18181b]  px-4 py-8 sm:px-6 lg:px-8 bg-black">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             
@@ -317,7 +293,7 @@ const Home: NextPage = () => {
                 href="https://twitter.com/codebreak_er"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-1 hover:text-black dark:hover:text-white transition-colors"
+                className="flex items-center space-x-1 hover:text-white transition-colors"
               >
                 <FaXTwitter className="text-lg" />
                 <span>codebreak_er</span>
