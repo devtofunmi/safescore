@@ -104,7 +104,7 @@ const Home: NextPage = () => {
           name="description"
           content="AI-powered football predictions for safe bets."
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.png" />
       </Head>
 
       {loading && (
@@ -119,16 +119,11 @@ const Home: NextPage = () => {
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">
-                SafeScore
-              </h1>
-              <p className="mt-2 text-md font-bold text-gray-700 dark:text-gray-300">
-                AI-Powered Football Predictions
-              </p>
+              <img src="/logos.png" alt="SafeScore Logo" className="h-12" />
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-600 dark:text-gray-300">
+              <div className="text-right ">
+                <p className="text-sm font-bold text-gray-300">
                   Low-Risk Betting Intelligence
                 </p>
               </div>

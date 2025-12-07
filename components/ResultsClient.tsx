@@ -91,13 +91,12 @@ export default function ResultsClient() {
           <div className="flex items-center justify-between">
             <Link href="/">
               <div className="cursor-pointer">
-                <h1 className="text-2xl font-extrabold">SafeScore</h1>
-                <p className="mt-3 text-sm font-bold text-gray-700 dark:text-gray-300">← Back to Home</p>
+                <img src="/logos.png" alt="SafeScore Logo" className="h-12" />
               </div>
             </Link>
             <div className="flex items-center space-x-4">
-              <div className="text-right hidden sm:block">
-                <p className="font-bold text-gray-200">{predictions.length} Predictions</p>
+              <div className="text-right ">
+                <p className="font-bold text-sm text-gray-200">{predictions.length} Predictions</p>
                 <p className="text-sm font-bold text-gray-400">Generated Just Now</p>
               </div>
              
