@@ -55,7 +55,6 @@ export const PredictionSchema = z.object({
   team2: z.string(),
   betType: z.enum(ALLOWED_BET_TYPES),
   confidence: z.number().min(0).max(100),
-  odds: z.number().positive(),
   league: z.string(),
   matchTime: z.string(),
 });

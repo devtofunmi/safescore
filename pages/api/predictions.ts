@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { fetchFixtures } from '@/lib/football/fetchFixtures';
 import { fetchExtendedFixtureData } from '@/lib/football/fetchStandings';
 import { generateLocalPredictions } from '@/lib/ai/localPredictor';
-import { parseOddsRange } from '@/lib/utils/parseOdds';
 import { PredictionsRequestSchema, PredictionsResponseSchema, type PredictionsResponse, type ErrorResponse } from '@/lib/schemas';
 
 /**
@@ -36,7 +35,7 @@ export default async function handler(
     return;
   }
 
-  const { oddsType, leagues, day, oddsRange, date } = parseResult.data;
+  const { oddsType, leagues, day, date } = parseResult.data;
 
   // Calculate requested date
   let requestedDate = date || '';
@@ -50,9 +49,6 @@ export default async function handler(
         : new Date(today.getTime() + 5 * 86400000);
     requestedDate = target.toISOString().split('T')[0];
   }
-
-  const usedOddsRange =
-    typeof oddsRange === 'string' && oddsRange.trim() ? oddsRange : '1.10-1.40';
 
   try {
     // Verify API keys are configured
@@ -90,14 +86,7 @@ export default async function handler(
 
     // Generate predictions using local analysis
     console.info(`Generating ${extendedFixtures.length} predictions using local analysis`);
-    const [minOdds, maxOdds] = parseOddsRange(usedOddsRange);
-    const predictions = generateLocalPredictions(
-      extendedFixtures,
-      oddsType,
-      usedOddsRange,
-      minOdds,
-      maxOdds
-    );
+    const predictions = generateLocalPredictions(extendedFixtures);
 
     if (!predictions || predictions.length === 0) {
       console.warn('No predictions generated');

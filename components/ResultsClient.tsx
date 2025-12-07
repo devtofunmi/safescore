@@ -12,7 +12,6 @@ interface Prediction {
   team2: string;
   betType: string;
   confidence: number;
-  odds: number;
   league: string;
   matchTime: string;
 }
@@ -224,15 +223,9 @@ export default function ResultsClient() {
                       <p className="text-md font-bold">{prediction.betType}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-lg border-2 border-gray-200 dark:border-[#18181b] dark:bg-[#18181b] bg-gray-50 p-4">
-                      <p className="text-xs font-bold text-gray-600 dark:text-white">CONFIDENCE</p>
-                      <p className="text-2xl font-bold text-black dark:text-white">{prediction.confidence}%</p>
-                    </div>
-                    <div className="rounded-lg border-2 border-gray-200 dark:border-[#18181b] dark:bg-[#18181b] bg-gray-50 p-4">
-                      <p className="text-xs font-bold text-gray-600 dark:text-white">ODDS</p>
-                      <p className="text-2xl font-bold text-black dark:text-white">{prediction.odds.toFixed(2)}</p>
-                    </div>
+                  <div className="rounded-lg border-2 border-gray-200 dark:border-[#18181b] dark:bg-[#18181b] bg-gray-50 p-4">
+                    <p className="text-xs font-bold text-gray-600 dark:text-white">CONFIDENCE</p>
+                    <p className="text-2xl font-bold text-black dark:text-white">{prediction.confidence}%</p>
                   </div>
                 </div>
                 <div className="rounded-lg border-2 border-gray-300 dark:border-[#18181b] dark:bg-[#18181b] bg-white p-3">

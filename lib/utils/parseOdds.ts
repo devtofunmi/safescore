@@ -26,6 +26,7 @@ export function parseOddsRange(range: string | undefined): [number, number] {
 }
 
 export function calculateOdds(minOdds: number, maxOdds: number): number {
-  const midpoint = (minOdds + maxOdds) / 2;
-  return parseFloat(midpoint.toFixed(2));
+  // Generate random odds within the range instead of always using midpoint
+  const randomOdds = minOdds + Math.random() * (maxOdds - minOdds);
+  return parseFloat(randomOdds.toFixed(2));
 }
