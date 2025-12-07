@@ -31,7 +31,8 @@ export const ALLOWED_BET_TYPES = [
 export type BetType = (typeof ALLOWED_BET_TYPES)[number];
 
 /**
- * Raw prediction from Gemini AI
+ * @deprecated Gemini integration removed - using local predictor
+ * Raw prediction schema (no longer used)
  */
 export const GeminiPredictionSchema = z.object({
   idx: z.number().optional(),

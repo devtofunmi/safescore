@@ -1,19 +1,14 @@
-import { parseOddsRange } from '../utils/parseOdds';
-import { generateLocalPredictions } from './localPredictor';
-import type { FullAPIFixture } from './types';
+/**
+ * @deprecated This file is no longer used - local predictor is used instead
+ * Kept for backward compatibility only
+ */
+
 import type { Prediction } from '../schemas';
 
 /**
- * Analyze fixtures and generate predictions
- * Uses local predictor - instant, no rate limits, uses real match data
+ * @deprecated Use generateLocalPredictions from localPredictor.ts instead
+ * This function is no longer called - kept for backward compatibility
  */
-export async function analyzeWithGemini(
-  fixtureData: FullAPIFixture[],
-  oddsType: string,
-  oddsRange: string
-): Promise<Prediction[]> {
-  const [minOdds, maxOdds] = parseOddsRange(oddsRange);
-
-  console.info(`[Predictor] Generating ${fixtureData.length} predictions using local analysis (instant, no rate limits)`);
-  return generateLocalPredictions(fixtureData, oddsType, oddsRange, minOdds, maxOdds);
+export async function analyzeWithGemini(): Promise<Prediction[]> {
+  throw new Error('analyzeWithGemini is deprecated. Use localPredictor.generateLocalPredictions instead.');
 }

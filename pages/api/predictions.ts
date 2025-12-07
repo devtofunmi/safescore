@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { fetchFixtures } from '@/lib/football/fetchFixtures';
 import { fetchExtendedFixtureData } from '@/lib/football/fetchStandings';
-import { analyzeWithGemini } from '@/lib/ai/analyzeMatches';
+import { generateLocalPredictions } from '@/lib/ai/localPredictor';
+import { parseOddsRange } from '@/lib/utils/parseOdds';
 import { PredictionsRequestSchema, PredictionsResponseSchema, type PredictionsResponse, type ErrorResponse } from '@/lib/schemas';
 
 /**
@@ -56,10 +57,9 @@ export default async function handler(
   try {
     // Verify API keys are configured
     const FOOTBALL_DATA_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-    if (!FOOTBALL_DATA_API_KEY || !GEMINI_API_KEY) {
-      console.error('Missing API keys in environment');
+    if (!FOOTBALL_DATA_API_KEY) {
+      console.error('Missing FOOTBALL_DATA_API_KEY in environment');
       res.status(500).json({ error: 'Service temporarily unavailable. Please try again later.' });
       return;
     }
@@ -88,12 +88,15 @@ export default async function handler(
       // Continue with non-enriched fixtures
     }
 
-    // Analyze with Gemini AI (with strict output validation)
-    console.info(`Analyzing ${extendedFixtures.length} fixtures with Gemini`);
-    const predictions = await analyzeWithGemini(
+    // Generate predictions using local analysis
+    console.info(`Generating ${extendedFixtures.length} predictions using local analysis`);
+    const [minOdds, maxOdds] = parseOddsRange(usedOddsRange);
+    const predictions = generateLocalPredictions(
       extendedFixtures,
       oddsType,
-      usedOddsRange
+      usedOddsRange,
+      minOdds,
+      maxOdds
     );
 
     if (!predictions || predictions.length === 0) {
