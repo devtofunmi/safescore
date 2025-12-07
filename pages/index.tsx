@@ -62,6 +62,14 @@ const Home: NextPage = () => {
     );
   };
 
+  const handleSelectAllLeagues = () => {
+    if (selectedLeagues.length === leagues.length) {
+      setSelectedLeagues([]);
+    } else {
+      setSelectedLeagues(leagues);
+    }
+  };
+
   const handleGeneratePredictions = async () => {
     if (selectedLeagues.length === 0) {
       alert('Please select at least one league');
@@ -116,6 +124,13 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="text-white text-xl mt-4">safescore is predicting games...</p>
+        </div>
+      )}
 
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b-2 py-3 dark:border-[#18181b] border-gray-200 bg-white/90 backdrop-blur-sm px-4 sm:px-6 lg:px-8 dark:bg-black/50">
@@ -194,6 +209,22 @@ const Home: NextPage = () => {
               Choose one or more leagues
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <label
+                key="select-all"
+                className={`flex cursor-pointer items-center space-x-3 rounded-full border-2 px-4 py-3 font-bold transition-all ${
+                  selectedLeagues.length === leagues.length
+                    ? 'border-black bg-black text-white dark:border-gray-[#18181b] dark:bg-[#18181b] dark:text-gray-100'
+                    : 'border-gray-300 bg-white text-black hover:border-bl[#18181b] dark:border-[#18181b] dark:bg-black dark:text-white dark:hover:border-[#18181b]'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="h-5 w-5 cursor-pointer rounded dark:accent-white"
+                  checked={selectedLeagues.length === leagues.length}
+                  onChange={handleSelectAllLeagues}
+                />
+                <span>Select All</span>
+              </label>
               {leagues.map((league) => (
                 <label
                   key={league}
