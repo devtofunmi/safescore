@@ -155,7 +155,7 @@ export default function ResultsClient() {
         </div>
       )}
 
-      <main className="mx-auto max-w-3xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full px-4 pt-28 pb-12 sm:px-6 lg:px-8">
         {predictions.length > 0 && (
           <div className="flex justify-center gap-4 mb-6">
             <button
@@ -199,7 +199,7 @@ export default function ResultsClient() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {displayedPredictions.map((prediction, index) => (
               <div key={prediction.id || index} className="card border dark:border-[#18181b] border-gray-200 p-5 rounded-xl">
                 <div className="mb-4 flex items-center justify-between border-b-2 dark:border-[#18181b] border-gray-200 pb-4">
