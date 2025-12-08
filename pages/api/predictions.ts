@@ -86,7 +86,7 @@ export default async function handler(
 
     // Generate predictions using local analysis
     console.info(`Generating ${extendedFixtures.length} predictions using local analysis`);
-    const predictions = generateLocalPredictions(extendedFixtures);
+    const predictions = generateLocalPredictions(extendedFixtures, oddsType);
 
     if (!predictions || predictions.length === 0) {
       console.warn('No predictions generated');

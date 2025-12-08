@@ -13,6 +13,7 @@ export const ALLOWED_BET_TYPES = [
   'Over 0.5 Goals',
   'Over 1.5 Goals',
   'Over 2.5 Goals',
+  'Under 1.5 Goals',
   'Under 2.5 Goals',
   'Under 3.5 Goals',
   'Both Teams to Score: Yes',
