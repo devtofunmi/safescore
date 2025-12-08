@@ -146,9 +146,9 @@ const Home: NextPage = () => {
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {[
-                { id: 'verysafe', label: 'Very Safe', icon: MdShield },
+                { id: 'very safe', label: 'Very Safe', icon: MdShield },
                 { id: 'safe', label: 'Safe', icon: MdCheckCircle },
-                { id: 'mediumsafe', label: 'Medium-Safe', icon: MdThunderstorm },
+                { id: 'medium safe', label: 'Medium-Safe', icon: MdThunderstorm },
               ].map((option) => {
                 const IconComponent = option.icon;
                 return (

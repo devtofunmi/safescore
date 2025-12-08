@@ -1,4 +1,4 @@
-import { type Prediction, type BetType } from '../schemas';
+import { ALLOWED_BET_TYPES, type Prediction } from '../schemas';
 import type { FullAPIFixture } from './types';
 
 interface MatchAnalysis {
@@ -25,14 +25,8 @@ function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
   const normalize = (val: number, max: number) => Math.min(1, Math.max(0, val / max));
 
   // --- Scores / stats ---
-  const getFormPoints = (form: string) => {
-    if (!form) return 0;
-    const wins = form.match(/W/g)?.length || 0;
-    const draws = form.match(/D/g)?.length || 0;
-    return wins * 3 + draws * 1;
-  };
-  const homeForm = normalize(getFormPoints(home.form || ''), 15); // 5 games * 3 points/win
-  const awayForm = normalize(getFormPoints(away.form || ''), 15);
+  const homeForm = normalize(home.form?.match(/W/g)?.length || 0, 5);
+  const awayForm = normalize(away.form?.match(/W/g)?.length || 0, 5);
 
   const maxRank = 20;
   const homeRank = home.leagueRank ? (maxRank - home.leagueRank) / (maxRank - 1) : 0;
@@ -46,50 +40,25 @@ function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
 
   // --- H2H ---
   const totalH2H = (h2h.homeWins || 0) + (h2h.awayWins || 0) + (h2h.draws || 0);
-  const homeH2H = totalH2H > 0 ? (h2h.homeWins || 0) / totalH2H : 0.5; // Default to 0.5 if no H2H
-  const awayH2H = totalH2H > 0 ? (h2h.awayWins || 0) / totalH2H : 0.5;
+  const homeH2H = totalH2H ? ((h2h.homeWins || 0) / totalH2H) : 0;
+  const awayH2H = totalH2H ? ((h2h.awayWins || 0) / totalH2H) : 0;
 
-  // --- Overall score with weighted factors ---
-  const weights = {
-    rank: 0.4,
-    form: 0.3,
-    goals: 0.15,
-    h2h: 0.1,
-    defense: 0.05,
-  };
-
-  const homeScore = Math.round(
-    (homeRank * weights.rank +
-      homeForm * weights.form +
-      homeGoals * weights.goals +
-      homeH2H * weights.h2h +
-      homeDefense * weights.defense) *
-      100
-  );
-  const awayScore = Math.round(
-    (awayRank * weights.rank +
-      awayForm * weights.form +
-      awayGoals * weights.goals +
-      awayH2H * weights.h2h +
-      awayDefense * weights.defense) *
-      100
-  );
+  // --- Overall score ---
+  const homeScore = Math.round((homeForm + homeRank + homeGoals + homeDefense + homeH2H) * 100);
+  const awayScore = Math.round((awayForm + awayRank + awayGoals + awayDefense + awayH2H) * 100);
 
   // --- Expected goals ---
-  const baseGoals = 0.7; 
-  let expectedGoalsHome = baseGoals + (homeScore / 100) * 2.8;
-  let expectedGoalsAway = baseGoals + (awayScore / 100) * 2.8;
+  const baseGoals = 1.2;
+  let expectedGoalsHome = +(baseGoals + homeGoals - awayDefense).toFixed(2);
+  let expectedGoalsAway = +(baseGoals + awayGoals - homeDefense).toFixed(2);
 
-  expectedGoalsHome -= (awayDefense * 0.4);
-  expectedGoalsAway -= (homeDefense * 0.4);
-
-  expectedGoalsHome = +(Math.min(4.0, Math.max(0.1, expectedGoalsHome)).toFixed(2));
-  expectedGoalsAway = +(Math.min(4.0, Math.max(0.1, expectedGoalsAway)).toFixed(2));
+  expectedGoalsHome = Math.min(3.5, Math.max(0.3, expectedGoalsHome));
+  expectedGoalsAway = Math.min(3.5, Math.max(0.3, expectedGoalsAway));
 
   // --- BTTS probability ---
-  const pHomeGoal = Math.min(0.95, expectedGoalsHome / 2);
-  const pAwayGoal = Math.min(0.95, expectedGoalsAway / 2);
-  const bttsProbability = +(pHomeGoal * pAwayGoal).toFixed(2);
+  const pHomeGoal = Math.min(0.95, expectedGoalsHome / 3);
+  const pAwayGoal = Math.min(0.95, expectedGoalsAway / 3);
+  const bttsProbability = +(1 - (1 - pHomeGoal) * (1 - pAwayGoal)).toFixed(2);
 
   // --- Confidence ---
   const completeness =
@@ -99,85 +68,110 @@ function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
     (away.form ? 1 : 0) +
     (away.leagueRank ? 1 : 0) +
     (away.goals !== undefined ? 1 : 0) +
-    (totalH2H > 0 ? 1 : 0);
+    (totalH2H ? 1 : 0);
 
-  const scoreDiff = Math.abs(homeScore - awayScore);
-
-  const baseConfidence = 50 + (scoreDiff * 0.4);
-  const adjustedCompletenessFactor = (completeness / 7) * 0.6 + 0.4;
-  const confidence = Math.round(Math.min(98, baseConfidence * adjustedCompletenessFactor));
+  const scoreDiff = Math.abs(homeScore - awayScore) / 100;
+  const confidence = Math.round(Math.min(95, (completeness / 7 + scoreDiff) * 80 + 15));
 
   return { homeScore, awayScore, expectedGoalsHome, expectedGoalsAway, confidence, bttsProbability };
 }
 
-// --- Select the SAFEST bet type based on analysis ---
-function selectBetType(analysis: MatchAnalysis, oddsType?: string): BetType {
-  const { homeScore, awayScore, expectedGoalsHome, expectedGoalsAway, bttsProbability, confidence } = analysis;
+// --- Select bet type covering all ALLOWED_BET_TYPES ---
+function getBetCandidates(analysis: MatchAnalysis): { bet: typeof ALLOWED_BET_TYPES[number], safeness: number }[] {
+  const { homeScore, awayScore, expectedGoalsHome, expectedGoalsAway, bttsProbability } = analysis;
   const totalGoals = expectedGoalsHome + expectedGoalsAway;
   const scoreDiff = homeScore - awayScore;
 
-  const bets = {
-    'over-under': [
-      { condition: totalGoals > 3.5 && confidence > 70, bet: 'Over 2.5 Goals' },
-      { condition: totalGoals > 2.8 && confidence > 65, bet: 'Over 1.5 Goals' },
-      { condition: totalGoals > 1.2 && confidence > 50, bet: 'Over 0.5 Goals' },
-      { condition: totalGoals < 1.5 && confidence > 70, bet: 'Under 2.5 Goals' },
-      { condition: totalGoals < 2.2 && confidence > 60, bet: 'Under 3.5 Goals' },
-    ],
-    'btts': [
-      { condition: bttsProbability > 0.65 && confidence > 60, bet: 'Both Teams to Score: Yes' },
-      { condition: bttsProbability < 0.40 && confidence > 60, bet: 'Both Teams to Score: No' },
-    ],
-    'match-winner': [
-      { condition: scoreDiff > 40 && confidence > 75, bet: 'Home Team to Win' },
-      { condition: scoreDiff < -40 && confidence > 75, bet: 'Away Team to Win' },
-      { condition: Math.abs(scoreDiff) < 15 && confidence > 65, bet: 'Draw' },
-      { condition: scoreDiff > 15 && confidence > 60, bet: 'Home Team to Win or Draw' },
-      { condition: scoreDiff < -15 && confidence > 60, bet: 'Away Team to Win or Draw' },
-    ]
+  const candidates: { bet: typeof ALLOWED_BET_TYPES[number], safeness: number }[] = [];
+
+  const scaleSafeness = (value: number, min: number, max: number) => {
+    return Math.round(Math.max(0, Math.min(100, ((value - min) / (max - min)) * 80 + 20)));
+  }
+
+  // --- Team win / draw ---
+  if (scoreDiff > 10) {
+    candidates.push({ bet: 'Home Team to Win', safeness: scaleSafeness(scoreDiff, 10, 50) });
+  }
+  if (scoreDiff < -10) {
+    candidates.push({ bet: 'Away Team to Win', safeness: scaleSafeness(Math.abs(scoreDiff), 10, 50) });
+  }
+  if (scoreDiff > 5) {
+    candidates.push({ bet: 'Home Team to Win or Draw', safeness: scaleSafeness(scoreDiff, 5, 40) });
+  }
+  if (scoreDiff < -5) {
+    candidates.push({ bet: 'Away Team to Win or Draw', safeness: scaleSafeness(Math.abs(scoreDiff), 5, 40) });
+  }
+  if (Math.abs(scoreDiff) < 10) {
+    candidates.push({ bet: 'Draw', safeness: 100 - scaleSafeness(Math.abs(scoreDiff), 0, 10) });
+  }
+  if (homeScore > 55) {
+    candidates.push({ bet: 'Team to Score: Home', safeness: scaleSafeness(homeScore, 55, 80) });
+  }
+  if (awayScore > 55) {
+    candidates.push({ bet: 'Team to Score: Away', safeness: scaleSafeness(awayScore, 55, 80) });
+  }
+
+  // --- BTTS ---
+  candidates.push({ bet: 'Both Teams to Score: Yes', safeness: scaleSafeness(bttsProbability, 0.5, 0.8) });
+  candidates.push({ bet: 'Both Teams to Score: No', safeness: scaleSafeness(1 - bttsProbability, 0.5, 0.8) });
+  
+
+  // --- Goal-based bets ---
+  const goalSafeness = (goals: number, threshold: number) => scaleSafeness(goals, threshold, threshold + 1.5);
+
+  if (totalGoals > 0.5) {
+    candidates.push({ bet: 'Over 0.5 Goals', safeness: goalSafeness(totalGoals, 0.5) });
+  }
+  if (totalGoals > 1.5) {
+      candidates.push({ bet: 'Over 1.5 Goals', safeness: goalSafeness(totalGoals, 1.5) });
+  }
+  if (totalGoals > 2.5) {
+      candidates.push({ bet: 'Over 2.5 Goals', safeness: goalSafeness(totalGoals, 2.5) });
+  }
+  if (totalGoals < 3.5) {
+    candidates.push({ bet: 'Under 3.5 Goals', safeness: goalSafeness(3.5 - totalGoals, 0) });
+  }
+  if (totalGoals < 2.5) {
+      candidates.push({ bet: 'Under 2.5 Goals', safeness: goalSafeness(2.5 - totalGoals, 0) });
+  }
+
+  if (expectedGoalsHome > 1.2 || expectedGoalsAway > 1.2) {
+    candidates.push({ bet: 'Highest Scoring Half: 2nd', safeness: 50 });
+  } else {
+    candidates.push({ bet: 'Highest Scoring Half: 1st', safeness: 40 });
+  }
+  
+  // De-duplicate candidates by bet type, keeping the one with the highest safeness
+  const uniqueCandidates = Array.from(new Map(candidates.map(c => [c.bet, c])).values());
+  
+  // Sort by safeness DESC
+  return uniqueCandidates.sort((a, b) => b.safeness - a.safeness);
+}
+
+function selectBetType(
+  analysis: MatchAnalysis,
+  riskLevel: 'very safe' | 'safe' | 'medium safe'
+): typeof ALLOWED_BET_TYPES[number] {
+  const candidates = getBetCandidates(analysis);
+
+  if (candidates.length === 0) {
+      return 'No Pick';
+  }
+
+  const riskThresholds = {
+      'very safe': 85,
+      'safe': 70,
+      'medium safe': 50
   };
 
-  if (oddsType && bets[oddsType as keyof typeof bets]) {
-    for (const bet of bets[oddsType as keyof typeof bets]) {
-      if (bet.condition) return bet.bet as BetType;
-    }
-  }
+  const filteredCandidates = candidates.filter(c => c.safeness >= riskThresholds[riskLevel]);
 
-  // --- Generic Tiered Logic if no oddsType is specified or no bet was found ---
-  
-  // Tier 1: Very High Confidence "Obvious" Bets
-  if (confidence > 85) {
-    if (scoreDiff > 50) return 'Home Team to Win or Draw';
-    if (scoreDiff < -50) return 'Away Team to Win or Draw';
+  if (filteredCandidates.length > 0) {
+      // Return the safest bet among the filtered candidates
+      return filteredCandidates[0].bet;
   }
   
-  // Tier 2: Goal-based "Safe" Bets
-  if (totalGoals > 1.1) return 'Over 0.5 Goals';
-
-  // Tier 3: Strong Win/Draw Predictions
-  if (confidence > 75) {
-    if (scoreDiff > 35) return 'Home Team to Win';
-    if (scoreDiff < -35) return 'Away Team to Win';
-  }
-
-  // Tier 4: Over/Under Goal Bets
-  if (totalGoals > 3.2 && confidence > 65) return 'Over 2.5 Goals';
-  if (totalGoals > 2.6 && confidence > 60) return 'Over 1.5 Goals';
-  if (totalGoals < 1.7 && confidence > 65) return 'Under 2.5 Goals';
-
-  // Tier 5: Both Teams to Score (BTTS) Bets
-  if (bttsProbability > 0.70 && confidence > 60) return 'Both Teams to Score: Yes';
-  if (bttsProbability < 0.35 && confidence > 65) return 'Both Teams to Score: No';
-
-  // Tier 6: Draw Prediction
-  if (Math.abs(scoreDiff) < 10 && confidence > 70) return 'Draw';
-
-  // Fallback to a double chance bet if one team is moderately favored
-  if (confidence > 55) {
-    if (homeScore > awayScore) return 'Home Team to Win or Draw';
-    if (awayScore > homeScore) return 'Away Team to Win or Draw';
-  }
-
+  // Fallback if no candidates meet the risk level
   return 'No Pick';
 }
 
@@ -185,25 +179,20 @@ function selectBetType(analysis: MatchAnalysis, oddsType?: string): BetType {
 export function generateLocalPrediction(
   fixture: FullAPIFixture,
   idx: number,
-  oddsType?: string
+  riskLevel: 'very safe' | 'safe' | 'medium safe'
 ): Prediction {
   const analysis = analyzeMatch(fixture);
-  const betType = selectBetType(analysis, oddsType);
+  const betType = selectBetType(analysis, riskLevel);
 
-  // Adjust confidence based on the bet type itself. Safer bets get a boost.
-  let finalConfidence = analysis.confidence;
-  if (betType.includes('0.5 Goals') || betType.includes('Win or Draw')) {
-    finalConfidence = Math.min(99, finalConfidence + 5);
-  } else if (betType.includes('Under 3.5') || betType.includes('Over 1.5')) {
-    finalConfidence = Math.min(97, finalConfidence + 2);
-  }
+  const confidenceVariation = Math.random() * 10 - 5;
+  const finalConfidence = Math.max(25, Math.min(95, analysis.confidence + confidenceVariation));
 
   return {
     id: `pred-local-${Date.now()}-${idx}`,
     team1: fixture.teams.home.name,
     team2: fixture.teams.away.name,
-    betType: betType,
-    confidence: Math.round(Math.max(30, Math.min(99, finalConfidence))),
+    betType: betType as typeof ALLOWED_BET_TYPES[number],
+    confidence: Math.round(finalConfidence),
     league: fixture.league?.name || 'Unknown',
     matchTime: 'TBD',
   };
@@ -212,12 +201,12 @@ export function generateLocalPrediction(
 // --- Generate predictions for multiple matches ---
 export function generateLocalPredictions(
   fixtureData: FullAPIFixture[],
-  oddsType?: string
+  riskLevel: 'very safe' | 'safe' | 'medium safe'
 ): Prediction[] {
-  console.log(`[LocalPredictor] Generating ${fixtureData.length} predictions with oddsType: ${oddsType || 'any'}`);
+  console.info(`[LocalPredictor] Generating ${fixtureData.length} predictions with risk level: ${riskLevel}`);
 
   const predictions = fixtureData.map((fixture, idx) =>
-    generateLocalPrediction(fixture, idx, oddsType)
+    generateLocalPrediction(fixture, idx, riskLevel)
   );
 
   const betTypeCounts = predictions.reduce((acc, p) => {
@@ -225,12 +214,10 @@ export function generateLocalPredictions(
     return acc;
   }, {} as Record<string, number>);
 
-  const avgConfidence = predictions.length > 0 
-    ? Math.round(predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length)
-    : 0;
+  const avgConfidence = Math.round(predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length);
 
-  console.log(`[LocalPredictor] Bet types:`, betTypeCounts);
-  console.log(`[LocalPredictor] Avg confidence:`, avgConfidence);
+  console.info(`[LocalPredictor] Bet types:`, betTypeCounts);
+  console.info(`[LocalPredictor] Avg confidence:`, avgConfidence);
 
   return predictions;
 }

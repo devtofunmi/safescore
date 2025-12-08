@@ -66,7 +66,7 @@ export type Prediction = z.infer<typeof PredictionSchema>;
  * API request validation
  */
 export const PredictionsRequestSchema = z.object({
-  oddsType: z.string().min(1),
+  oddsType: z.enum(['very safe', 'safe', 'medium safe']),
   leagues: z.array(z.string()).min(1),
   day: z.string().default('today'),
   oddsRange: z.string().optional(),

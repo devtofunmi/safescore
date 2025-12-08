@@ -70,6 +70,7 @@ export default function ResultsClient() {
   const [predictions] = React.useState<Prediction[]>(() => readStoredPredictions());
   const [filters] = React.useState<Filters | null>(() => readStoredFilters());
   const [safestFilter, setSafestFilter] = React.useState<number | null>(null);
+  const [copyStatus, setCopyStatus] = React.useState('Copy');
 
   const displayedPredictions = React.useMemo(() => {
     if (safestFilter === null) {
@@ -79,6 +80,32 @@ export default function ResultsClient() {
       .sort((a, b) => b.confidence - a.confidence)
       .slice(0, safestFilter);
   }, [predictions, safestFilter]);
+
+  const copyToClipboard = () => {
+    const textToCopy = displayedPredictions
+      .map(p => `${p.team1} vs ${p.team2} - ${p.betType} (${p.confidence}%)`)
+      .join('\n');
+    navigator.clipboard.writeText(textToCopy).then(
+      () => {
+        setCopyStatus('Copied!');
+        setTimeout(() => setCopyStatus('Copy'), 2000);
+      },
+      err => {
+        console.error('Failed to copy predictions: ', err);
+        setCopyStatus('Failed');
+        setTimeout(() => setCopyStatus('Copy'), 2000);
+      }
+    );
+  };
+
+  const shareToTwitter = () => {
+    const textToShare = displayedPredictions
+      .map(p => `${p.team1} vs ${p.team2} - ${p.betType} (${p.confidence}%)`)
+      .join('\n');
+    const tweetText = `Here are my football predictions from savescore.vercel.app:\n\n${textToShare}\n\n#safescore #AI #predictions`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    window.open(twitterUrl, '_blank');
+  };
 
  
 
@@ -133,7 +160,7 @@ export default function ResultsClient() {
           <div className="flex justify-center gap-4 mb-6">
             <button
               onClick={() => setSafestFilter(5)}
-              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+              className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${
                 safestFilter === 5
                   ? '  bg-white text-black'
                   : 'bg-black text-white border-[#18181b]'
@@ -143,7 +170,7 @@ export default function ResultsClient() {
             </button>
             <button
               onClick={() => setSafestFilter(10)}
-              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+              className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${
                 safestFilter === 10
                   ? 'bg-white text-black'
                   : 'bg-black text-white border-[#18181b]'
@@ -153,13 +180,25 @@ export default function ResultsClient() {
             </button>
             <button
               onClick={() => setSafestFilter(null)}
-              className={`rounded-xl cursor-pointer border-2 px-6 py-2 font-extrabold transition-all ${
+              className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${
                 safestFilter === null
                   ? 'bg-white text-black'
                   : 'bg-black text-white border-[#18181b]'
               }`}
             >
               All
+            </button>
+            <button
+              onClick={copyToClipboard}
+              className="rounded-xl hidden md:block cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-black text-white border-[#18181b]"
+            >
+              {copyStatus}
+            </button>
+            <button
+              onClick={shareToTwitter}
+              className="rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-[#1DA1F2] text-white border-[#1DA1F2]"
+            >
+              <FaXTwitter />
             </button>
           </div>
         )}
