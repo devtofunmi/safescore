@@ -1,0 +1,184 @@
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { FiCoffee } from 'react-icons/fi';
+import { AiOutlineHeart } from 'react-icons/ai';
+import { FaXTwitter } from 'react-icons/fa6';
+import RiskLevelSelector from '../components/home/RiskLevelSelector';
+import LeagueSelector from '../components/home/LeagueSelector';
+import DaySelector from '../components/home/DaySelector';
+import Summary from '../components/home/Summary';
+
+const Home: NextPage = () => {
+  const router = useRouter();
+  const [oddsType, setOddsType] = useState('safe');
+  const [day, setDay] = useState('today');
+  const [loading, setLoading] = useState(false);
+  const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+
+  const leagues = [
+    'Premier League',
+    'Championship',
+    'La Liga',
+    'Bundesliga',
+    'Serie A',
+    'Serie B',
+    'Ligue 1',
+    'Eredivisie',
+    'Primeira Liga',
+    'Super Lig',
+    'Greek Super League',
+    'Allsvenskan',
+    'Champions League',
+    'Europa League',
+  ];
+
+  const handleLeagueChange = (league: string) => {
+    setSelectedLeagues((prev) =>
+      prev.includes(league)
+        ? prev.filter((l) => l !== league)
+        : [...prev, league]
+    );
+  };
+
+  const handleSelectAllLeagues = () => {
+    if (selectedLeagues.length === leagues.length) {
+      setSelectedLeagues([]);
+    } else {
+      setSelectedLeagues(leagues);
+    }
+  };
+
+  const handleGeneratePredictions = async () => {
+    if (selectedLeagues.length === 0) {
+      alert('Please select at least one league');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oddsType,
+          leagues: selectedLeagues,
+          day,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Log the raw API response for debugging in the browser console
+      try {
+        console.debug('API /api/predictions response status:', response.status, 'body:', data);
+      } catch (e) {
+        console.debug('Failed to log API response', e);
+      }
+
+      // Store predictions in session and navigate to results
+      sessionStorage.setItem('predictions', JSON.stringify(data.predictions));
+      sessionStorage.setItem('filters', JSON.stringify({
+        oddsType,
+        leagues: selectedLeagues,
+        day,
+      }));
+
+      router.push('/results');
+    } catch (error) {
+      console.error('Error generating predictions:', error);
+      alert('Error generating predictions. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+      <Head>
+        <title>SafeScore - AI Football Predictions</title>
+        <meta
+          name="description"
+          content="AI-powered football predictions for safe bets."
+        />
+        <link rel="icon" href="/logo.png" />
+      </Head>
+
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="text-white text-xl mt-4">safescore is predicting games...</p>
+        </div>
+      )}
+
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b-2 py-3 dark:border-[#18181b] border-gray-200 bg-white/90 backdrop-blur-sm px-4 sm:px-6 lg:px-8 dark:bg-black/50">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <img src="/logos.png" alt="SafeScore Logo" className="h-12" />
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right ">
+                <p className="text-sm font-bold text-gray-300">
+                  Low-Risk Betting Intelligence
+                </p>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-4xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
+        <div className="space-y-12">
+          <RiskLevelSelector oddsType={oddsType} setOddsType={setOddsType} />
+          <LeagueSelector
+            selectedLeagues={selectedLeagues}
+            handleLeagueChange={handleLeagueChange}
+            handleSelectAllLeagues={handleSelectAllLeagues}
+          />
+          <DaySelector day={day} setDay={setDay} />
+          <Summary
+            oddsType={oddsType}
+            selectedLeagues={selectedLeagues}
+            day={day}
+            loading={loading}
+            handleGeneratePredictions={handleGeneratePredictions}
+          />
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t-2 border-[#18181b]  px-4 py-8 sm:px-6 lg:px-8 bg-black">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            
+            <div className="mt-4 flex items-center justify-center space-x-2 font-bold text-gray-600">
+              <span>Made with</span>
+              <FiCoffee className="text-lg" />
+              <span>and</span>
+              <AiOutlineHeart className="text-lg text-red-600" />
+              <span>by</span>
+              <a
+                href="https://twitter.com/codebreak_er"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-white transition-colors"
+              >
+                <FaXTwitter className="text-lg" />
+                <span>codebreak_er</span>
+              </a>
+            </div>
+            
+          <p className="font-bold mt-5 text-gray-600">© 2025 SafeScore - AI-Powered Football Predictions</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Home;
