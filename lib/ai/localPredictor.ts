@@ -158,20 +158,29 @@ function selectBetType(
       return 'No Pick';
   }
 
-  const riskThresholds = {
-      'very safe': 85,
-      'safe': 70,
-      'medium safe': 50
-  };
-
-  const filteredCandidates = candidates.filter(c => c.safeness >= riskThresholds[riskLevel]);
-
-  if (filteredCandidates.length > 0) {
-      // Return the safest bet among the filtered candidates
-      return filteredCandidates[0].bet;
+  if (riskLevel === 'very safe') {
+    const bestCandidate = candidates.find(c => c.safeness >= 85);
+    return bestCandidate ? bestCandidate.bet : 'No Pick';
   }
-  
-  // Fallback if no candidates meet the risk level
+
+  if (riskLevel === 'safe') {
+    // First, try to find a bet in the 'safe' range
+    let bestCandidate = candidates.find(c => c.safeness >= 70 && c.safeness < 85);
+    
+    // If no 'safe' bet is found, fall back to a 'very safe' one
+    if (!bestCandidate) {
+      bestCandidate = candidates.find(c => c.safeness >= 85);
+    }
+    
+    return bestCandidate ? bestCandidate.bet : 'No Pick';
+  }
+
+  if (riskLevel === 'medium safe') {
+    const bestCandidate = candidates.find(c => c.safeness >= 50 && c.safeness < 70);
+    return bestCandidate ? bestCandidate.bet : 'No Pick';
+  }
+
+  // Fallback for any other case
   return 'No Pick';
 }
 

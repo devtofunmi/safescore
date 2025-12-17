@@ -71,6 +71,11 @@ export default function ResultsClient() {
   const [filters] = React.useState<Filters | null>(() => readStoredFilters());
   const [safestFilter, setSafestFilter] = React.useState<number | null>(null);
   const [copyStatus, setCopyStatus] = React.useState('Copy');
+  const [activeTooltipId, setActiveTooltipId] = React.useState<string | null>(null);
+
+  const handleTooltipToggle = (predictionId: string) => {
+    setActiveTooltipId(prevId => (prevId === predictionId ? null : predictionId));
+  };
 
   const displayedPredictions = React.useMemo(() => {
     if (safestFilter === null) {
@@ -236,9 +241,16 @@ export default function ResultsClient() {
                       <p className="text-md font-bold">{prediction.betType}</p>
                     </div>
                   </div>
-                  <div className="rounded-lg border-2 border-[#18181b] bg-[#18181b]  p-4">
-                    <p className="text-xs font-bold text-white">CONFIDENCE</p>
-                    <p className="text-2xl font-bold text-white">{prediction.confidence}%</p>
+                  <div className="relative cursor-pointer" onClick={() => handleTooltipToggle(prediction.id)}>
+                    <div className="rounded-lg border-2 border-[#18181b] bg-[#18181b]  p-4">
+                      <p className="text-xs font-bold text-white">CONFIDENCE</p>
+                      <p className="text-2xl font-bold text-white">{prediction.confidence}%</p>
+                    </div>
+                    {activeTooltipId === prediction.id && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-lg bg-[#18181b] border border-white p-3 text-center text-sm text-white z-10">
+                        Confidence reflects both the amount of data available and the predicted strength difference between the teams.
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="rounded-lg border-2 border-[#18181b] bg-[#18181b]  p-3">
