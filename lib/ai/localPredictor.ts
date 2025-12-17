@@ -1,6 +1,34 @@
 import { ALLOWED_BET_TYPES, type Prediction } from '../schemas';
 import type { FullAPIFixture } from './types';
 
+
+
+const LEAGUE_STRENGTH_MAP: Record<string, number> = {
+  'Champions League': 1.0,
+  'Premier League': 1.0,
+  'La Liga': 1.0,
+  'Serie A': 1.0,
+  'Bundesliga': 1.0,
+  'Europa League': 0.9,
+  'Ligue 1': 0.9,
+  'Eredivisie': 0.8,
+  'Primeira Liga': 0.8,
+  'Super Lig': 0.7,
+  'Championship': 0.7,
+  'Greek Super League': 0.6,
+  'Allsvenskan': 0.6,
+  'Serie B': 0.5,
+};
+
+const FACTOR_WEIGHTS = {
+  form: 1.5,
+  rank: 1.2,
+  goalsFor: 1.2,
+  goalsAgainst: 0.8,
+  cleanSheet: 0.5,
+  h2h: 0.5,
+};
+
 interface MatchAnalysis {
   homeScore: number;
   awayScore: number;
@@ -16,15 +44,19 @@ interface H2HData {
   draws?: number;
 }
 
-// --- Analyze a single match ---
+// --- Analyze a single match (v2 - with weighted factors and league strength) ---
 function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
   const home = fixture.stats?.homeTeam || {};
   const away = fixture.stats?.awayTeam || {};
   const h2h = fixture.stats?.h2h as H2HData || {};
 
+  // --- Get League Strength ---
+  // Default to 0.7 if league not in map
+  const leagueStrength = LEAGUE_STRENGTH_MAP[fixture.league?.name || ''] || 0.7;
+
   const normalize = (val: number, max: number) => Math.min(1, Math.max(0, val / max));
 
-  // --- Scores / stats ---
+  // --- Weighted Scores / stats ---
   const homeForm = normalize(home.form?.match(/W/g)?.length || 0, 5);
   const awayForm = normalize(away.form?.match(/W/g)?.length || 0, 5);
 
@@ -32,46 +64,76 @@ function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
   const homeRank = home.leagueRank ? (maxRank - home.leagueRank) / (maxRank - 1) : 0;
   const awayRank = away.leagueRank ? (maxRank - away.leagueRank) / (maxRank - 1) : 0;
 
-  const homeGoals = normalize(home.goals || 0, 30);
-  const awayGoals = normalize(away.goals || 0, 30);
+  const homeGoalsFor = normalize(home.goals || 0, 30);
+  const awayGoalsFor = normalize(away.goals || 0, 30);
 
-  const homeDefense = normalize(home.cleanSheets || 0, 10);
-  const awayDefense = normalize(away.cleanSheets || 0, 10);
+  // Lower goalsAgainst is better, so we invert the normalized value
+  const homeGoalsAgainst = 1 - normalize(home.goalsAgainst || 30, 30);
+  const awayGoalsAgainst = 1 - normalize(away.goalsAgainst || 30, 30);
+
+  const homeCleanSheet = normalize(home.cleanSheets || 0, 10);
+  const awayCleanSheet = normalize(away.cleanSheets || 0, 10);
 
   // --- H2H ---
   const totalH2H = (h2h.homeWins || 0) + (h2h.awayWins || 0) + (h2h.draws || 0);
-  const homeH2H = totalH2H ? ((h2h.homeWins || 0) / totalH2H) : 0;
-  const awayH2H = totalH2H ? ((h2h.awayWins || 0) / totalH2H) : 0;
+  const homeH2H = totalH2H > 0 ? ((h2h.homeWins || 0) / totalH2H) : 0.5; // Default to 0.5 if no H2H
+  const awayH2H = totalH2H > 0 ? ((h2h.awayWins || 0) / totalH2H) : 0.5;
 
-  // --- Overall score ---
-  const homeScore = Math.round((homeForm + homeRank + homeGoals + homeDefense + homeH2H) * 100);
-  const awayScore = Math.round((awayForm + awayRank + awayGoals + awayDefense + awayH2H) * 100);
+  // --- Calculate weighted team scores ---
+  const homeWeightedScore =
+    (homeForm * FACTOR_WEIGHTS.form) +
+    (homeRank * FACTOR_WEIGHTS.rank) +
+    (homeGoalsFor * FACTOR_WEIGHTS.goalsFor) +
+    (homeGoalsAgainst * FACTOR_WEIGHTS.goalsAgainst) +
+    (homeCleanSheet * FACTOR_WEIGHTS.cleanSheet) +
+    (homeH2H * FACTOR_WEIGHTS.h2h);
 
-  // --- Expected goals ---
+  const awayWeightedScore =
+    (awayForm * FACTOR_WEIGHTS.form) +
+    (awayRank * FACTOR_WEIGHTS.rank) +
+    (awayGoalsFor * FACTOR_WEIGHTS.goalsFor) +
+    (awayGoalsAgainst * FACTOR_WEIGHTS.goalsAgainst) +
+    (awayCleanSheet * FACTOR_WEIGHTS.cleanSheet) +
+    (awayH2H * FACTOR_WEIGHTS.h2h);
+
+  // --- Amplify scores by league strength & scale up ---
+  const homeScore = Math.round(homeWeightedScore * leagueStrength * 100);
+  const awayScore = Math.round(awayWeightedScore * leagueStrength * 100);
+
+  // --- Expected goals (remains a simple heuristic) ---
   const baseGoals = 1.2;
-  let expectedGoalsHome = +(baseGoals + homeGoals - awayDefense).toFixed(2);
-  let expectedGoalsAway = +(baseGoals + awayGoals - homeDefense).toFixed(2);
+  let expectedGoalsHome = +(baseGoals + homeGoalsFor - awayCleanSheet).toFixed(2);
+  let expectedGoalsAway = +(baseGoals + awayGoalsFor - homeCleanSheet).toFixed(2);
 
   expectedGoalsHome = Math.min(3.5, Math.max(0.3, expectedGoalsHome));
   expectedGoalsAway = Math.min(3.5, Math.max(0.3, expectedGoalsAway));
 
-  // --- BTTS probability ---
+  // --- BTTS probability (remains a simple heuristic) ---
   const pHomeGoal = Math.min(0.95, expectedGoalsHome / 3);
   const pAwayGoal = Math.min(0.95, expectedGoalsAway / 3);
   const bttsProbability = +(1 - (1 - pHomeGoal) * (1 - pAwayGoal)).toFixed(2);
 
-  // --- Confidence ---
+  // --- Confidence Calculation ---
+  // Data completeness check
   const completeness =
     (home.form ? 1 : 0) +
     (home.leagueRank ? 1 : 0) +
     (home.goals !== undefined ? 1 : 0) +
+    (home.goalsAgainst !== undefined ? 1 : 0) +
     (away.form ? 1 : 0) +
     (away.leagueRank ? 1 : 0) +
     (away.goals !== undefined ? 1 : 0) +
+    (away.goalsAgainst !== undefined ? 1 : 0) +
     (totalH2H ? 1 : 0);
 
-  const scoreDiff = Math.abs(homeScore - awayScore) / 100;
-  const confidence = Math.round(Math.min(95, (completeness / 7 + scoreDiff) * 80 + 15));
+  // Scale score difference to a 0-1 range. Max possible weighted score is ~5.2.
+  // Multiplied by league strength (max 1.0) and 100. So max score is ~520.
+  // A score diff of 100 is significant.
+  const scoreDiff = Math.abs(homeScore - awayScore);
+  const scaledDiff = Math.min(1, scoreDiff / 150);
+
+  // Confidence is a mix of data completeness and how one-sided the match appears
+  const confidence = Math.round(Math.min(95, ((completeness / 9) * 0.5 + scaledDiff * 0.5) * 80 + 15));
 
   return { homeScore, awayScore, expectedGoalsHome, expectedGoalsAway, confidence, bttsProbability };
 }
