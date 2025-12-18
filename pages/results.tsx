@@ -88,6 +88,11 @@ const getBetTypeBadge = (betType: string) => {
 
 
 
+const truncateText = (text: string, length: number = 10) => {
+  if (!text) return '';
+  return text.length > length ? text.substring(0, length) + '...' : text;
+};
+
 const Results: NextPage = () => {
   const [predictions] = React.useState<Prediction[]>(() => readStoredPredictions());
   const [filters] = React.useState<Filters | null>(() => readStoredFilters());
@@ -108,6 +113,17 @@ const Results: NextPage = () => {
   const closeDetails = () => {
     setSelectedPrediction(null);
   };
+
+  React.useEffect(() => {
+    if (selectedPrediction) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedPrediction]);
 
   const displayedPredictions = React.useMemo(() => {
     if (safestFilter === null) {
@@ -295,9 +311,9 @@ const Results: NextPage = () => {
                     </div>
                     <div className="mb-6">
                       <div className="grid grid-cols-3 items-center gap-4">
-                        <div className="text-center"><p className="font-bold text-md">{prediction.team1}</p></div>
+                        <div className="text-center"><p className="font-bold text-md" title={prediction.team1}>{truncateText(prediction.team1)}</p></div>
                         <div className="text-center text-gray-500">vs</div>
-                        <div className="text-center"><p className="font-bold text-md">{prediction.team2}</p></div>
+                        <div className="text-center"><p className="font-bold text-md" title={prediction.team2}>{truncateText(prediction.team2)}</p></div>
                       </div>
                     </div>
                     <div className="mb-6 space-y-4">
@@ -355,7 +371,6 @@ const Results: NextPage = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-              onClick={closeDetails}
             >
               <motion.div
                 initial={{ scale: 0.9, y: 20 }}
@@ -366,7 +381,9 @@ const Results: NextPage = () => {
               >
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="text-xl font-bold text-white">{selectedPrediction.team1} vs {selectedPrediction.team2}</h3>
+                    <h3 className="text-xl font-bold text-white" title={`${selectedPrediction.team1} vs ${selectedPrediction.team2}`}>
+                      {truncateText(selectedPrediction.team1, 12)} vs {truncateText(selectedPrediction.team2, 12)}
+                    </h3>
                     <p className="text-gray-400 text-sm">{selectedPrediction.league}</p>
                   </div>
                   <button onClick={closeDetails} className="text-gray-400 hover:text-white p-2 text-2xl font-bold">&times;</button>
@@ -427,12 +444,12 @@ const Results: NextPage = () => {
                           <h4 className="text-white font-bold mb-4 text-sm uppercase">Season Goals Stats</h4>
                           <div className="grid grid-cols-2 gap-8">
                             <div>
-                              <p className="text-gray-300 font-bold mb-2 text-center">{selectedPrediction.team1}</p>
+                              <p className="text-gray-300 font-bold mb-2 text-center" title={selectedPrediction.team1}>{truncateText(selectedPrediction.team1)}</p>
                               <div className="flex justify-between text-sm mb-1 text-gray-400"><span>Scored</span> <span className="text-white">{selectedPrediction.details.team1Stats.goalsFor}</span></div>
                               <div className="flex justify-between text-sm text-gray-400"><span>Conceded</span> <span className="text-white">{selectedPrediction.details.team1Stats.goalsAgainst}</span></div>
                             </div>
                             <div>
-                              <p className="text-gray-300 font-bold mb-2 text-center">{selectedPrediction.team2}</p>
+                              <p className="text-gray-300 font-bold mb-2 text-center" title={selectedPrediction.team2}>{truncateText(selectedPrediction.team2)}</p>
                               <div className="flex justify-between text-sm mb-1 text-gray-400"><span>Scored</span> <span className="text-white">{selectedPrediction.details.team2Stats.goalsFor}</span></div>
                               <div className="flex justify-between text-sm text-gray-400"><span>Conceded</span> <span className="text-white">{selectedPrediction.details.team2Stats.goalsAgainst}</span></div>
                             </div>

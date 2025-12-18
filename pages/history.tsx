@@ -32,6 +32,11 @@ interface HistoryProps {
     historyData: DailyRecord[];
 }
 
+const truncateText = (text: string, length: number = 15) => {
+    if (!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+};
+
 const History: NextPage<HistoryProps> = ({ historyData }) => {
     const [history, setHistory] = useState<DailyRecord[]>(historyData);
     const [selectedDate, setSelectedDate] = useState<string>(history[0]?.date || '');
@@ -222,7 +227,9 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                                                         className="border-b border-white/5 hover:bg-white/5 transition-colors"
                                                     >
                                                         <td className="py-4 pl-4 font-medium text-white">
-                                                            {item.homeTeam} <span className="text-gray-500 px-2">vs</span> {item.awayTeam}
+                                                            <span title={item.homeTeam}>{truncateText(item.homeTeam)}</span>
+                                                            <span className="text-gray-500 px-2">vs</span>
+                                                            <span title={item.awayTeam}>{truncateText(item.awayTeam)}</span>
                                                         </td>
                                                         <td className="py-4 font-bold text-blue-400">
                                                             {item.prediction}
