@@ -176,7 +176,7 @@ function getBetCandidates(analysis: MatchAnalysis): { bet: typeof ALLOWED_BET_TY
   // --- BTTS ---
   candidates.push({ bet: 'Both Teams to Score: Yes', safeness: scaleSafeness(bttsProbability, 0.5, 0.8) });
   candidates.push({ bet: 'Both Teams to Score: No', safeness: scaleSafeness(1 - bttsProbability, 0.5, 0.8) });
-  
+
 
   // --- Goal-based bets ---
   const goalSafeness = (goals: number, threshold: number) => scaleSafeness(goals, threshold, threshold + 1.5);
@@ -185,16 +185,16 @@ function getBetCandidates(analysis: MatchAnalysis): { bet: typeof ALLOWED_BET_TY
     candidates.push({ bet: 'Over 0.5 Goals', safeness: goalSafeness(totalGoals, 0.5) });
   }
   if (totalGoals > 1.5) {
-      candidates.push({ bet: 'Over 1.5 Goals', safeness: goalSafeness(totalGoals, 1.5) });
+    candidates.push({ bet: 'Over 1.5 Goals', safeness: goalSafeness(totalGoals, 1.5) });
   }
   if (totalGoals > 2.5) {
-      candidates.push({ bet: 'Over 2.5 Goals', safeness: goalSafeness(totalGoals, 2.5) });
+    candidates.push({ bet: 'Over 2.5 Goals', safeness: goalSafeness(totalGoals, 2.5) });
   }
   if (totalGoals < 3.5) {
     candidates.push({ bet: 'Under 3.5 Goals', safeness: goalSafeness(3.5 - totalGoals, 0) });
   }
   if (totalGoals < 2.5) {
-      candidates.push({ bet: 'Under 2.5 Goals', safeness: goalSafeness(2.5 - totalGoals, 0) });
+    candidates.push({ bet: 'Under 2.5 Goals', safeness: goalSafeness(2.5 - totalGoals, 0) });
   }
 
   if (expectedGoalsHome > 1.2 || expectedGoalsAway > 1.2) {
@@ -202,10 +202,10 @@ function getBetCandidates(analysis: MatchAnalysis): { bet: typeof ALLOWED_BET_TY
   } else {
     candidates.push({ bet: 'Highest Scoring Half: 1st', safeness: 40 });
   }
-  
+
   // De-duplicate candidates by bet type, keeping the one with the highest safeness
   const uniqueCandidates = Array.from(new Map(candidates.map(c => [c.bet, c])).values());
-  
+
   // Sort by safeness DESC
   return uniqueCandidates.sort((a, b) => b.safeness - a.safeness);
 }
@@ -217,7 +217,7 @@ function selectBetType(
   const candidates = getBetCandidates(analysis);
 
   if (candidates.length === 0) {
-      return 'No Pick';
+    return 'No Pick';
   }
 
   if (riskLevel === 'very safe') {
@@ -228,12 +228,12 @@ function selectBetType(
   if (riskLevel === 'safe') {
     // First, try to find a bet in the 'safe' range
     let bestCandidate = candidates.find(c => c.safeness >= 70 && c.safeness < 85);
-    
+
     // If no 'safe' bet is found, fall back to a 'very safe' one
     if (!bestCandidate) {
       bestCandidate = candidates.find(c => c.safeness >= 85);
     }
-    
+
     return bestCandidate ? bestCandidate.bet : 'No Pick';
   }
 
@@ -266,6 +266,23 @@ export function generateLocalPrediction(
     confidence: Math.round(finalConfidence),
     league: fixture.league?.name || 'Unknown',
     matchTime: 'TBD',
+    details: {
+      team1Form: fixture.stats?.homeTeam?.form || 'N/A',
+      team2Form: fixture.stats?.awayTeam?.form || 'N/A',
+      team1Stats: {
+        goalsFor: fixture.stats?.homeTeam?.goals || 0,
+        goalsAgainst: fixture.stats?.homeTeam?.goalsAgainst || 0,
+      },
+      team2Stats: {
+        goalsFor: fixture.stats?.awayTeam?.goals || 0,
+        goalsAgainst: fixture.stats?.awayTeam?.goalsAgainst || 0,
+      },
+      h2h: {
+        homeWins: fixture.stats?.h2h?.homeWins || 0,
+        awayWins: fixture.stats?.h2h?.awayWins || 0,
+        draws: fixture.stats?.h2h?.draws || 0,
+      },
+    },
   };
 }
 
