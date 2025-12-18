@@ -27,8 +27,13 @@ const Summary: React.FC<SummaryProps> = ({
         disabled={loading}
         className="w-full rounded-xl cursor-pointer border-2 border-blue-400 bg-blue-400 px-8 py-4 text-xl font-extrabold text-white transition-all hover:bg-blue-500 hover:scale-[1.02] shadow-lg shadow-blue-400/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
-        {loading ? 'Generating Predictions...' : 'Generate Predictions'}
+        {loading ? 'Processing Leagues...' : 'Generate Predictions'}
       </button>
+      {/* {loading && selectedLeagues.length > 3 && (
+        <p className="mt-3 text-center text-xs text-gray-400 leading-relaxed font-medium">
+          Note: We are fetching detailed data league-by-league to ensure 100% accuracy. This may take up to {selectedLeagues.length * 7} seconds.
+        </p>
+      )} */}
     </section>
   );
 };
