@@ -80,7 +80,7 @@ export async function fetchFixtures(
 
     // Fetch fixtures from each league sequentially with rate limiting and retry
     const allFixtures: APIFixture[] = [];
-    const delayMs = 650; // 10 calls/minute = 6000ms/10 = 600ms, use 650ms for safety
+    const delayMs = 6500; // 10 calls/minute = 6000ms per call. Using 6.5s for safety.
 
     for (let i = 0; i < leagueCodes.length; i++) {
       const leagueCode = leagueCodes[i];
