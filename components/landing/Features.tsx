@@ -1,4 +1,5 @@
 import { FaChartLine, FaShieldHalved, FaEarthAmericas, FaBolt } from 'react-icons/fa6';
+import { motion } from 'framer-motion';
 
 const features = [
     {
@@ -109,11 +110,19 @@ const features = [
     },
 ];
 
+
+
 const Features = () => {
     return (
         <div className="py-24 bg-gray-50 dark:bg-zinc-950 overflow-hidden">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ margin: "-100px" }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-20"
+                >
                     <h2 className="text-base font-semibold uppercase tracking-wide text-blue-400">Features</h2>
                     <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-gray-900 dark:text-white sm:text-4xl">
                         Why Bettors Trust SafeScore
@@ -122,16 +131,26 @@ const Features = () => {
                         We don’t promise <span className="font-bold text-blue-400">"guaranteed"</span> wins.
                         We provide statistical insights designed to help you make smarter decisions over time.
                     </p>
-                </div>
+                </motion.div>
 
                 <div className="space-y-24">
                     {features.map((feature, index) => (
-                        <div key={feature.name} className={`flex flex-col lg:flex-row gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                        <motion.div
+                            key={feature.name}
+                            initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ margin: "-100px" }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className={`flex flex-col lg:flex-row gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+                        >
                             {/* Text Section */}
                             <div className="flex-1 text-center lg:text-left">
-                                <span className="inline-flex items-center justify-center rounded-xl bg-blue-400 p-3 shadow-lg mb-6">
+                                <motion.span
+                                    whileHover={{ rotate: 5, scale: 1.1 }}
+                                    className="inline-flex items-center justify-center rounded-xl bg-blue-400 p-3 shadow-lg mb-6"
+                                >
                                     <feature.icon className="h-8 w-8 text-white" aria-hidden="true" />
-                                </span>
+                                </motion.span>
                                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
                                     {feature.name}
                                 </h3>
@@ -142,7 +161,11 @@ const Features = () => {
 
                             {/* Visual Card Section */}
                             <div className="flex-1 w-full max-w-md lg:max-w-full">
-                                <div className="relative transform bg-gradient-to-br from-blue-400 to-indigo-800 rounded-2xl shadow-2xl p-8 rotate-1 hover:rotate-0 transition-all duration-500">
+                                <motion.div
+                                    whileHover={{ scale: 1.02, rotate: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="relative transform bg-gradient-to-br from-blue-400 to-indigo-800 rounded-2xl shadow-2xl p-8 rotate-1 transition-all duration-500"
+                                >
                                     {/* Decorative Elements */}
                                     <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-white opacity-5 blur-2xl"></div>
                                     <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-24 h-24 rounded-full bg-blue-400 opacity-10 blur-2xl"></div>
@@ -151,9 +174,9 @@ const Features = () => {
                                     <div className="relative z-10">
                                         {feature.visual}
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>
