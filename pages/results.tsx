@@ -4,6 +4,7 @@ import React, { JSX } from 'react';
 import Link from 'next/link';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import Footer from '../components/landing/Footer';
 
 
@@ -121,11 +122,13 @@ const Results: NextPage = () => {
     navigator.clipboard.writeText(textToCopy).then(
       () => {
         setCopyStatus('Copied!');
+        toast.success('Predictions copied to clipboard!');
         setTimeout(() => setCopyStatus('Copy'), 2000);
       },
       err => {
         console.error('Failed to copy predictions: ', err);
         setCopyStatus('Failed');
+        toast.error('Failed to copy to clipboard.');
         setTimeout(() => setCopyStatus('Copy'), 2000);
       }
     );
@@ -153,9 +156,9 @@ const Results: NextPage = () => {
           <div className="mx-auto max-w-7xl">
             <div className="flex items-center justify-between">
               <Link href="/">
-                <div className="cursor-pointer">
-                  <img src="/logos.png" alt="SafeScore Logo" className="h-12" />
-                </div>
+                 <div className="flex-shrink-0 flex items-center cursor-pointer" >
+                        <img src="/logos.png" alt="SafeScore" className="h-10" />
+                    </div>
               </Link>
               <div className="text-right ">
                 <p className="font-bold text-sm text-gray-200">{predictions.length} Predictions</p>
