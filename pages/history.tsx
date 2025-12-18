@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Footer from '../components/landing/Footer';
 import { FaCheckCircle, FaTimesCircle, FaClock, FaCalendarAlt, FaChartLine } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 import fs from 'fs';
 import path from 'path';
@@ -40,10 +41,11 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
             const res = await fetch('/api/history/verify');
             const data = await res.json();
             if (data.updatedCount > 0) {
-                // Reload data from server
-                window.location.reload();
+                toast.success(`Success! Updated ${data.updatedCount} match results.`);
+                // Small delay before reload to let toast show
+                setTimeout(() => window.location.reload(), 1500);
             } else {
-                alert(data.message || 'All results are up to date!');
+                toast.info(data.message || 'All results are up to date!');
             }
         } catch (err) {
             console.error('Refresh failed:', err);
@@ -117,8 +119,8 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                             onClick={refreshResults}
                             disabled={isRefreshing}
                             className={`inline-flex cursor-pointer items-center gap-2 px-6 py-3 rounded-full font-bold transition-all ${isRefreshing
-                                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                                    : 'bg-blue-400 text-white hover:bg-blue-500 shadow-xl shadow-blue-400/20'
+                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                : 'bg-blue-400 text-white hover:bg-blue-500 shadow-xl shadow-blue-400/20'
                                 }`}
                         >
                             <FaClock className={isRefreshing ? 'animate-spin' : ''} />
