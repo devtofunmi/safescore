@@ -58,8 +58,8 @@ export async function fetchFixtures(
       day === 'today'
         ? dateFrom
         : day === 'tomorrow'
-        ? new Date(today.getTime() + 86400000).toISOString().split('T')[0]
-        : new Date(today.getTime() + 5 * 86400000).toISOString().split('T')[0];
+          ? new Date(today.getTime() + 86400000).toISOString().split('T')[0]
+          : new Date(today.getTime() + 5 * 86400000).toISOString().split('T')[0];
 
     // Create cache key
     const cacheKey = `fixtures:${leagueCodes.join(',')}-${dateFrom}-${dateTo}`;
@@ -98,7 +98,7 @@ export async function fetchFixtures(
           console.info(
             `Fetching ${leagueCode}${retries > 0 ? ` (attempt ${retries + 1}/3)` : ''}`
           );
-          
+
           const response = await axios.get(
             `https://api.football-data.org/v4/competitions/${leagueCode}/matches`,
             {
@@ -134,7 +134,7 @@ export async function fetchFixtures(
               })
             )
           );
-          
+
           success = true;
         } catch (err) {
           retries++;
