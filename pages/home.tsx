@@ -2,13 +2,12 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { FiCoffee } from 'react-icons/fi';
-import { AiOutlineHeart } from 'react-icons/ai';
-import { FaXTwitter } from 'react-icons/fa6';
+
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
 import DaySelector from '../components/home/DaySelector';
 import Summary from '../components/home/Summary';
+import Footer from '../components/landing/Footer';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -97,18 +96,18 @@ const Home: NextPage = () => {
   return (
     <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
       <Head>
-        <title>SafeScore - AI Football Predictions</title>
+        <title>SafeScore - Data-Driven Football Predictions</title>
         <meta
           name="description"
-          content="AI-powered football predictions for safe bets."
+          content="Algorithmic football predictions for safe bets."
         />
         <link rel="icon" href="/logo.png" />
       </Head>
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
-            <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-blue-500"></div>
-            <p className="text-white text-xl mt-4">safescore is predicting games...</p>
+          <div className="animate-spin rounded-full h-20 w-20 border-t-2 border-b-2 border-blue-400"></div>
+          <p className="text-white text-xl mt-4">safescore is predicting games...</p>
         </div>
       )}
 
@@ -125,7 +124,7 @@ const Home: NextPage = () => {
                   Low-Risk Betting Intelligence
                 </p>
               </div>
-             
+
             </div>
           </div>
         </div>
@@ -152,31 +151,7 @@ const Home: NextPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t-2 border-[#18181b]  px-4 py-8 sm:px-6 lg:px-8 bg-black">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            
-            <div className="mt-4 flex items-center justify-center space-x-2 font-bold text-gray-600">
-              <span>Made with</span>
-              <FiCoffee className="text-lg" />
-              <span>and</span>
-              <AiOutlineHeart className="text-lg text-red-600" />
-              <span>by</span>
-              <a
-                href="https://twitter.com/codebreak_er"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-1 hover:text-white transition-colors"
-              >
-                <FaXTwitter className="text-lg" />
-                <span>codebreak_er</span>
-              </a>
-            </div>
-            
-          <p className="font-bold mt-5 text-gray-600">© 2025 SafeScore - AI-Powered Football Predictions</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
