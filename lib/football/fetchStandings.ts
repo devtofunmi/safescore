@@ -41,7 +41,7 @@ export async function fetchExtendedFixtureData(
   const standingsCache: Map<string, StandingsData> = new Map();
 
   // Fetch standings for all leagues with rate limiting and retry logic
-  const delayMs = 1500; // Increase delay to 1.5 seconds
+  const delayMs = 2500; // Increase delay to 2.5 seconds to avoid 429s
   for (let i = 0; i < leagueCodes.length; i++) {
     const leagueCode = leagueCodes[i];
     const cacheKey = `standings:${leagueCode}`;
@@ -61,7 +61,7 @@ export async function fetchExtendedFixtureData(
 
     let retries = 0;
     let success = false;
-    
+
     while (retries < 3 && !success) {
       try {
         console.info(`Fetching standings for ${leagueCode} (attempt ${retries + 1}/3)`);
@@ -79,7 +79,7 @@ export async function fetchExtendedFixtureData(
         success = true;
       } catch (err) {
         retries++;
-        
+
         // Check if it's a rate limit error
         if (axios.isAxiosError(err) && err.response?.status === 429) {
           if (retries < 3) {
@@ -89,7 +89,7 @@ export async function fetchExtendedFixtureData(
             continue;
           }
         }
-        
+
         console.warn(
           `Could not fetch standings for ${leagueCode}:`,
           err instanceof Error ? err.message : String(err)
@@ -123,13 +123,13 @@ export async function fetchExtendedFixtureData(
     const getTeamStats = (
       standing:
         | {
-            team: { id: number };
-            position: number;
-            form?: string;
-            goalsFor: number;
-            goalsAgainst: number;
-            cleanSheet?: number;
-          }
+          team: { id: number };
+          position: number;
+          form?: string;
+          goalsFor: number;
+          goalsAgainst: number;
+          cleanSheet?: number;
+        }
         | undefined
     ): Partial<TeamStats> => {
       if (!standing) return {};
@@ -142,9 +142,14 @@ export async function fetchExtendedFixtureData(
       };
     };
 
+    const totalTeamsInTable = table.length;
+
+    const homeStats = getTeamStats(homeTeamStanding);
+    const awayStats = getTeamStats(awayTeamStanding);
+
     fixture.stats = {
-      homeTeam: getTeamStats(homeTeamStanding),
-      awayTeam: getTeamStats(awayTeamStanding),
+      homeTeam: homeStats,
+      awayTeam: awayStats,
       h2h: { homeWins: 0, draws: 0, awayWins: 0 },
     };
   }
