@@ -1,31 +1,38 @@
 import { FiCoffee } from 'react-icons/fi';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { FaXTwitter } from 'react-icons/fa6';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
         <footer className="bg-white dark:bg-black ">
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ margin: "-50px" }}
+                transition={{ duration: 0.8 }}
+                className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"
+            >
                 <div className="flex border-t border-gray-200 dark:border-zinc-800 flex-col md:flex-row justify-between items-start gap-6">
                     <div className="mt-10 text-left">
                         <img src="/logos.png" alt="SafeScore" className="h-10" />
                         <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 max-w-sm">
                             Algorithmic football predictions. We analyze stats so you don't have to.
                         </p>
-                        
+
                     </div>
                 </div>
                 <div className="mt-4 flex justify-center ">
-                            <a
-                                href="https://twitter.com/intent/tweet?text=Check%20out%20SafeScore%20for%20data-driven%20football%20predictions!%20%23SafeScore"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-black px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800"
-                            >
-                                <FaXTwitter className="text-blue-400" />
-                                Share SafeScore on X
-                            </a>
-                        </div>
+                    <a
+                        href="https://twitter.com/intent/tweet?text=Check%20out%20SafeScore%20for%20data-driven%20football%20predictions!%20%23SafeScore"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-black px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800"
+                    >
+                        <FaXTwitter className="text-blue-400" />
+                        Share SafeScore on X
+                    </a>
+                </div>
 
                 <div className="mt-8 border-t border-gray-200 dark:border-zinc-800 pt-8 flex flex-col items-center">
 
@@ -55,7 +62,7 @@ const Footer = () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </footer>
     );
 };
