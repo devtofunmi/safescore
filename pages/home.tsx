@@ -2,12 +2,14 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
 import DaySelector from '../components/home/DaySelector';
 import Summary from '../components/home/Summary';
 import Footer from '../components/landing/Footer';
+import Link from 'next/link';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -51,7 +53,7 @@ const Home: NextPage = () => {
 
   const handleGeneratePredictions = async () => {
     if (selectedLeagues.length === 0) {
-      alert('Please select at least one league');
+      toast.warning('Please select at least one league to get started!');
       return;
     }
 
@@ -87,7 +89,7 @@ const Home: NextPage = () => {
       router.push('/results');
     } catch (error) {
       console.error('Error generating predictions:', error);
-      alert('Error generating predictions. Please try again.');
+      toast.error('Prediction generation failed. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -115,9 +117,11 @@ const Home: NextPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 border-b-2 py-3 dark:border-[#18181b] border-gray-200 bg-white/90 backdrop-blur-sm px-4 sm:px-6 lg:px-8 dark:bg-black/50">
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between">
-            <div>
-              <img src="/logos.png" alt="SafeScore Logo" className="h-12" />
-            </div>
+            <Link href="/">
+                             <div className="flex-shrink-0 flex items-center cursor-pointer" >
+                                    <img src="/logos.png" alt="SafeScore" className="h-10" />
+                                </div>
+                          </Link>
             <div className="flex items-center space-x-4">
               <div className="text-right ">
                 <p className="text-sm font-bold text-gray-300">
