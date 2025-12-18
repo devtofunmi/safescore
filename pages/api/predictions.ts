@@ -45,8 +45,8 @@ export default async function handler(
       day === 'today'
         ? today
         : day === 'tomorrow'
-        ? new Date(today.getTime() + 86400000)
-        : new Date(today.getTime() + 5 * 86400000);
+          ? new Date(today.getTime() + 86400000)
+          : new Date(today.getTime() + 5 * 86400000);
     requestedDate = target.toISOString().split('T')[0];
   }
 
@@ -109,6 +109,11 @@ export default async function handler(
       res.status(500).json({ error: 'Internal server error' });
       return;
     }
+
+    // Save to history (async, don't block response)
+    import('@/lib/history/storage').then(({ saveToHistory }) => {
+      saveToHistory(predictions, requestedDate);
+    }).catch(err => console.error('History save failed:', err));
 
     res.status(200).json(response);
   } catch (err) {
