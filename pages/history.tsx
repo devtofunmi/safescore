@@ -98,8 +98,8 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                         <Link href="/">
                             <img src="/logos.png" alt="SafeScore" className="h-8 cursor-pointer opacity-90 hover:opacity-100 transition-opacity" />
                         </Link>
-                        <Link href="/home">
-                            <button className="rounded-full bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200">
+                        <Link href="/">
+                            <button className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200">
                                 Back to App
                             </button>
                         </Link>
