@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
+import SEO from '../components/SEO';
 import React, { JSX } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -149,10 +149,10 @@ const Results: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Predictions - SafeScore</title>
-        <meta name="description" content="Your AI-powered football predictions" />
-      </Head>
+      <SEO
+        title="Your Predictions"
+        description="View your Generated football predictions with confidence scores and detailed analysis."
+      />
       <div className="min-h-screen bg-black text-white">
         {/* Header (Animate entrance) */}
         <motion.header
@@ -184,6 +184,8 @@ const Results: NextPage = () => {
             className="bg-black mt-18 px-4 py-6 sm:px-6 lg:px-8 "
           >
             <div className="mx-auto max-w-7xl">
+              <h1 className="mb-2 text-2xl font-extrabold text-white">Match <span className="text-blue-400">Predictions</span></h1>
+              <p className="mb-6 text-gray-400 text-sm font-medium">Based on your selected filters and AI analysis.</p>
               <h2 className="mb-4 text-xl font-extrabold">Your Filters:</h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <motion.div whileHover={{ scale: 1.02 }} className="rounded-xl border-2 border-[#18181b] bg-[#18181b] p-4">

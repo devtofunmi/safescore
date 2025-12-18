@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import SEO from '../components/SEO';
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -85,10 +86,10 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
 
     return (
         <>
-            <Head>
-                <title>Performance History - SafeScore</title>
-                <meta name="description" content="Track our historical betting accuracy and performance." />
-            </Head>
+            <SEO
+                title="Performance History"
+                description="Our transparent track record. View historical accuracy and results for football predictions across all supported leagues."
+            />
 
             <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-500/30">
 

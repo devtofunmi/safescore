@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
@@ -98,14 +99,10 @@ const Home: NextPage = () => {
 
   return (
     <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-      <Head>
-        <title>SafeScore - Data-Driven Football Predictions</title>
-        <meta
-          name="description"
-          content="Algorithmic football predictions for safe bets."
-        />
-        <link rel="icon" href="/logo.png" />
-      </Head>
+      <SEO
+        title="Dashboard"
+        description="Filter high-probability match outcomes by risk level and league."
+      />
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-100">
@@ -144,6 +141,12 @@ const Home: NextPage = () => {
           transition={{ duration: 0.5 }}
           className="space-y-12"
         >
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+              Prediction <span className="text-blue-400">Dashboard</span>
+            </h1>
+            <p className="mt-2 text-gray-500 dark:text-gray-400 font-medium">Configure your filters to get the most accurate predictions.</p>
+          </div>
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ margin: "0px" }} transition={{ delay: 0.1 }}>
             <RiskLevelSelector oddsType={oddsType} setOddsType={setOddsType} />
           </motion.div>
