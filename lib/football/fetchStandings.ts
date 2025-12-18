@@ -32,31 +32,45 @@ export async function fetchExtendedFixtureData(
   fixtures: APIFixture[]
 ): Promise<FullAPIFixture[]> {
   const extendedFixtures: FullAPIFixture[] = [...fixtures];
-  const leagueCodes = [...new Set(
+  const TOP_LEAGUES = ['PL', 'BL1', 'PD', 'SA', 'FL1', 'ELC'];
+
+  const rawLeagues = [...new Set(
     fixtures
       .map((f) => f.league?.code)
       .filter((code): code is string => code !== undefined && typeof code === 'string')
   )];
 
+  // Prioritize top leagues in the processing order
+  const leagueCodes = rawLeagues.sort((a, b) => {
+    const isATop = TOP_LEAGUES.includes(a);
+    const isBTop = TOP_LEAGUES.includes(b);
+    if (isATop && !isBTop) return -1;
+    if (!isATop && isBTop) return 1;
+    return 0;
+  });
+
   const standingsCache: Map<string, StandingsData> = new Map();
 
   // Fetch standings for all leagues with rate limiting and retry logic
-  const delayMs = 2500; // Increase delay to 2.5 seconds to avoid 429s
   for (let i = 0; i < leagueCodes.length; i++) {
     const leagueCode = leagueCodes[i];
     const cacheKey = `standings:${leagueCode}`;
 
-    // Check cache first
-    const cached = cache.get<StandingsData>(cacheKey, CACHE_DURATIONS.STANDINGS);
+    // Check cache first (Cache for 24 hours to save API calls)
+    const CACHE_DURATION_24H = 60 * 60 * 24;
+    const cached = cache.get<StandingsData>(cacheKey, CACHE_DURATION_24H);
     if (cached) {
       console.info(`Cache hit for standings: ${cacheKey}`);
       standingsCache.set(leagueCode, cached);
       continue;
     }
 
-    // Add delay before each request (except the first)
+    // Strict rate limiting for Free Tier (10 calls/minute = 1 call every 6 seconds)
+    // We add a safety buffer (6500ms) to be sure.
     if (i > 0) {
-      await sleep(delayMs);
+      const waitTime = 6500;
+      console.info(`Waiting ${waitTime}ms to respect API rate limit (10/min)...`);
+      await sleep(waitTime);
     }
 
     let retries = 0;
@@ -69,7 +83,7 @@ export async function fetchExtendedFixtureData(
           `https://api.football-data.org/v4/competitions/${leagueCode}/standings`,
           {
             headers: { 'X-Auth-Token': FOOTBALL_DATA_API_KEY },
-            timeout: 5000,
+            timeout: 10000,
           }
         );
 
