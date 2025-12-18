@@ -22,11 +22,10 @@ const DaySelector: React.FC<DaySelectorProps> = ({ day, setDay }) => {
             <button
               key={option.id}
               onClick={() => setDay(option.id)}
-              className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
-                day === option.id
-                  ? 'border-[#18181b] border-gray-[[#18181b] bg-[#18181b] text-gray-100'
-                  : 'border-[#18181b] bg-black text-white  hover:bg-[#18181b]'
-              }`}
+              className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${day === option.id
+                  ? 'border-blue-400 bg-blue-400 text-white shadow-lg shadow-blue-400/20'
+                  : 'border-[#18181b] bg-black text-gray-300 hover:border-blue-400/50 hover:bg-[#18181b]'
+                }`}
             >
               <div className="text-3xl mb-2 flex justify-center">
                 <IconComponent />
