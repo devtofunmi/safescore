@@ -22,6 +22,7 @@ const Navbar = () => {
                     </div>
                     <div className="hidden md:flex items-center space-x-8">
                         <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="text-gray-600 dark:text-gray-300 hover:text-blue-500 cursor-pointer font-medium">How it works</button>
+                        {/* <button onClick={() => router.push('/history')} className="text-gray-600 dark:text-gray-300 hover:text-blue-500 cursor-pointer font-medium">History</button> */}
                         <button
                             onClick={() => router.push('/home')}
                             className="bg-blue-400 text-white px-5 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-colors shadow-lg shadow-blue-400/30"
