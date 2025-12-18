@@ -26,11 +26,10 @@ const RiskLevelSelector: React.FC<RiskLevelSelectorProps> = ({ oddsType, setOdds
             <button
               key={option.id}
               onClick={() => setOddsType(option.id)}
-              className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
-                oddsType === option.id
-                  ? 'border-[#18181b] bg-[#18181b] text-gray-100'
-                  : 'border-[#18181b] bg-black hover:bg-[#18181b]'
-              }`}
+              className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${oddsType === option.id
+                  ? 'border-blue-400 bg-blue-400 text-white shadow-lg shadow-blue-400/20'
+                  : 'border-[#18181b] bg-black hover:border-blue-400/50 hover:bg-[#18181b] text-gray-300'
+                }`}
             >
               <div className="text-3xl mb-2 flex justify-center">
                 <IconComponent />
