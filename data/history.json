@@ -1,0 +1,724 @@
+[
+  {
+    "date": "2025-12-23",
+    "predictions": [
+      {
+        "id": "pred-local-1766069239351-0",
+        "homeTeam": "Newcastle United FC",
+        "awayTeam": "Chelsea FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-1",
+        "homeTeam": "AFC Bournemouth",
+        "awayTeam": "Burnley FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-2",
+        "homeTeam": "Brighton & Hove Albion FC",
+        "awayTeam": "Sunderland AFC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-3",
+        "homeTeam": "Manchester City FC",
+        "awayTeam": "West Ham United FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-4",
+        "homeTeam": "Wolverhampton Wanderers FC",
+        "awayTeam": "Brentford FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-5",
+        "homeTeam": "Tottenham Hotspur FC",
+        "awayTeam": "Liverpool FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-6",
+        "homeTeam": "Everton FC",
+        "awayTeam": "Arsenal FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239351-7",
+        "homeTeam": "Leeds United FC",
+        "awayTeam": "Crystal Palace FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239352-8",
+        "homeTeam": "Aston Villa FC",
+        "awayTeam": "Manchester United FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239352-9",
+        "homeTeam": "Fulham FC",
+        "awayTeam": "Nottingham Forest FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Premier League"
+      },
+      {
+        "id": "pred-local-1766069239352-10",
+        "homeTeam": "Swansea City AFC",
+        "awayTeam": "Wrexham AFC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239352-11",
+        "homeTeam": "Blackburn Rovers FC",
+        "awayTeam": "Millwall FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239352-12",
+        "homeTeam": "Preston North End FC",
+        "awayTeam": "Norwich City FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239352-13",
+        "homeTeam": "Southampton FC",
+        "awayTeam": "Coventry City FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-14",
+        "homeTeam": "Bristol City FC",
+        "awayTeam": "Middlesbrough FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-15",
+        "homeTeam": "Charlton Athletic FC",
+        "awayTeam": "Oxford United FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-16",
+        "homeTeam": "Derby County FC",
+        "awayTeam": "Portsmouth FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-17",
+        "homeTeam": "Hull City AFC",
+        "awayTeam": "West Bromwich Albion FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-18",
+        "homeTeam": "Ipswich Town FC",
+        "awayTeam": "Sheffield Wednesday FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-19",
+        "homeTeam": "Queens Park Rangers FC",
+        "awayTeam": "Leicester City FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-20",
+        "homeTeam": "Sheffield United FC",
+        "awayTeam": "Birmingham City FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-21",
+        "homeTeam": "Watford FC",
+        "awayTeam": "Stoke City FC",
+        "prediction": "Over 0.5 Goals",
+        "odds": 1.45,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766069239353-22",
+        "homeTeam": "Valencia CF",
+        "awayTeam": "RCD Mallorca",
+        "prediction": "Team to Score: Home",
+        "odds": 1.63,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-23",
+        "homeTeam": "Real Oviedo",
+        "awayTeam": "RC Celta de Vigo",
+        "prediction": "Away Team to Win",
+        "odds": 1.91,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-24",
+        "homeTeam": "Levante UD",
+        "awayTeam": "Real Sociedad de Fútbol",
+        "prediction": "Away Team to Win or Draw",
+        "odds": 1.72,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-25",
+        "homeTeam": "CA Osasuna",
+        "awayTeam": "Deportivo Alavés",
+        "prediction": "Team to Score: Home",
+        "odds": 1.73,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-26",
+        "homeTeam": "Real Madrid CF",
+        "awayTeam": "Sevilla FC",
+        "prediction": "Home Team to Win",
+        "odds": 1.74,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-27",
+        "homeTeam": "Girona FC",
+        "awayTeam": "Club Atlético de Madrid",
+        "prediction": "Away Team to Win",
+        "odds": 1.99,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-28",
+        "homeTeam": "Villarreal CF",
+        "awayTeam": "FC Barcelona",
+        "prediction": "Team to Score: Home",
+        "odds": 1.63,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-29",
+        "homeTeam": "Elche CF",
+        "awayTeam": "Rayo Vallecano de Madrid",
+        "prediction": "Team to Score: Home",
+        "odds": 1.68,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-30",
+        "homeTeam": "Real Betis Balompié",
+        "awayTeam": "Getafe CF",
+        "prediction": "Home Team to Win or Draw",
+        "odds": 1.78,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-31",
+        "homeTeam": "Athletic Club",
+        "awayTeam": "RCD Espanyol de Barcelona",
+        "prediction": "Team to Score: Home",
+        "odds": 1.69,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766069239353-32",
+        "homeTeam": "Borussia Dortmund",
+        "awayTeam": "Borussia Mönchengladbach",
+        "prediction": "Home Team to Win",
+        "odds": 1.89,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-33",
+        "homeTeam": "VfB Stuttgart",
+        "awayTeam": "TSG 1899 Hoffenheim",
+        "prediction": "Team to Score: Home",
+        "odds": 1.64,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-34",
+        "homeTeam": "VfL Wolfsburg",
+        "awayTeam": "SC Freiburg",
+        "prediction": "Team to Score: Home",
+        "odds": 1.66,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-35",
+        "homeTeam": "FC Augsburg",
+        "awayTeam": "SV Werder Bremen",
+        "prediction": "Team to Score: Home",
+        "odds": 1.66,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-36",
+        "homeTeam": "1. FC Köln",
+        "awayTeam": "1. FC Union Berlin",
+        "prediction": "Team to Score: Home",
+        "odds": 1.57,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-37",
+        "homeTeam": "Hamburger SV",
+        "awayTeam": "Eintracht Frankfurt",
+        "prediction": "Away Team to Win",
+        "odds": 1.85,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-38",
+        "homeTeam": "RB Leipzig",
+        "awayTeam": "Bayer 04 Leverkusen",
+        "prediction": "Team to Score: Home",
+        "odds": 1.71,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-39",
+        "homeTeam": "1. FSV Mainz 05",
+        "awayTeam": "FC St. Pauli 1910",
+        "prediction": "Team to Score: Home",
+        "odds": 1.66,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239353-40",
+        "homeTeam": "1. FC Heidenheim 1846",
+        "awayTeam": "FC Bayern München",
+        "prediction": "Away Team to Win",
+        "odds": 2.04,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      },
+      {
+        "id": "pred-local-1766069239355-41",
+        "homeTeam": "SS Lazio",
+        "awayTeam": "US Cremonese",
+        "prediction": "Team to Score: Home",
+        "odds": 1.75,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-42",
+        "homeTeam": "Juventus FC",
+        "awayTeam": "AS Roma",
+        "prediction": "Team to Score: Home",
+        "odds": 1.61,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-43",
+        "homeTeam": "Cagliari Calcio",
+        "awayTeam": "AC Pisa 1909",
+        "prediction": "Home Team to Win or Draw",
+        "odds": 1.69,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-44",
+        "homeTeam": "US Sassuolo Calcio",
+        "awayTeam": "Torino FC",
+        "prediction": "Home Team to Win",
+        "odds": 1.83,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-45",
+        "homeTeam": "ACF Fiorentina",
+        "awayTeam": "Udinese Calcio",
+        "prediction": "Away Team to Win",
+        "odds": 1.85,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-46",
+        "homeTeam": "Genoa CFC",
+        "awayTeam": "Atalanta BC",
+        "prediction": "Away Team to Win",
+        "odds": 1.77,
+        "result": "Pending",
+        "score": "-",
+        "league": "Serie A"
+      },
+      {
+        "id": "pred-local-1766069239355-47",
+        "homeTeam": "Heracles Almelo",
+        "awayTeam": "SC Heerenveen",
+        "prediction": "Away Team to Win or Draw",
+        "odds": 1.74,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-48",
+        "homeTeam": "SBV Excelsior",
+        "awayTeam": "PEC Zwolle",
+        "prediction": "Team to Score: Home",
+        "odds": 1.64,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-49",
+        "homeTeam": "NEC",
+        "awayTeam": "AFC Ajax",
+        "prediction": "Team to Score: Home",
+        "odds": 1.65,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-50",
+        "homeTeam": "NAC Breda",
+        "awayTeam": "Telstar 1963",
+        "prediction": "Team to Score: Home",
+        "odds": 1.6,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-51",
+        "homeTeam": "FC Utrecht",
+        "awayTeam": "PSV",
+        "prediction": "Away Team to Win or Draw",
+        "odds": 1.74,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-52",
+        "homeTeam": "Feyenoord Rotterdam",
+        "awayTeam": "FC Twente '65",
+        "prediction": "Home Team to Win or Draw",
+        "odds": 1.7,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-53",
+        "homeTeam": "Go Ahead Eagles",
+        "awayTeam": "FC Groningen",
+        "prediction": "Away Team to Win or Draw",
+        "odds": 1.78,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-54",
+        "homeTeam": "FC Volendam",
+        "awayTeam": "Sparta Rotterdam",
+        "prediction": "Team to Score: Home",
+        "odds": 1.72,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-55",
+        "homeTeam": "Fortuna Sittard",
+        "awayTeam": "AZ",
+        "prediction": "Away Team to Win",
+        "odds": 1.82,
+        "result": "Pending",
+        "score": "-",
+        "league": "Eredivisie"
+      },
+      {
+        "id": "pred-local-1766069239355-56",
+        "homeTeam": "GD Estoril Praia",
+        "awayTeam": "Sporting Clube de Braga",
+        "prediction": "Away Team to Win",
+        "odds": 1.81,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-57",
+        "homeTeam": "Gil Vicente FC",
+        "awayTeam": "Rio Ave FC",
+        "prediction": "Home Team to Win",
+        "odds": 1.75,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-58",
+        "homeTeam": "CF Estrela da Amadora",
+        "awayTeam": "Moreirense FC",
+        "prediction": "Team to Score: Home",
+        "odds": 1.75,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-59",
+        "homeTeam": "AVS",
+        "awayTeam": "CD Nacional",
+        "prediction": "Away Team to Win",
+        "odds": 1.82,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-60",
+        "homeTeam": "CD Tondela",
+        "awayTeam": "Casa Pia AC",
+        "prediction": "Team to Score: Away",
+        "odds": 1.65,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-61",
+        "homeTeam": "CD Santa Clara",
+        "awayTeam": "FC Arouca",
+        "prediction": "Team to Score: Home",
+        "odds": 1.71,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-62",
+        "homeTeam": "FC Alverca",
+        "awayTeam": "FC Porto",
+        "prediction": "Away Team to Win",
+        "odds": 1.9,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-63",
+        "homeTeam": "Sport Lisboa e Benfica",
+        "awayTeam": "FC Famalicão",
+        "prediction": "Home Team to Win",
+        "odds": 1.8,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      },
+      {
+        "id": "pred-local-1766069239355-64",
+        "homeTeam": "Vitória SC",
+        "awayTeam": "Sporting Clube de Portugal",
+        "prediction": "Away Team to Win",
+        "odds": 1.91,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primeira Liga"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-19",
+    "predictions": [
+      {
+        "id": "pred-local-1766070905495-0",
+        "homeTeam": "Swansea City AFC",
+        "awayTeam": "Wrexham AFC",
+        "prediction": "Away Team to Win",
+        "odds": 1.73,
+        "result": "Pending",
+        "score": "-",
+        "league": "Championship"
+      },
+      {
+        "id": "pred-local-1766070905495-1",
+        "homeTeam": "Valencia CF",
+        "awayTeam": "RCD Mallorca",
+        "prediction": "Over 2.5 Goals",
+        "odds": 1.72,
+        "result": "Pending",
+        "score": "-",
+        "league": "Primera Division"
+      },
+      {
+        "id": "pred-local-1766070905496-2",
+        "homeTeam": "Borussia Dortmund",
+        "awayTeam": "Borussia Mönchengladbach",
+        "prediction": "Home Team to Win",
+        "odds": 1.89,
+        "result": "Pending",
+        "score": "-",
+        "league": "Bundesliga"
+      }
+    ]
+  },
+  {
+    "date": "2024-12-18",
+    "predictions": [
+      {
+        "id": "mock-1",
+        "homeTeam": "Arsenal",
+        "awayTeam": "Brighton",
+        "prediction": "Home Win",
+        "odds": 1.45,
+        "result": "Won",
+        "score": "2-0"
+      },
+      {
+        "id": "mock-2",
+        "homeTeam": "Liverpool",
+        "awayTeam": "Everton",
+        "prediction": "Over 2.5 Goals",
+        "odds": 1.6,
+        "result": "Lost",
+        "score": "1-0"
+      },
+      {
+        "id": "mock-3",
+        "homeTeam": "Aston Villa",
+        "awayTeam": "Brentford",
+        "prediction": "Home Win",
+        "odds": 1.7,
+        "result": "Pending",
+        "score": "-"
+      }
+    ]
+  }
+]
