@@ -138,7 +138,7 @@ const Results: NextPage = () => {
     const textToShare = displayedPredictions
       .map(p => `${p.team1} vs ${p.team2} - ${p.betType} (${p.confidence}%)`)
       .join('\n');
-    const tweetText = `Here are my football predictions from safescore.vercel.app:\n\n${textToShare}\n\n#safescore #AI #predictions`;
+    const tweetText = `Here are my football predictions from safescore.vercel.app:\n\n${textToShare}\n\n#safescore #predictions`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     window.open(twitterUrl, '_blank');
   };
@@ -153,7 +153,7 @@ const Results: NextPage = () => {
       <div className="min-h-screen bg-blacktext-white">
         {/* Header */}
         <header className="fixed top-0 left-0 right-0 z-50 border-b-2 border-[#18181b] bg-black backdrop-blur-sm px-4 py-3 ">
-          <div className="mx-auto max-w-7xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
               <Link href="/">
                  <div className="flex-shrink-0 flex items-center cursor-pointer" >
