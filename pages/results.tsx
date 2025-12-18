@@ -276,7 +276,7 @@ const Results: NextPage = () => {
                         <p className="text-2xl font-bold text-white">{prediction.confidence}%</p>
                       </div>
                       {activeTooltipId === prediction.id && (
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-lg bg-[#18181b] border border-white p-3 text-center text-sm text-white z-10">
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-lg bg-[#18181b] border border-blue-400/30 p-3 text-center text-sm text-white z-10">
                           Confidence reflects both the amount of data available and the predicted strength difference between the teams.
                         </div>
                       )}

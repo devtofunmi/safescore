@@ -4,18 +4,6 @@ import { fetchExtendedFixtureData } from '@/lib/football/fetchStandings';
 import { generateLocalPredictions } from '@/lib/ai/localPredictor';
 import { PredictionsRequestSchema, PredictionsResponseSchema, type PredictionsResponse, type ErrorResponse } from '@/lib/schemas';
 
-/**
- * Main API handler for predictions
- * 
- * Implements best practices:
- * ✓ Server-only API keys (no NEXT_PUBLIC_)
- * ✓ Caching for fixtures and standings
- * ✓ Rate limiting (sequential requests with delays)
- * ✓ Strict input validation with Zod
- * ✓ AI output validation and sanitization
- * ✓ Proper error handling and logging
- * ✓ Generic error messages to users (detailed logs on server)
- */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PredictionsResponse | ErrorResponse>
