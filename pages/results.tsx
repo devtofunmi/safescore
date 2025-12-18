@@ -15,6 +15,23 @@ interface Prediction {
   confidence: number;
   league: string;
   matchTime: string;
+  details?: {
+    team1Form: string;
+    team2Form: string;
+    team1Stats: {
+      goalsFor: number;
+      goalsAgainst: number;
+    };
+    team2Stats: {
+      goalsFor: number;
+      goalsAgainst: number;
+    };
+    h2h: {
+      homeWins: number;
+      awayWins: number;
+      draws: number;
+    };
+  };
 }
 
 interface Filters {
@@ -74,8 +91,18 @@ const Results: NextPage = () => {
   const [copyStatus, setCopyStatus] = React.useState('Copy');
   const [activeTooltipId, setActiveTooltipId] = React.useState<string | null>(null);
 
+  const [selectedPrediction, setSelectedPrediction] = React.useState<Prediction | null>(null);
+
   const handleTooltipToggle = (predictionId: string) => {
     setActiveTooltipId(prevId => (prevId === predictionId ? null : predictionId));
+  };
+
+  const openDetails = (prediction: Prediction) => {
+    setSelectedPrediction(prediction);
+  };
+
+  const closeDetails = () => {
+    setSelectedPrediction(null);
   };
 
   const displayedPredictions = React.useMemo(() => {
@@ -252,15 +279,145 @@ const Results: NextPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="rounded-lg border-2 border-[#18181b] bg-[#18181b]  p-3">
-                    <p className="text-xs font-bold text-white">AI ANALYSIS</p>
-                    <p className="mt-1 font-bold text-white">High-probability prediction based on team form, head-to-head history, and statistical analysis.</p>
+                  <div className="rounded-lg border-2 border-[#18181b] bg-[#18181b] p-3 cursor-pointer hover:border-blue-400 transition-colors" onClick={() => openDetails(prediction)}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-xs font-bold text-white">AI ANALYSIS</p>
+                        <p className="mt-1 font-bold text-white text-sm">View detailed stats & analysis</p>
+                      </div>
+                      <div className="bg-blue-400 p-2 rounded-full">
+                        <FaChartBar className="text-white" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </main>
+
+        {/* Details Modal */}
+        {selectedPrediction && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeDetails}>
+            <div className="bg-[#18181b] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-800 p-6 shadow-2xl custom-scrollbar" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white">{selectedPrediction.team1} vs {selectedPrediction.team2}</h3>
+                  <p className="text-gray-400 text-sm">{selectedPrediction.league}</p>
+                </div>
+                <button onClick={closeDetails} className="text-gray-400 hover:text-white p-2 text-2xl font-bold">&times;</button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Prediction Summary */}
+                <div className="bg-blue-400/10 border border-blue-400/30 rounded-xl p-4 flex justify-between items-center">
+                  <div>
+                    <p className="text-blue-400 font-bold text-xs uppercase mb-1">Recommended Bet</p>
+                    <p className="text-white font-bold text-lg">{selectedPrediction.betType}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-blue-400 font-bold text-xs uppercase mb-1">Confidence</p>
+                    <p className="text-white font-bold text-2xl">{selectedPrediction.confidence}%</p>
+                  </div>
+                </div>
+
+                {selectedPrediction.details ? (
+                  <>
+                    {/* Form Guide */}
+                    {/* Form Guide - Only show if valid form data exists */}
+                    {(selectedPrediction.details.team1Form !== 'N/A' || selectedPrediction.details.team2Form !== 'N/A') && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-black/50 p-4 rounded-xl border border-gray-800">
+                          <p className="text-gray-400 text-xs font-bold uppercase mb-2">Home Form</p>
+                          <div className="flex gap-1 justify-center">
+                            {selectedPrediction.details.team1Form !== 'N/A' ? selectedPrediction.details.team1Form.split('').map((r, i) => (
+                              <span key={i} className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold ${r === 'W' ? 'bg-green-500 text-black' :
+                                r === 'D' ? 'bg-gray-500 text-white' :
+                                  r === 'L' ? 'bg-red-500 text-white' : 'bg-gray-700 text-gray-400'
+                                }`}>
+                                {r}
+                              </span>
+                            )) : <span className="text-gray-500 text-xs italic">Data Unavailable</span>}
+                          </div>
+                        </div>
+                        <div className="bg-black/50 p-4 rounded-xl border border-gray-800">
+                          <p className="text-gray-400 text-xs font-bold uppercase mb-2">Away Form</p>
+                          <div className="flex gap-1 justify-center">
+                            {selectedPrediction.details.team2Form !== 'N/A' ? selectedPrediction.details.team2Form.split('').map((r, i) => (
+                              <span key={i} className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold ${r === 'W' ? 'bg-green-500 text-black' :
+                                r === 'D' ? 'bg-gray-500 text-white' :
+                                  r === 'L' ? 'bg-red-500 text-white' : 'bg-gray-700 text-gray-400'
+                                }`}>
+                                {r}
+                              </span>
+                            )) : <span className="text-gray-500 text-xs italic">Data Unavailable</span>}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Goals Stats - Only show if valid stats exist (sum of goals > 0) */}
+                    {(selectedPrediction.details.team1Stats.goalsFor + selectedPrediction.details.team1Stats.goalsAgainst +
+                      selectedPrediction.details.team2Stats.goalsFor + selectedPrediction.details.team2Stats.goalsAgainst > 0) ? (
+                      <div className="bg-black/50 p-4 rounded-xl border border-gray-800">
+                        <h4 className="text-white font-bold mb-4 text-sm uppercase">Season Goals Stats</h4>
+                        <div className="grid grid-cols-2 gap-8">
+                          <div>
+                            <p className="text-gray-300 font-bold mb-2 text-center">{selectedPrediction.team1}</p>
+                            <div className="flex justify-between text-sm mb-1 text-gray-400"><span>Scored</span> <span className="text-white">{selectedPrediction.details.team1Stats.goalsFor}</span></div>
+                            <div className="flex justify-between text-sm text-gray-400"><span>Conceded</span> <span className="text-white">{selectedPrediction.details.team1Stats.goalsAgainst}</span></div>
+                          </div>
+                          <div>
+                            <p className="text-gray-300 font-bold mb-2 text-center">{selectedPrediction.team2}</p>
+                            <div className="flex justify-between text-sm mb-1 text-gray-400"><span>Scored</span> <span className="text-white">{selectedPrediction.details.team2Stats.goalsFor}</span></div>
+                            <div className="flex justify-between text-sm text-gray-400"><span>Conceded</span> <span className="text-white">{selectedPrediction.details.team2Stats.goalsAgainst}</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-black/50 p-4 rounded-xl border border-gray-800 text-center">
+                        <h4 className="text-white font-bold mb-2 text-sm uppercase">Season Goals Stats</h4>
+                        <p className="text-gray-500 text-sm italic">Season statistics unavailable for this league.</p>
+                      </div>
+                    )}
+
+                    {/* H2H */}
+                    {/* H2H - Only show if data exists (sum > 0) */}
+                    {(selectedPrediction.details.h2h.homeWins + selectedPrediction.details.h2h.draws + selectedPrediction.details.h2h.awayWins > 0) ? (
+                      <div className="bg-black/50 p-4 rounded-xl border border-gray-800 text-center">
+                        <h4 className="text-white font-bold mb-4 text-sm uppercase">Head to Head History</h4>
+                        <div className="flex justify-center items-center gap-6">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-white">{selectedPrediction.details.h2h.homeWins}</div>
+                            <div className="text-xs text-gray-500">Home Wins</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-gray-400">{selectedPrediction.details.h2h.draws}</div>
+                            <div className="text-xs text-gray-500">Draws</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-white">{selectedPrediction.details.h2h.awayWins}</div>
+                            <div className="text-xs text-gray-500">Away Wins</div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-black/50 p-4 rounded-xl border border-gray-800 text-center">
+                        <h4 className="text-white font-bold mb-2 text-sm uppercase">Head to Head History</h4>
+                        <p className="text-gray-500 text-sm italic">Historical H2H data unavailable for this matchup.</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="p-8 text-center text-gray-500">
+                    Detailed statistics are not available for this legacy prediction. Please generate a new prediction.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-4 justify-center">
           <Link href="/home">
             <button className="rounded-full cursor-pointer border-2 border-blue-400 bg-blue-400 text-white hover:bg-blue-500 px-8 py-3 font-extrabold transition-all shadow-lg hover:scale-105">New Prediction</button>
