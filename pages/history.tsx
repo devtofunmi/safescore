@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../components/landing/Footer';
 import { FaCheckCircle, FaTimesCircle, FaClock, FaCalendarAlt, FaChartLine } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -108,14 +109,21 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                 <main className="mx-auto max-w-7xl px-4 pt-32 pb-20 sm:px-6 lg:px-8">
 
                     {/* Header Section */}
-                    <div className="text-center mb-16">
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ margin: "-50px" }}
+                        className="text-center mb-16"
+                    >
                         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
                             Transparent <span className="text-blue-400">Performance</span> Tracking
                         </h1>
                         <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed mb-8">
                             We believe in full transparency. Review our past predictions and accuracy metrics to see exactly how our algorithms are performing.
                         </p>
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={refreshResults}
                             disabled={isRefreshing}
                             className={`inline-flex cursor-pointer items-center gap-2 px-6 py-3 rounded-full font-bold transition-all ${isRefreshing
@@ -125,35 +133,41 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                         >
                             <FaClock className={isRefreshing ? 'animate-spin' : ''} />
                             {isRefreshing ? 'Verifying Results...' : 'Refresh Latest Results'}
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
 
                     {/* Overall Stats Cards */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-                        <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center transform hover:scale-[1.02] transition-transform">
-                            <div className="text-blue-400 mb-2 flex justify-center"><FaChartLine className="text-2xl" /></div>
-                            <div className="text-3xl font-bold mb-1">{stats.accuracy}%</div>
-                            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Accuracy (Win Rate)</div>
-                        </div>
-                        <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center transform hover:scale-[1.02] transition-transform">
-                            <div className="text-green-500 mb-2 flex justify-center"><FaCheckCircle className="text-2xl" /></div>
-                            <div className="text-3xl font-bold mb-1">{stats.won}</div>
-                            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Winning Tips</div>
-                        </div>
-                        <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center transform hover:scale-[1.02] transition-transform">
-                            <div className="text-red-500 mb-2 flex justify-center"><FaTimesCircle className="text-2xl" /></div>
-                            <div className="text-3xl font-bold mb-1">{stats.lost}</div>
-                            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Lost Tips</div>
-                        </div>
-                        <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center transform hover:scale-[1.02] transition-transform">
-                            <div className="text-gray-400 mb-2 flex justify-center"><FaClock className="text-2xl" /></div>
-                            <div className="text-3xl font-bold mb-1">{stats.pending}</div>
-                            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Pending Results</div>
-                        </div>
+                        {[
+                            { label: 'Accuracy (Win Rate)', val: `${stats.accuracy}%`, icon: FaChartLine, color: 'text-blue-400' },
+                            { label: 'Winning Tips', val: stats.won, icon: FaCheckCircle, color: 'text-green-500' },
+                            { label: 'Lost Tips', val: stats.lost, icon: FaTimesCircle, color: 'text-red-500' },
+                            { label: 'Pending Results', val: stats.pending, icon: FaClock, color: 'text-gray-400' },
+                        ].map((stat, i) => (
+                            <motion.div
+                                key={stat.label}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ margin: "-50px" }}
+                                transition={{ delay: i * 0.1 }}
+                                whileHover={{ y: -5 }}
+                                className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center shadow-lg hover:shadow-blue-500/5 transition-all"
+                            >
+                                <div className={`${stat.color} mb-2 flex justify-center`}><stat.icon className="text-2xl" /></div>
+                                <div className="text-3xl font-bold mb-1">{stat.val}</div>
+                                <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">{stat.label}</div>
+                            </motion.div>
+                        ))}
                     </div>
 
                     {/* Daily Breakdown */}
-                    <div className="bg-[#101012] border border-white/5 rounded-3xl overflow-hidden">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ margin: "-50px" }}
+                        transition={{ delay: 0.5 }}
+                        className="bg-[#101012] border border-white/5 rounded-3xl overflow-hidden shadow-2xl"
+                    >
                         {/* Date Selector */}
                         <div className="border-b border-white/5 p-6 flex flex-wrap gap-3 items-center">
                             <div className="flex items-center gap-2 text-gray-400 mr-4">
@@ -161,76 +175,97 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                                 <span className="font-bold text-sm uppercase">Select Date:</span>
                             </div>
                             {history.map((day) => (
-                                <button
+                                <motion.button
                                     key={day.date}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => setSelectedDate(day.date)}
-                                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${selectedDate === day.date
+                                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all cursor-pointer ${selectedDate === day.date
                                         ? 'bg-blue-400 text-white shadow-lg shadow-blue-400/20'
                                         : 'bg-[#18181b] text-gray-400 hover:text-white hover:bg-gray-800'
                                         }`}
                                 >
                                     {day.date}
-                                </button>
+                                </motion.button>
                             ))}
                         </div>
 
                         {/* Results List */}
                         <div className="p-6">
-                            {currentRecords.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="text-xs text-gray-500 border-b border-white/5">
-                                                <th className="py-4 font-bold uppercase tracking-wider pl-4">Match</th>
-                                                <th className="py-4 font-bold uppercase tracking-wider">Prediction</th>
-                                                <th className="py-4 font-bold uppercase tracking-wider">Est. Odds</th>
-                                                <th className="py-4 font-bold uppercase tracking-wider text-center">Result</th>
-                                                <th className="py-4 font-bold uppercase tracking-wider text-right pr-4">Score</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm">
-                                            {currentRecords.map((item) => (
-                                                <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                                    <td className="py-4 pl-4 font-medium text-white">
-                                                        {item.homeTeam} <span className="text-gray-500 px-2">vs</span> {item.awayTeam}
-                                                    </td>
-                                                    <td className="py-4 font-bold text-blue-400">
-                                                        {item.prediction}
-                                                    </td>
-                                                    <td className="py-4 text-gray-400">
-                                                        {item.odds}
-                                                    </td>
-                                                    <td className="py-4 text-center">
-                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide ${item.result === 'Won' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                                                            item.result === 'Lost' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
-                                                                'bg-gray-500/10 text-gray-400 border border-gray-500/20'
-                                                            }`}>
-                                                            {item.result === 'Won' && <FaCheckCircle />}
-                                                            {item.result === 'Lost' && <FaTimesCircle />}
-                                                            {item.result === 'Pending' && <FaClock />}
-                                                            {item.result}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-4 pr-4 text-right font-mono text-gray-300">
-                                                        {item.score}
-                                                    </td>
+                            <AnimatePresence mode="wait">
+                                {currentRecords.length > 0 ? (
+                                    <motion.div
+                                        key={selectedDate}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        className="overflow-x-auto"
+                                    >
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="text-xs text-gray-500 border-b border-white/5">
+                                                    <th className="py-4 font-bold uppercase tracking-wider pl-4">Match</th>
+                                                    <th className="py-4 font-bold uppercase tracking-wider">Prediction</th>
+                                                    <th className="py-4 font-bold uppercase tracking-wider">Est. Odds</th>
+                                                    <th className="py-4 font-bold uppercase tracking-wider text-center">Result</th>
+                                                    <th className="py-4 font-bold uppercase tracking-wider text-right pr-4">Score</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <div className="text-center py-12 text-gray-500">
-                                    No records found for this date.
-                                </div>
-                            )}
+                                            </thead>
+                                            <tbody className="text-sm">
+                                                {currentRecords.map((item, i) => (
+                                                    <motion.tr
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: i * 0.05 }}
+                                                        key={item.id}
+                                                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                                                    >
+                                                        <td className="py-4 pl-4 font-medium text-white">
+                                                            {item.homeTeam} <span className="text-gray-500 px-2">vs</span> {item.awayTeam}
+                                                        </td>
+                                                        <td className="py-4 font-bold text-blue-400">
+                                                            {item.prediction}
+                                                        </td>
+                                                        <td className="py-4 text-gray-400">
+                                                            {item.odds}
+                                                        </td>
+                                                        <td className="py-4 text-center">
+                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide ${item.result === 'Won' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                                                                item.result === 'Lost' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                                                                    'bg-gray-500/10 text-gray-400 border border-gray-500/20'
+                                                                }`}>
+                                                                {item.result === 'Won' && <FaCheckCircle />}
+                                                                {item.result === 'Lost' && <FaTimesCircle />}
+                                                                {item.result === 'Pending' && <FaClock />}
+                                                                {item.result}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-4 pr-4 text-right font-mono text-gray-300">
+                                                            {item.score}
+                                                        </td>
+                                                    </motion.tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="empty"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-center py-12 text-gray-500"
+                                    >
+                                        No records found for this date.
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
-                    </div>
+                    </motion.div>
 
                 </main>
 
                 <Footer />
-            </div>
+            </div >
         </>
     );
 };
