@@ -10,7 +10,7 @@ interface SEOProps {
 const SEO = ({
     title = "SafeScore - High-Probability Football Predictions",
     description = "SafeScore uses data-driven algorithms to analyze 14+ global leagues for high-probability football predictions. Stop guessing and start making informed picks.",
-    image = "https://safescore.vercel.app/og-image.png", // Using the logo as default, ideally use a specific 1200x630 image
+    image = "https://safescore.vercel.app/og-image.png", 
     url = "https://safescore.vercel.app",
 }: SEOProps) => {
     const siteTitle = title.includes("SafeScore") ? title : `${title} | SafeScore`;

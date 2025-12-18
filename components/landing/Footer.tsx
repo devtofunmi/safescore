@@ -24,7 +24,7 @@ const Footer = () => {
                 </div>
                 <div className="mt-4 flex justify-center ">
                     <a
-                        href="https://twitter.com/intent/tweet?text=Check%20out%20SafeScore%20for%20data-driven%20football%20predictions!%20%23SafeScore"
+                        href="https://twitter.com/intent/tweet?text=Check%20out%20SafeScore%20for%20data-driven%20football%20predictions!&url=https://safescore.vercel.app&hashtags=SafeScore,FootballPredictions"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-black px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800"

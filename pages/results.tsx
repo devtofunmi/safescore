@@ -139,10 +139,11 @@ const Results: NextPage = () => {
 
   const shareToTwitter = () => {
     const textToShare = displayedPredictions
-      .map(p => `${p.team1} vs ${p.team2} - ${p.betType} (${p.confidence}%)`)
+      .map(p => `• ${p.team1} vs ${p.team2}: ${p.betType}`)
       .join('\n');
-    const tweetText = `Here are my football predictions from safescore.vercel.app:\n\n${textToShare}\n\n#safescore #predictions`;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    const tweetText = `Just generated these high-probability predictions on SafeScore! 📈⚽\n\n${textToShare}\n\n`;
+    const shareUrl = 'https://safescore.vercel.app';
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(shareUrl)}&hashtags=SafeScore,Picks`;
     window.open(twitterUrl, '_blank');
   };
 
