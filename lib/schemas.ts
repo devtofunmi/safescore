@@ -58,6 +58,23 @@ export const PredictionSchema = z.object({
   confidence: z.number().min(0).max(100),
   league: z.string(),
   matchTime: z.string(),
+  details: z.object({
+    team1Form: z.string(),
+    team2Form: z.string(),
+    team1Stats: z.object({
+      goalsFor: z.number(),
+      goalsAgainst: z.number(),
+    }),
+    team2Stats: z.object({
+      goalsFor: z.number(),
+      goalsAgainst: z.number(),
+    }),
+    h2h: z.object({
+      homeWins: z.number(),
+      awayWins: z.number(),
+      draws: z.number(),
+    }),
+  }).optional(),
 });
 
 export type Prediction = z.infer<typeof PredictionSchema>;
