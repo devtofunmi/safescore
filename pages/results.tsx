@@ -167,34 +167,34 @@ const Results: NextPage = () => {
             <div className="flex justify-center gap-4 mb-6">
               <button
                 onClick={() => setSafestFilter(5)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${safestFilter === 5
-                  ? '  bg-white text-black'
-                  : 'bg-black text-white border-[#18181b]'
+                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-400 ${safestFilter === 5
+                  ? 'bg-blue-400 text-white shadow-lg shadow-blue-400/20'
+                  : 'bg-transparent text-gray-300 hover:bg-blue-400/20'
                   }`}
               >
                 Top 5
               </button>
               <button
                 onClick={() => setSafestFilter(10)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${safestFilter === 10
-                  ? 'bg-white text-black'
-                  : 'bg-black text-white border-[#18181b]'
+                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-400 ${safestFilter === 10
+                  ? 'bg-blue-400 text-white shadow-lg shadow-blue-400/20'
+                  : 'bg-transparent text-gray-300 hover:bg-blue-400/20'
                   }`}
               >
                 Top 10
               </button>
               <button
                 onClick={() => setSafestFilter(null)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all ${safestFilter === null
-                  ? 'bg-white text-black'
-                  : 'bg-black text-white border-[#18181b]'
+                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-400 ${safestFilter === null
+                  ? 'bg-blue-400 text-white shadow-lg shadow-blue-400/20'
+                  : 'bg-transparent text-gray-300 hover:bg-blue-400/20'
                   }`}
               >
                 All
               </button>
               <button
                 onClick={copyToClipboard}
-                className="rounded-xl hidden md:block cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-black text-white border-[#18181b]"
+                className="rounded-xl hidden md:block cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-black text-gray-300 border-[#18181b] hover:border-gray-500"
               >
                 {copyStatus}
               </button>
@@ -210,8 +210,8 @@ const Results: NextPage = () => {
             <div className="rounded-xl border-2 border-[#18181b] bg-[#18181b] p-12 text-center">
               <p className="text-2xl font-extrabold text-white  mb-4">No Predictions Found</p>
               <p className="font-bold text-white mb-6">Try adjusting your filters and generating predictions again.</p>
-              <Link href="/">
-                <button className="rounded-xl cursor-pointer border-2  bg-white px-8 py-3 font-extrabold text-black  hover:bg-[#18181b] border-[#18181b]  transition-all">Create New Prediction</button>
+              <Link href="/home">
+                <button className="rounded-full cursor-pointer border-2 bg-blue-400 text-white px-8 py-3 font-extrabold hover:bg-blue-500 border-blue-400 transition-all shadow-lg hover:scale-105">Create New Prediction</button>
               </Link>
             </div>
           ) : (
@@ -262,8 +262,8 @@ const Results: NextPage = () => {
           )}
         </main>
         <div className="flex gap-4 justify-center">
-          <Link href="/">
-            <button className="rounded-xl cursor-pointer border-2 border-black  bg-white text-black hover:bg-[#18181b] hover:text-white px-8 py-3 font-extrabold   transition-all">New Prediction</button>
+          <Link href="/home">
+            <button className="rounded-full cursor-pointer border-2 border-blue-400 bg-blue-400 text-white hover:bg-blue-500 px-8 py-3 font-extrabold transition-all shadow-lg hover:scale-105">New Prediction</button>
           </Link>
           {/* <button className="rounded-full cursor-pointer border-2 border-black bg-white px-8 py-3 font-extrabold text-black hover:bg-gray-100 transition-all">Save Results</button> */}
         </div>

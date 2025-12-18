@@ -25,7 +25,7 @@ const Summary: React.FC<SummaryProps> = ({
       <button
         onClick={handleGeneratePredictions}
         disabled={loading}
-        className="w-full rounded-xl cursor-pointer border-2 border-gray-200 bg-gray-200 px-8 py-4 text-xl font-extrabold text-black transition-all hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-xl cursor-pointer border-2 border-blue-400 bg-blue-400 px-8 py-4 text-xl font-extrabold text-white transition-all hover:bg-blue-500 hover:scale-[1.02] shadow-lg shadow-blue-400/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {loading ? 'Generating Predictions...' : 'Generate Predictions'}
       </button>
