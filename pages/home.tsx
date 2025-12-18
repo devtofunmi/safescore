@@ -14,7 +14,7 @@ const Home: NextPage = () => {
   const [oddsType, setOddsType] = useState('safe');
   const [day, setDay] = useState('today');
   const [loading, setLoading] = useState(false);
-  const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+  const [selectedLeagues, setSelectedLeagues] = useState<string[]>(['Premier League', 'Championship', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1', 'Champions League']);
 
   const leagues = [
     'Premier League',
