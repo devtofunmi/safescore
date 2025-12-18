@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
 
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
@@ -118,10 +119,10 @@ const Home: NextPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <Link href="/">
-                             <div className="flex-shrink-0 flex items-center cursor-pointer" >
-                                    <img src="/logos.png" alt="SafeScore" className="h-10" />
-                                </div>
-                          </Link>
+              <div className="flex-shrink-0 flex items-center cursor-pointer" >
+                <img src="/logos.png" alt="SafeScore" className="h-10" />
+              </div>
+            </Link>
             <div className="flex items-center space-x-4">
               <div className="text-right ">
                 <p className="text-sm font-bold text-gray-300">
@@ -136,22 +137,39 @@ const Home: NextPage = () => {
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
-        <div className="space-y-12">
-          <RiskLevelSelector oddsType={oddsType} setOddsType={setOddsType} />
-          <LeagueSelector
-            selectedLeagues={selectedLeagues}
-            handleLeagueChange={handleLeagueChange}
-            handleSelectAllLeagues={handleSelectAllLeagues}
-          />
-          <DaySelector day={day} setDay={setDay} />
-          <Summary
-            oddsType={oddsType}
-            selectedLeagues={selectedLeagues}
-            day={day}
-            loading={loading}
-            handleGeneratePredictions={handleGeneratePredictions}
-          />
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ margin: "0px" }}
+          transition={{ duration: 0.5 }}
+          className="space-y-12"
+        >
+          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ margin: "0px" }} transition={{ delay: 0.1 }}>
+            <RiskLevelSelector oddsType={oddsType} setOddsType={setOddsType} />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ margin: "0px" }} transition={{ delay: 0.2 }}>
+            <LeagueSelector
+              selectedLeagues={selectedLeagues}
+              handleLeagueChange={handleLeagueChange}
+              handleSelectAllLeagues={handleSelectAllLeagues}
+            />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ margin: "0px" }} transition={{ delay: 0.3 }}>
+            <DaySelector day={day} setDay={setDay} />
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ margin: "0px" }} transition={{ delay: 0.4 }}>
+            <Summary
+              oddsType={oddsType}
+              selectedLeagues={selectedLeagues}
+              day={day}
+              loading={loading}
+              handleGeneratePredictions={handleGeneratePredictions}
+            />
+          </motion.div>
+        </motion.div>
       </main>
 
       {/* Footer */}
