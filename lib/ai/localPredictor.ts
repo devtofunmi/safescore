@@ -79,34 +79,80 @@ function analyzeMatch(fixture: FullAPIFixture): MatchAnalysis {
   const homeH2H = totalH2H > 0 ? ((h2h.homeWins || 0) / totalH2H) : 0.5; // Default to 0.5 if no H2H
   const awayH2H = totalH2H > 0 ? ((h2h.awayWins || 0) / totalH2H) : 0.5;
 
-  // --- Calculate weighted team scores ---
-  const homeWeightedScore =
-    (homeForm * FACTOR_WEIGHTS.form) +
-    (homeRank * FACTOR_WEIGHTS.rank) +
-    (homeGoalsFor * FACTOR_WEIGHTS.goalsFor) +
-    (homeGoalsAgainst * FACTOR_WEIGHTS.goalsAgainst) +
-    (homeCleanSheet * FACTOR_WEIGHTS.cleanSheet) +
-    (homeH2H * FACTOR_WEIGHTS.h2h);
+  // --- Calculate weighted team scores with Dynamic Weighting ---
+  // If a stat is missing, we don't treat it as 0. We remove its weight 
+  // and redistribute the importance to available stats.
 
-  const awayWeightedScore =
-    (awayForm * FACTOR_WEIGHTS.form) +
-    (awayRank * FACTOR_WEIGHTS.rank) +
-    (awayGoalsFor * FACTOR_WEIGHTS.goalsFor) +
-    (awayGoalsAgainst * FACTOR_WEIGHTS.goalsAgainst) +
-    (awayCleanSheet * FACTOR_WEIGHTS.cleanSheet) +
-    (awayH2H * FACTOR_WEIGHTS.h2h);
+  const calculateScore = (stats: any, formVal: number, rankVal: number, gForVal: number, gAgainstVal: number, csVal: number, h2hVal: number) => {
+    let score = 0;
+    let totalWeight = 0;
+
+    // Form
+    if (stats.form) {
+      score += formVal * FACTOR_WEIGHTS.form;
+      totalWeight += FACTOR_WEIGHTS.form;
+    }
+
+    // Rank
+    if (stats.leagueRank) {
+      score += rankVal * FACTOR_WEIGHTS.rank;
+      totalWeight += FACTOR_WEIGHTS.rank;
+    }
+
+    // Goals For
+    if (stats.goals !== undefined) {
+      score += gForVal * FACTOR_WEIGHTS.goalsFor;
+      totalWeight += FACTOR_WEIGHTS.goalsFor;
+    }
+
+    // Goals Against
+    if (stats.goalsAgainst !== undefined) {
+      score += gAgainstVal * FACTOR_WEIGHTS.goalsAgainst;
+      totalWeight += FACTOR_WEIGHTS.goalsAgainst;
+    }
+
+    // Clean Sheets
+    if (stats.cleanSheets !== undefined) {
+      score += csVal * FACTOR_WEIGHTS.cleanSheet;
+      totalWeight += FACTOR_WEIGHTS.cleanSheet;
+    }
+
+    // H2H (Always check if totalH2H > 0)
+    if (totalH2H > 0) {
+      score += h2hVal * FACTOR_WEIGHTS.h2h;
+      totalWeight += FACTOR_WEIGHTS.h2h;
+    }
+
+    // Normalize: If no data at all, return 0.5 (middle)
+    if (totalWeight === 0) return 0.5;
+
+    // We normalize the score back to a 0-1 scale based on active weights
+    return score / totalWeight;
+  };
+
+  const homeNormalized = calculateScore(home, homeForm, homeRank, homeGoalsFor, homeGoalsAgainst, homeCleanSheet, homeH2H);
+  const awayNormalized = calculateScore(away, awayForm, awayRank, awayGoalsFor, awayGoalsAgainst, awayCleanSheet, awayH2H);
 
   // --- Amplify scores by league strength & scale up ---
-  const homeScore = Math.round(homeWeightedScore * leagueStrength * 100);
-  const awayScore = Math.round(awayWeightedScore * leagueStrength * 100);
+  // We use a base multiplier of 400 to keep the score ranges consistent with previous logic
+  const homeScore = Math.round(homeNormalized * leagueStrength * 400);
+  const awayScore = Math.round(awayNormalized * leagueStrength * 400);
 
-  // --- Expected goals (remains a simple heuristic) ---
+  // --- Expected goals (More robust handling of missing data) ---
   const baseGoals = 1.2;
-  let expectedGoalsHome = +(baseGoals + homeGoalsFor - awayCleanSheet).toFixed(2);
-  let expectedGoalsAway = +(baseGoals + awayGoalsFor - homeCleanSheet).toFixed(2);
 
-  expectedGoalsHome = Math.min(3.5, Math.max(0.3, expectedGoalsHome));
-  expectedGoalsAway = Math.min(3.5, Math.max(0.3, expectedGoalsAway));
+  // If we have raw goal stats, we use them. Otherwise, we use the normalized strength as a fallback.
+  const homeAttack = home.goals !== undefined ? homeGoalsFor : homeNormalized;
+  const awayDefense = away.cleanSheets !== undefined ? awayCleanSheet : awayNormalized;
+
+  const awayAttack = away.goals !== undefined ? awayGoalsFor : awayNormalized;
+  const homeDefense = home.cleanSheets !== undefined ? homeCleanSheet : homeNormalized;
+
+  let expectedGoalsHome = +(baseGoals + (homeAttack * 1.5) - (awayDefense * 0.8)).toFixed(2);
+  let expectedGoalsAway = +(baseGoals + (awayAttack * 1.5) - (homeDefense * 0.8)).toFixed(2);
+
+  expectedGoalsHome = Math.min(3.5, Math.max(0.5, expectedGoalsHome));
+  expectedGoalsAway = Math.min(3.5, Math.max(0.5, expectedGoalsAway));
 
   // --- BTTS probability (remains a simple heuristic) ---
   const pHomeGoal = Math.min(0.95, expectedGoalsHome / 3);
