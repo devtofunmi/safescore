@@ -186,7 +186,7 @@ const Results: NextPage = () => {
           >
             <div className="mx-auto max-w-7xl">
               <h1 className="mb-2 text-2xl font-extrabold text-white">Match <span className="text-blue-400">Predictions</span></h1>
-              <p className="mb-6 text-gray-400 text-sm font-medium">Based on your selected filters and AI analysis.</p>
+              <p className="mb-6 text-gray-400 text-sm font-medium">Based on your selected filters and data-driven analysis.</p>
               <h2 className="mb-4 text-xl font-extrabold">Your Filters:</h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <motion.div whileHover={{ scale: 1.02 }} className="rounded-xl border-2 border-[#18181b] bg-[#18181b] p-4">
