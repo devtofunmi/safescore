@@ -1,0 +1,91 @@
+[
+  {
+    "version": "1.1.0",
+    "date": "2025-12-22",
+    "title": "Transparency & AI Verification",
+    "description": "A major update focused on trust, transparency, and clearer confidence signaling for predictions.",
+    "changes": [
+      {
+        "type": "feat",
+        "title": "Prediction History & Performance Tracking",
+        "description": "Added a history page that displays past predictions, outcomes, and accuracy metrics, allowing users to review how SafeScore performs over time."
+      },
+      {
+        "type": "feat",
+        "title": "Gemini AI Verification (Top 10 Matches)",
+        "description": "Integrated Gemini 2.5 Flash to verify the top 10 highest-confidence predicted matches. Verified matches are clearly marked with an AI badge in the UI."
+      },
+      {
+        "type": "feat",
+        "title": "AI Verification Badge",
+        "description": "Introduced a visual AI badge on prediction cards to indicate matches that have passed secondary verification by Gemini."
+      },
+      {
+        "type": "feat",
+        "title": "Wall of Love",
+        "description": "Added a community feedback section showcasing real comments and reactions from early users testing SafeScore."
+      },
+      {
+        "type": "feat",
+        "title": "Confidence-Based Highlighting",
+        "description": "Improved how high-confidence predictions are surfaced, making it easier to identify safer picks at a glance."
+      },
+      {
+        "type": "feat",
+        "title": "AI Qualitative Reasoning (Top 10)",
+        "description": "For our Top 10 picks, the AI now provides professional analysis (e.g., injuries, tactics) that explains why a match was verified. This reasoning is saved to history for future review."
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2025-12-20",
+    "title": "The Grand Launch",
+    "description": "SafeScore officially launched with its first public release of the data-driven prediction engine.",
+    "changes": [
+      {
+        "type": "feat",
+        "title": "Prediction Engine v1",
+        "description": "Launched a rule-based prediction system analyzing team form, league strength, match statistics, and head-to-head data to generate football predictions."
+      },
+      {
+        "type": "feat",
+        "title": "League Coverage",
+        "description": "Initial support for Premier League, La Liga, Serie A, Bundesliga, Ligue 1, and additional European leagues."
+      },
+      {
+        "type": "feat",
+        "title": "Match Analytics",
+        "description": "Provided match-level insights including recent form, goals scored/conceded, league rankings, and historical H2H data."
+      },
+      {
+        "type": "feat",
+        "title": "Dark UI Experience",
+        "description": "Released a clean black-and-white interface optimized for speed, readability, and mobile responsiveness."
+      },
+      {
+        "type": "fix",
+        "title": "Performance Improvements",
+        "description": "Optimized prediction calculations and UI rendering for faster load times."
+      }
+    ]
+  },
+  {
+    "version": "0.9.5-beta",
+    "date": "2025-12-19",
+    "title": "Beta Refinements",
+    "description": "Final UX and stability improvements before public launch.",
+    "changes": [
+      {
+        "type": "feat",
+        "title": "UI Animations",
+        "description": "Added subtle entrance and scroll-based animations for a smoother experience."
+      },
+      {
+        "type": "fix",
+        "title": "Responsive Layout",
+        "description": "Fixed layout and spacing issues on smaller screen sizes."
+      }
+    ]
+  }
+]
