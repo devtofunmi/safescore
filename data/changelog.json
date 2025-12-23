@@ -1,5 +1,39 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2025-12-23",
+    "title": "Open Source Release",
+    "description": "SafeScore is now open source at the platform level. We've decoupled the architecture so the frontend and developer experience are open for collaboration, while the core prediction engine remains private."
+,
+    "changes": [
+      {
+        "type": "feat",
+        "title": "Open Source Release",
+        "description": "Released the full frontend and proxy layer under the MIT License. Contributions are now welcome!"
+      },
+      {
+        "type": "feat",
+        "title": "Contribution Page",
+        "description": "Added a new dedicated page for community members to find out how to contribute, join discussions, and report issues."
+      },
+      {
+        "type": "feat",
+        "title": "Automated Quality Checks",
+        "description": "Implemented GitHub Actions (CI) to ensure code quality and stability for all future contributions."
+      },
+      {
+        "type": "feat",
+        "title": "Improved Security",
+        "description": "Enhanced environment variable handling and deployment rules to protect core engine keys in a public environment."
+      },
+      {
+        "type": "fix",
+        "title": "Responsive UI Fixes",
+        "description": "Fixed layout issues in the community section and improved button responsiveness across various screen sizes."
+      }
+    ]
+  },
+  {
     "version": "1.1.0",
     "date": "2025-12-22",
     "title": "Transparency & AI Verification",
