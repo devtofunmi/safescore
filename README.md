@@ -1,10 +1,10 @@
-# SafeScore ⚽️
+# SafeScore 
 
 **SafeScore** is a professional, data-driven football prediction platform that leverages advanced statistical analysis to provide high-probability betting insights. Built with modern web technologies, it offers users a sleek, responsive, and real-time experience.
 
 This repository contains the **frontend and proxy layer** for SafeScore. It is designed to work with the [SafeScore Core Engine](https://huggingface.co/spaces/devtofunmi/safescore-core) but can be adapted for other data sources.
 
-## ✨ Features
+## Features
 
 *   **Smart Predictions:** Algorithmic analysis of form, H2H, goal statistics, and league strength.
 *   **Risk Management:** Filter predictions by risk levels: 'Safe', 'Very Safe', and 'Medium Safe'.
@@ -12,7 +12,7 @@ This repository contains the **frontend and proxy layer** for SafeScore. It is d
 *   **PWA Support:** Installable as a native-like app on mobile and desktop.
 *   **Premium UI:** Dark-mode first design with smooth animations using Framer Motion.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Framework:** [Next.js](https://nextjs.org/) (React)
 *   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
@@ -20,7 +20,7 @@ This repository contains the **frontend and proxy layer** for SafeScore. It is d
 *   **Data Source:** Football-Data.org API
 *   **Analytics:** Vercel Analytics
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -53,11 +53,11 @@ This repository contains the **frontend and proxy layer** for SafeScore. It is d
     ```
     Open [http://localhost:3000](http://localhost:3000) to see the result.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
