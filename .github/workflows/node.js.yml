@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: production
+    environment: Production
+    permissions:
+      contents: read
 
     strategy:
       matrix:
@@ -22,7 +24,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
+    - run: npm ci || npm install
     - run: npm run build
       env:
         # Dummy variables for build time check if needed
