@@ -34,20 +34,20 @@ const Contribute: NextPage = () => {
                         className="mb-16"
                     >
                         <h1 className="text-4xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent">
-                        Join the Mission
+                            Join the Mission
                         </h1>
 
                         <p className="text-zinc-400 text-lg md:text-xl max-w-2xl leading-relaxed">
-                         SafeScore is built in public, with an open-source frontend and platform layer.
-                         While the core prediction engine is private by design, contributors can help improve
-                         the UI, data presentation, performance tracking, and overall user experience.
-                         Whether you’re a developer, designer, data enthusiast, or football fan,
-                         there’s meaningful work you can contribute.
-                       </p>
+                            SafeScore is built in public, with an open-source frontend and platform layer.
+                            While the core prediction engine is private by design, contributors can help improve
+                            the UI, data presentation, performance tracking, and overall user experience.
+                            Whether you’re a developer, designer, data enthusiast, or football fan,
+                            there’s meaningful work you can contribute.
+                        </p>
 
                         <p className="text-zinc-500 text-sm mt-4 max-w-2xl">
-                          The prediction logic itself is proprietary, but contributors can shape how predictions
-                          are evaluated, visualized, verified, and communicated to users.
+                            The prediction logic itself is proprietary, but contributors can shape how predictions
+                            are evaluated, visualized, verified, and communicated to users.
                         </p>
 
                     </motion.div>
@@ -105,7 +105,7 @@ const Contribute: NextPage = () => {
                                         Join our discussions on GitHub. Share your prediction strategies, discuss match outcomes, and connect with other users.
                                     </p>
                                 </div>
-                                <a href="https://github.com/devtofunmi/safescore/discussions" className="inline-flex items-center px-4 py-4 bg-white text-black rounded-2xl font-bold hover:bg-zinc-200 transition-all">
+                                <a href="https://github.com/devtofunmi/safescore/discussions" className="flex-shrink-0 inline-flex items-center justify-center px-8 py-4 bg-white text-black rounded-2xl font-bold hover:bg-zinc-200 transition-all whitespace-nowrap w-full md:w-auto">
                                     Join Discussion
                                 </a>
                             </div>
