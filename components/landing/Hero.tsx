@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
                         className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-900/30 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-300 mb-6"
                     >
                         <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2 animate-pulse"></span>
-                        v1.1.0 Now Live
+                        v1.2.0 Now Live
                     </motion.div>
 
                     <motion.h1
