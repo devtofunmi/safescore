@@ -14,9 +14,12 @@ export default function Document() {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#000000" />
 
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo-192x192-black.png" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="icon" href="/favicon.png" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/logo-192x192-black.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/logo-192x192-black.png" />
 
 
 
