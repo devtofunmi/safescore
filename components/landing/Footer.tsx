@@ -25,7 +25,6 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="flex flex-wrap gap-8 text-sm font-medium">
                         <Link href="/" className="text-gray-500 hover:text-blue-400 transition-colors">Home</Link>
-                        <Link href="/history" className="text-gray-500 hover:text-blue-400 transition-colors">History</Link>
                         <Link href="/changelog" className="text-gray-500 hover:text-blue-400 transition-colors">Changelog</Link>
                         <Link href="/contribute" className="text-gray-500 hover:text-blue-400 transition-colors tracking-tight">Contribute</Link>
                     </div>
