@@ -38,7 +38,7 @@ class Cache {
    * Now checks Disk Cache if in-memory fails (on server-side)
    */
   get<T>(key: string, maxAgeMs: number): T | null {
-    // 1. Check Memory
+    // Check Memory
     const entry = this.store.get(key);
     if (entry) {
       const ageMs = Date.now() - entry.timestamp;
@@ -49,7 +49,7 @@ class Cache {
       }
     }
 
-    // 2. Check Disk (Server-only)
+    // Check Disk (Server-only)
     if (typeof window === 'undefined') {
       const sanitizedKey = key.replace(/[^a-z0-9_-]/gi, '_');
       const filePath = path.join(DISK_CACHE_DIR, `${sanitizedKey}.json`);

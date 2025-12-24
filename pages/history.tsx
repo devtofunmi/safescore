@@ -19,7 +19,6 @@ interface HistoryItem {
     result: 'Won' | 'Lost' | 'Pending';
     score: string;
     league?: string;
-    aiReasoning?: string;
 }
 
 interface DailyRecord {
@@ -58,6 +57,8 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                     // Update state instead of reloading if possible, 
                     // or just reload to get fresh getServerSideProps data
                     window.location.reload();
+                } else {
+                    console.info('Auto-refresh checked: No new results to update.');
                 }
             } catch (err) {
                 console.error('Auto-refresh failed:', err);
@@ -78,6 +79,10 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
             if (data.updatedCount > 0) {
                 toast.success(`Updated ${data.updatedCount} results.`);
                 setTimeout(() => window.location.reload(), 1000);
+            } else if (data.isPending) {
+                toast.warning(data.status);
+            } else {
+                toast.info(data.status || 'All results are already up to date.');
             }
         } catch (err) {
             console.error('Refresh failed:', err);
@@ -129,10 +134,8 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                         <Link href="/">
                             <img src="/logos.png" alt="SafeScore" className="h-8 cursor-pointer opacity-90 hover:opacity-100 transition-opacity" />
                         </Link>
-                        <Link href="/">
-                            <button className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200">
-                                Back to App
-                            </button>
+                        <Link href="/" className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200 inline-block">
+                            Back to App
                         </Link>
                     </div>
                 </nav>
@@ -295,18 +298,6 @@ const History: NextPage<HistoryProps> = ({ historyData }) => {
                                                                 {item.score}
                                                             </td>
                                                         </tr>
-                                                        {item.aiReasoning && (
-                                                            <tr className="border-b border-white/2">
-                                                                <td colSpan={4} className="py-2 pl-4 pr-4 bg-white/[0.01]">
-                                                                    <div className="flex items-start gap-2">
-                                                                        <span className="text-[9px] font-bold bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded uppercase tracking-tighter shrink-0 mt-0.5">AI Analysis</span>
-                                                                        <p className="text-[11px] text-gray-500 italic leading-relaxed">
-                                                                            {item.aiReasoning}
-                                                                        </p>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        )}
                                                     </React.Fragment>
                                                 ))}
                                             </tbody>

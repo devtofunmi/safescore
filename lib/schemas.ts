@@ -1,8 +1,10 @@
 import { z } from 'zod';
 
 /**
- * Allowed bet types for predictions
- * This list prevents AI hallucinations of invalid bet types
+ * Valid Betting Markets
+ * 
+ * This list represents the only allow outcomes the AI is permitted to predict.
+ * Ensures data consistency between the backend engine and the UI.
  */
 export const ALLOWED_BET_TYPES = [
   'Home Team to Win or Draw',
@@ -31,31 +33,21 @@ export const ALLOWED_BET_TYPES = [
 
 export type BetType = (typeof ALLOWED_BET_TYPES)[number];
 
-
-export const GeminiPredictionSchema = z.object({
-  idx: z.number().optional(),
-  team1: z.string().min(1),
-  team2: z.string().min(1),
-  betType: z.string().min(1),
-  confidence: z.number().min(0).max(100),
-  league: z.string().optional(),
-  reason: z.string().optional(),
-});
-
-export type GeminiPredictionRaw = z.infer<typeof GeminiPredictionSchema>;
-
 /**
- * Validated prediction returned to client
+ * Prediction Schema
+ * 
+ * Defines the structure of a single prediction object.
+ * Used for runtime validation of data incoming from the Core Engine.
  */
 export const PredictionSchema = z.object({
-  id: z.string(),
-  team1: z.string(),
-  team2: z.string(),
+  id: z.string(),                  // Primary identifier (Expected format: pred-{matchId}-{timestamp}-{index})
+  team1: z.string(),               // Home team name
+  team2: z.string(),               // Away team name
   betType: z.enum(ALLOWED_BET_TYPES),
   confidence: z.number().min(0).max(100),
   league: z.string(),
-  matchTime: z.string(),
-  details: z.object({
+  matchTime: z.string(),           // Match start time
+  details: z.object({              // Pre-match statistical analysis
     team1Form: z.string(),
     team2Form: z.string(),
     team1Stats: z.object({
@@ -78,7 +70,7 @@ export const PredictionSchema = z.object({
 export type Prediction = z.infer<typeof PredictionSchema>;
 
 /**
- * API request validation
+ * Request Schema: /api/predictions
  */
 export const PredictionsRequestSchema = z.object({
   oddsType: z.enum(['very safe', 'safe', 'medium safe']),
@@ -91,7 +83,7 @@ export const PredictionsRequestSchema = z.object({
 export type PredictionsRequest = z.infer<typeof PredictionsRequestSchema>;
 
 /**
- * API response validation
+ * Response Schema: /api/predictions
  */
 export const PredictionsResponseSchema = z.object({
   predictions: z.array(PredictionSchema),
@@ -102,7 +94,7 @@ export const PredictionsResponseSchema = z.object({
 export type PredictionsResponse = z.infer<typeof PredictionsResponseSchema>;
 
 /**
- * Error response
+ * Standard Error Response
  */
 export const ErrorResponseSchema = z.object({
   error: z.string(),
