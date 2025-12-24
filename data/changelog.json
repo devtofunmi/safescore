@@ -32,6 +32,11 @@
         "description": "Enhanced environment variable handling and deployment rules to protect core engine keys in a public environment."
       },
       {
+        "type": "refactor",
+        "title": "Branding & Navigation Update",
+        "description": "Rebranded 'History' to 'Previous Matches' for better clarity. Upgraded the Navbar with a full-screen mobile menu and improved z-index layering."
+      },
+      {
         "type": "fix",
         "title": "Responsive UI Fixes",
         "description": "Fixed layout issues in the community section and improved button responsiveness across various screen sizes."
