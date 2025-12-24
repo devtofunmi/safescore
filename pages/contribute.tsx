@@ -84,8 +84,8 @@ const Contribute: NextPage = () => {
                             <p className="text-zinc-400 mb-6 font-medium">
                                 Not a dev? No problem. Reporting bugs, suggesting improvements, or sharing SafeScore with your friends helps just as much.
                             </p>
-                            <Link href="/history" className="inline-flex items-center gap-2 text-white font-bold hover:gap-3 transition-all">
-                                See History Stats <FiArrowLeft className="rotate-180" />
+                            <Link href="/previous-matches" className="inline-flex items-center gap-2 text-white font-bold hover:gap-3 transition-all">
+                                See Previous Matches <FiArrowLeft className="rotate-180" />
                             </Link>
                         </motion.div>
 
