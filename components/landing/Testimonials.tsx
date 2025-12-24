@@ -96,9 +96,12 @@ const MarqueeRow = ({ items, reverse = false }: { items: any[], reverse?: boolea
                 className={`flex whitespace-nowrap gap-6 pause-on-interaction ${reverse ? 'animate-marquee-reverse' : 'animate-marquee'}`}
             >
                 {items.map((t, i) => (
-                    <div
+                    <a
                         key={`${t.handle}-${i}`}
-                        className="inline-block md:w-[350px] w-[250px] whitespace-normal bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-2xl border border-zinc-200 dark:border-white/5 relative group/card hover:border-blue-400/50 transition-all hover:scale-[1.02] shrink-0 cursor-pointer"
+                        href={`https://x.com/${t.handle.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block md:w-[350px] w-[250px] whitespace-normal bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-2xl border border-zinc-200 dark:border-white/5 relative group/card hover:border-blue-400/50 transition-all hover:scale-[1.02] shrink-0 cursor-pointer block no-underline"
                     >
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
@@ -109,15 +112,9 @@ const MarqueeRow = ({ items, reverse = false }: { items: any[], reverse?: boolea
                                 />
                                 <div>
                                     <h4 className="font-bold text-sm text-gray-900 dark:text-white leading-tight">{t.name}</h4>
-                                    <a
-                                        href={`https://x.com/${t.handle.replace('@', '')}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
+                                    <span className="text-xs text-blue-400 group-hover/card:text-blue-300 transition-colors">
                                         {t.handle}
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
                             <FaTwitter className="text-blue-400 opacity-20 group-hover/card:opacity-100 transition-opacity" />
@@ -126,7 +123,7 @@ const MarqueeRow = ({ items, reverse = false }: { items: any[], reverse?: boolea
                             &quot;{t.text}&quot;
                         </p>
                         <div className="absolute -bottom-2 -right-2 w-20 h-20 bg-blue-400/5 blur-2xl rounded-full opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
-                    </div>
+                    </a>
                 ))}
             </div>
         </div>
