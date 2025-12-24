@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   PredictionsRequestSchema,
-  PredictionsResponseSchema,
   type PredictionsResponse,
   type ErrorResponse
 } from '@/lib/schemas';
@@ -61,7 +60,7 @@ export default async function handler(
     const { saveToHistory } = await import('@/lib/history/storage');
     const requestedDate = date || new Date().toISOString().split('T')[0];
 
-    // Non-blocking save to data/history.json (server-side persistence)
+    // Non-blocking save to Supabase (cloud persistence)
     saveToHistory(predictions, requestedDate).catch(err => {
       console.error('[API] History persist failed:', err.message);
     });

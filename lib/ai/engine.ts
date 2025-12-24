@@ -23,7 +23,7 @@ export async function runPredictionEngine(
 
     if (REMOTE_ENGINE_URL) {
         const baseUrl = REMOTE_ENGINE_URL.replace(/\/$/, '');
-        console.info(`[Engine] Delegating analysis to: ${baseUrl}`);
+        console.info(`[Engine] Delegating prediction to private server...`);
 
         try {
             const response = await fetch(`${baseUrl}/api/predict`, {

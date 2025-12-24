@@ -18,6 +18,11 @@
       },
       {
         "type": "feat",
+        "title": "Supabase Cloud Persistence",
+        "description": "Migrated historical tracking from local JSON to Supabase. This ensures prediction history remains persistent even on serverless platforms like Vercel."
+      },
+      {
+        "type": "feat",
         "title": "Automated Quality Checks",
         "description": "Implemented GitHub Actions (CI) to ensure code quality and stability for all future contributions."
       },

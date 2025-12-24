@@ -15,10 +15,22 @@ This repository contains the **frontend and proxy layer** for SafeScore. It is d
 ## Tech Stack
 
 *   **Framework:** [Next.js](https://nextjs.org/) (React)
+*   **Database:** [Supabase](https://supabase.com/) (Cloud Persistence)
 *   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 *   **Animations:** [Framer Motion](https://www.framer.com/motion/)
 *   **Data Source:** Football-Data.org API
 *   **Analytics:** Vercel Analytics
+
+## Core Logic
+
+### 🚀 Prediction Engine
+The frontend delegates prediction requests to a private core engine via the `CORE_ENGINE_URL`. This allows for proprietary analysis while keeping the UI and contribution layer open.
+
+### ✅ Automated Verification
+SafeScore features an automated settlement system that:
+1.  Saves predictions to a Supabase `history` table.
+2.  Periodically verifies pending matches against real-world scores using the Football-Data API.
+3.  Automatically updates the status (Won/Lost) and final scores for transparency.
 
 ## Getting Started
 

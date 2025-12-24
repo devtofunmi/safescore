@@ -1,18 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '../supabase';
 import type { Prediction } from '../schemas';
-
-/**
- * Path to the local JSON file used for historical data persistence.
- * In a production environment, this might be replaced with a database (e.g., PostgreSQL or Redis).
- */
-const HISTORY_FILE = path.join(process.cwd(), 'data', 'history.json');
 
 /**
  * Interface representing a single historical prediction entry.
  */
 export interface HistoryItem {
-    id: string;               // Unique ID
+    id: string;               // Unique ID (Format: pred-{matchId}-{timestamp}-{index})
     homeTeam: string;
     awayTeam: string;
     prediction: string;      // The bet type selected
@@ -32,17 +25,23 @@ export interface DailyRecord {
 /**
  * saveToHistory
  * 
- * Appends new predictions to the local history.json file.
- * Automatically handles date grouping and ensures no duplicate matches are saved for the same day.
+ * Persists predictions to Supabase.
+ * Groups them by date and merges with any existing records for that day.
  */
 export async function saveToHistory(predictions: Prediction[], dateStr: string): Promise<void> {
     try {
-        //  Load existing history
-        let history: DailyRecord[] = [];
-        if (fs.existsSync(HISTORY_FILE)) {
-            const data = fs.readFileSync(HISTORY_FILE, 'utf8');
-            history = JSON.parse(data);
+        // Fetch existing record for this date from Supabase
+        const { data: existingRecord, error: fetchError } = await supabase
+            .from('history')
+            .select('*')
+            .eq('date', dateStr)
+            .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means not found
+            throw fetchError;
         }
+
+        const existingPredictions: HistoryItem[] = existingRecord?.predictions || [];
 
         // Map incoming predictions to HistoryItem format
         const newItems: HistoryItem[] = predictions.map(p => ({
@@ -55,34 +54,26 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string):
             league: p.league
         }));
 
-        // Update the record for the specific date
-        const dayIndex = history.findIndex(d => d.date === dateStr);
+        // Merge and avoid duplicates (Matched by teams)
+        const filteredNewItems = newItems.filter(newItem =>
+            !existingPredictions.find(ex => ex.homeTeam === newItem.homeTeam && ex.awayTeam === newItem.awayTeam)
+        );
 
-        if (dayIndex >= 0) {
-            const existingItems = history[dayIndex].predictions;
-            // Prevent duplicates (Matched by teams)
-            const filteredNewItems = newItems.filter(newItem =>
-                !existingItems.find(ex => ex.homeTeam === newItem.homeTeam && ex.awayTeam === newItem.awayTeam)
-            );
-            history[dayIndex].predictions = [...existingItems, ...filteredNewItems];
-        } else {
-            history.push({
+        const updatedPredictions = [...existingPredictions, ...filteredNewItems];
+
+        // Upsert into Supabase
+        const { error: upsertError } = await supabase
+            .from('history')
+            .upsert({
                 date: dateStr,
-                predictions: newItems
-            });
-        }
+                predictions: updatedPredictions
+            }, { onConflict: 'date' });
 
-        // Data Retention (Keep only the last 30 entries)
-        history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        if (history.length > 30) {
-            history = history.slice(0, 30);
-        }
+        if (upsertError) throw upsertError;
 
-        // Commit changes to Disk
-        fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
-        console.info(`[History] Successfully saved ${newItems.length} entries for ${dateStr}.`);
+        console.info(`[History] Successfully saved ${newItems.length} entries for ${dateStr} to Supabase.`);
 
     } catch (err) {
-        console.error('[History] Save operation failed:', err);
+        console.error('[History] Supabase save operation failed:', err);
     }
 }

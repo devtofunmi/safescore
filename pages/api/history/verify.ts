@@ -1,16 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 /**
- * Historical Sync Endpoint
+ * Historical Sync Endpoint (Supabase Edition)
  * 
- * This endpoint iterates through the local history.json, identifies "Pending" 
- * predictions, and attempts to verify them against live results using the
+ * Verifies pending predictions in the Supabase 'history' table using the 
  * Football-Data.org API.
- * 
- * Rate Limiting: Processes a max of 8 items per request with a 7s delay between 
- * calls to stay within the free tier quota (10 req/min).
  */
 export default async function handler(
     req: NextApiRequest,
@@ -24,27 +19,26 @@ export default async function handler(
             return res.status(500).json({ error: 'Missing FOOTBALL_DATA_API_KEY configuration' });
         }
 
-        // Load History File
-        const historyPath = path.join(process.cwd(), 'data', 'history.json');
-        if (!fs.existsSync(historyPath)) {
+        // 1. Fetch History from Supabase
+        const { data: historyData, error: fetchError } = await supabase
+            .from('history')
+            .select('*')
+            .order('date', { ascending: false });
+
+        if (fetchError) throw fetchError;
+        if (!historyData || historyData.length === 0) {
             return res.status(200).json({ updatedCount: 0, status: 'No history found' });
         }
 
-        const historyData = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
-        const verifiedDays: any[] = [];
         let totalUpdated = 0;
         let requestsMade = 0;
         const MAX_REQUESTS = 8;
 
-        // Settlement Logic
+        // 2. Settlement Logic
         for (const day of historyData) {
             const today = new Date().toISOString().split('T')[0];
 
-            // Optimization: Don't query future matches
-            if (day.date > today) {
-                verifiedDays.push(day);
-                continue;
-            }
+            if (day.date > today) continue;
 
             const updatedPredictions = [];
             let dayChanged = false;
@@ -66,14 +60,11 @@ export default async function handler(
                         }
 
                         requestsMade++;
-
-                        // Respect Rate Limits (Free Tier quota)
                         await new Promise(r => setTimeout(r, 7000));
 
                     } catch (e: any) {
                         console.error('[Verifier] Match verification failed:', e.message);
                         if (e.response?.status === 429) {
-                            console.warn('[Verifier] Rate limit capacity reached. Stopping batch.');
                             updatedPredictions.push(item);
                             break;
                         }
@@ -84,12 +75,15 @@ export default async function handler(
                 }
             }
 
-            verifiedDays.push({ ...day, predictions: updatedPredictions });
-        }
+            // 3. Update Supabase if anything changed for this day
+            if (dayChanged) {
+                const { error: updateError } = await supabase
+                    .from('history')
+                    .update({ predictions: updatedPredictions })
+                    .eq('date', day.date);
 
-        // Persistence
-        if (totalUpdated > 0) {
-            fs.writeFileSync(historyPath, JSON.stringify(verifiedDays, null, 2));
+                if (updateError) console.error(`[Verifier] Table update failed for ${day.date}:`, updateError.message);
+            }
         }
 
         return res.status(200).json({
