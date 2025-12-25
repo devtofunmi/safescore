@@ -8,6 +8,9 @@ import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar } 
 import { toast } from 'react-toastify';
 import Footer from '../components/landing/Footer';
 import { track } from '@vercel/analytics';
+import { useAuth } from '@/lib/auth';
+import { useRouter } from 'next/router';
+
 
 
 interface Prediction {
@@ -103,6 +106,15 @@ const Results: NextPage = () => {
   const [activeTooltipId, setActiveTooltipId] = React.useState<string | null>(null);
 
   const [selectedPrediction, setSelectedPrediction] = React.useState<Prediction | null>(null);
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  React.useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login');
+    }
+  }, [user, authLoading, router]);
+
 
   const handleTooltipToggle = (predictionId: string) => {
     setActiveTooltipId(prevId => (prevId === predictionId ? null : predictionId));
