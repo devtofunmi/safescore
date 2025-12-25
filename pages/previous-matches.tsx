@@ -125,11 +125,11 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                             <img src="/logos.png" alt="SafeScore" className="h-8 cursor-pointer opacity-90 hover:opacity-100 transition-opacity" />
                         </Link>
                         <div className="flex items-center gap-4">
-                            <Link href="/" className="text-sm font-bold text-gray-400 hover:text-white transition-colors hidden sm:block">
-                                Home
+                            <Link href="/dashboard" className="text-sm font-bold text-gray-400 hover:text-white transition-colors hidden sm:block">
+                                Dashboard
                             </Link>
-                            <Link href="/home" className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200 inline-block">
-                                Launch App
+                            <Link href="/home" className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200 inline-block font-black uppercase tracking-widest">
+                                Launch Engine
                             </Link>
                         </div>
                     </div>
