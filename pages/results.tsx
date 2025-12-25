@@ -82,6 +82,8 @@ const getConfidenceColor = (confidence: number) => {
   return 'bg-red-500/10 text-red-500 border border-red-500/20';
 };
 
+
+
 const getBetTypeBadge = (betType: string) => {
   const badges: { [key: string]: JSX.Element } = {
     'Over 0.5 goals': <FaFutbol />,
@@ -337,7 +339,6 @@ const Results: NextPage = () => {
                     <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-4">
                       <div>
                         <p className="text-sm font-bold text-white tracking-tight">{prediction.league}</p>
-                        <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{prediction.matchTime}</p>
                       </div>
                       <div className={`rounded-full px-4 py-2 font-extrabold text-xs uppercase tracking-widest ${getConfidenceColor(prediction.confidence)}`}>{prediction.confidence}%</div>
                     </div>
