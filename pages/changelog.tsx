@@ -28,18 +28,18 @@ const getIcon = (type: string) => {
     }
 };
 
- const fadeIn: Variants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            transition: {
-                delay: i * 0.1,
-                duration: 0.8,
-                ease: [0.21, 0.47, 0.32, 0.98] as const,
-            },
-        }),
-    };
+const fadeIn: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            delay: i * 0.1,
+            duration: 0.8,
+            ease: [0.21, 0.47, 0.32, 0.98] as const,
+        },
+    }),
+};
 
 const Changelog: NextPage = () => {
     const data = changelogData as ChangelogEntry[];
@@ -50,9 +50,9 @@ const Changelog: NextPage = () => {
                 title="Changelog | SafeScore"
                 description="Stay updated with the latest features, improvements, and bug fixes in SafeScore."
             />
-            <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
+            <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30">
                 {/* Header */}
-                <header className="sticky top-0 z-50 border-b border-zinc-800 bg-black/80 backdrop-blur-md px-4 py-4">
+                <header className="sticky top-0 z-50 border-b border-zinc-800 bg-[#0a0a0a]/80 backdrop-blur-md px-4 py-4">
                     <div className="max-w-4xl mx-auto flex items-center justify-between">
                         <Link href="/" className="group flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                             <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
@@ -84,14 +84,14 @@ const Changelog: NextPage = () => {
                     <div className="space-y-16 relative before:absolute before:left-[17px] before:top-2 before:bottom-0 before:w-px before:bg-zinc-800 md:before:left-1/2 md:before:-translate-x-px">
                         {data.map((entry, index) => (
                             <motion.div
-                               initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ margin: "-100px" }}
                                 transition={{ duration: 0.8 }}
                                 className="relative pl-12 md:pl-0"
                             >
                                 {/* Timeline Dot */}
-                                <div className="absolute left-0 top-2 w-9 h-9 rounded-full bg-black border-2 border-blue-500 flex items-center justify-center z-10 md:left-1/2 md:-translate-x-1/2 md:top-4 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                                <div className="absolute left-0 top-2 w-9 h-9 rounded-full bg-[#050505] border-2 border-blue-500 flex items-center justify-center z-10 md:left-1/2 md:-translate-x-1/2 md:top-4 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                                     <FiTag className="text-blue-500 text-sm" />
                                 </div>
 

@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
     const { user } = useAuth();
 
     return (
-        <footer className="bg-white dark:bg-black ">
+        <footer className="bg-white dark:bg-[#050505] ">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -27,15 +27,15 @@ const Footer: React.FC = () => {
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-8 text-sm font-medium">
-                        <Link href="/" className="text-gray-500 hover:text-blue-400 transition-colors">Home</Link>
+                        <Link href="/" className="text-gray-500 hover:text-blue-500 transition-colors">Home</Link>
                         {!user && (
                             <>
-                                <Link href="/auth/login" className="text-gray-500 hover:text-blue-400 transition-colors">Login</Link>
-                                <Link href="/auth/signup" className="text-gray-500 hover:text-blue-400 transition-colors">Sign Up</Link>
+                                <Link href="/auth/login" className="text-gray-500 hover:text-blue-500 transition-colors">Login</Link>
+                                <Link href="/auth/signup" className="text-gray-500 hover:text-blue-500 transition-colors">Sign Up</Link>
                             </>
                         )}
-                        <Link href="/changelog" className="text-gray-500 hover:text-blue-400 transition-colors">Changelog</Link>
-                        <Link href="/contribute" className="text-gray-500 hover:text-blue-400 transition-colors tracking-tight">Contribute</Link>
+                        <Link href="/changelog" className="text-gray-500 hover:text-blue-500 transition-colors">Changelog</Link>
+                        <Link href="/contribute" className="text-gray-500 hover:text-blue-500 transition-colors tracking-tight">Contribute</Link>
                     </div>
                 </div>
                 <div className="mt-12 flex justify-center ">
@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-black px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800"
                     >
-                        <FaXTwitter className="text-blue-400" />
+                        <FaXTwitter className="text-blue-500" />
                         Share SafeScore on X
                     </a>
                 </div>
@@ -62,7 +62,7 @@ const Footer: React.FC = () => {
                             href="https://twitter.com/codebreak_er"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
+                            className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
                         >
                             <FaXTwitter className="" />
                             <span>codebreak_er</span>

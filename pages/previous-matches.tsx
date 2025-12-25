@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../components/landing/Footer';
+import { useAuth } from '../lib/auth'; // Import useAuth
 import {
     IoStatsChartOutline,
     IoCheckmarkCircleOutline,
@@ -43,6 +44,7 @@ const truncateText = (text: string, length: number = 15) => {
 };
 
 const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
+    const { user } = useAuth(); // Add hook usage
     // Sort history by date descending
     const sortedHistory = useMemo(() => {
         return [...historyData].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -134,12 +136,16 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                             <img src="/logos.png" alt="SafeScore" className="h-8 cursor-pointer opacity-90 hover:opacity-100 transition-opacity" />
                         </Link>
                         <div className="flex items-center gap-4">
-                            <Link href="/dashboard" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors hidden sm:block">
-                                Dashboard
-                            </Link>
-                            <Link href="/home" className="rounded-xl cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-neutral-200 inline-block font-black uppercase tracking-widest">
-                                Launch Engine
-                            </Link>
+                            {user && (
+                                <>
+                                    <Link href="/dashboard" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors hidden sm:block">
+                                        Dashboard
+                                    </Link>
+                                    <Link href="/home" className="rounded-xl cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-neutral-200 inline-block font-black uppercase tracking-widest">
+                                        Launch Engine
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </nav>
@@ -215,8 +221,8 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                                             setIsDateDropdownOpen(false);
                                                         }}
                                                         className={`w-full text-left px-5 py-3 text-sm flex justify-between items-center transition-all group ${selectedDate === day.date
-                                                                ? 'text-blue-400 bg-blue-600/10 border-l-2 border-blue-500'
-                                                                : 'text-neutral-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'
+                                                            ? 'text-blue-400 bg-blue-600/10 border-l-2 border-blue-500'
+                                                            : 'text-neutral-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'
                                                             }`}
                                                     >
                                                         <span className="font-bold tracking-wide">{day.date}</span>

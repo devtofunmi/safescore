@@ -11,7 +11,7 @@ import PWAInstallPrompt from '../components/landing/PWAInstallPrompt';
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen bg-white dark:bg-black">
+        <div className="min-h-screen bg-white dark:bg-[#050505]">
             <SEO />
 
             <Navbar />

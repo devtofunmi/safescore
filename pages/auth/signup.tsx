@@ -148,7 +148,7 @@ export default function SignUpPage() {
 
                     <form onSubmit={handleSignUp} className="space-y-6">
                         <div className="space-y-3">
-                            <label className="text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">Full Name</label>
+                            <label className="text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">Name</label>
                             <div className="relative group">
                                 <input
                                     type="text"
@@ -156,7 +156,7 @@ export default function SignUpPage() {
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                     className="w-full bg-[#111] border border-white/5 hover:border-white/10 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/40 transition-all font-medium text-base"
-                                    placeholder="e.g. Jay James"
+                                    placeholder="e.g. Jay"
                                 />
                             </div>
                         </div>

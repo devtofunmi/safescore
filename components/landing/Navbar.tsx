@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
             <motion.nav
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
-                className={`fixed w-full z-[1000] transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-lg border-b border-white/10' : 'bg-transparent'}`}
+                className={`fixed w-full z-[1000] transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md shadow-lg border-b border-white/10' : 'bg-transparent'}`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-20">
@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
                                     </Link>
                                     <button
                                         onClick={() => router.push('/auth/signup')}
-                                        className="bg-blue-400 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-400/30 hover:scale-105 active:scale-95"
+                                        className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-600/30 hover:scale-105 active:scale-95"
                                     >
                                         Join Now
                                     </button>
@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
                                             router.push('/auth/signup');
                                             setMobileMenuOpen(false);
                                         }}
-                                        className="bg-blue-400 text-white px-12 py-4 rounded-2xl text-2xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-400/30 transition-transform active:scale-95 w-full"
+                                        className="bg-blue-600 text-white px-12 py-4 rounded-2xl text-2xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-600/30 transition-transform active:scale-95 w-full"
                                     >
                                         Join Now
                                     </button>

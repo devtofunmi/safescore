@@ -132,7 +132,7 @@ const MarqueeRow = ({ items, reverse = false }: { items: any[], reverse?: boolea
 
 const Testimonials: React.FC = () => {
     return (
-        <section className="py-24 bg-white dark:bg-black overflow-hidden border-y border-white/5">
+        <section className="py-24 bg-white dark:bg-[#050505] overflow-hidden border-y border-white/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

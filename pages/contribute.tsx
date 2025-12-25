@@ -12,9 +12,9 @@ const Contribute: NextPage = () => {
                 title="Contribute | SafeScore"
                 description="Join the community and help us build the most accurate football prediction platform."
             />
-            <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
+            <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30">
                 {/* Header */}
-                <header className="sticky top-0 z-50 border-b border-zinc-800 bg-black/80 backdrop-blur-md px-4 py-4">
+                <header className="sticky top-0 z-50 border-b border-zinc-800 bg-[#0a0a0a]/80 backdrop-blur-md px-4 py-4">
                     <div className="max-w-4xl mx-auto flex items-center justify-between">
                         <Link href="/" className="group flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                             <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />

@@ -37,21 +37,21 @@ const features = [
                 <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 text-white">
                     <div className="flex justify-between items-center mb-2">
                         <span className="font-bold">Premier League</span>
-                        <span className="bg-blue-400 text-xs px-2 py-1 rounded">Active</span>
+                        <span className="bg-blue-600 text-xs px-2 py-1 rounded">Active</span>
                     </div>
                     <div className="text-sm opacity-80">6 Matches Analyzed</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 text-white opacity-90">
                     <div className="flex justify-between items-center mb-2">
                         <span className="font-bold">La Liga</span>
-                        <span className="bg-blue-400 text-xs px-2 py-1 rounded">Active</span>
+                        <span className="bg-blue-600 text-xs px-2 py-1 rounded">Active</span>
                     </div>
                     <div className="text-sm opacity-80">4 Matches Analyzed</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 text-white opacity-80">
                     <div className="flex justify-between items-center mb-2">
                         <span className="font-bold">Eredivisie</span>
-                        <span className="bg-blue-400 text-xs px-2 py-1 rounded">Active</span>
+                        <span className="bg-blue-600 text-xs px-2 py-1 rounded">Active</span>
                     </div>
                     <div className="text-sm opacity-80">3 Matches Analyzed</div>
                 </div>
@@ -113,7 +113,7 @@ const features = [
 
 const Features: React.FC = () => {
     return (
-        <div className="py-24 bg-gray-50 dark:bg-zinc-950 overflow-hidden">
+        <div className="py-24 bg-gray-50 dark:bg-[#050505] overflow-hidden">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -122,12 +122,12 @@ const Features: React.FC = () => {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-base font-semibold uppercase tracking-wide text-blue-400">Features</h2>
+                    <h2 className="text-base font-semibold uppercase tracking-wide text-blue-500">Features</h2>
                     <p className="mt-2 text-3xl font-extrabold leading-8 tracking-tight text-gray-900 dark:text-white sm:text-4xl">
                         Why Bettors Trust SafeScore
                     </p>
                     <p className="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-400 mx-auto">
-                        We don&apos;t promise <span className="font-bold text-blue-400">&quot;guaranteed&quot;</span> wins.
+                        We don&apos;t promise <span className="font-bold text-blue-500">&quot;guaranteed&quot;</span> wins.
                         We provide statistical insights designed to help you make smarter decisions over time.
                     </p>
                 </motion.div>
@@ -146,7 +146,7 @@ const Features: React.FC = () => {
                             <div className="flex-1 text-center lg:text-left">
                                 <motion.span
                                     whileHover={{ rotate: 5, scale: 1.1 }}
-                                    className="inline-flex items-center justify-center rounded-xl bg-blue-400 p-3 shadow-lg mb-6"
+                                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 p-3 shadow-lg mb-6"
                                 >
                                     <feature.icon className="h-8 w-8 text-white" aria-hidden="true" />
                                 </motion.span>
@@ -163,11 +163,11 @@ const Features: React.FC = () => {
                                 <motion.div
                                     whileHover={{ scale: 1.02, rotate: 0 }}
                                     transition={{ duration: 0.3 }}
-                                    className="relative transform bg-gradient-to-br from-blue-400 to-indigo-800 rounded-2xl shadow-2xl p-8 rotate-1 transition-all duration-500"
+                                    className="relative transform bg-gradient-to-br from-blue-600 to-indigo-800 rounded-2xl shadow-2xl p-8 rotate-1 transition-all duration-500"
                                 >
                                     {/* Decorative Elements */}
                                     <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-white opacity-5 blur-2xl"></div>
-                                    <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-24 h-24 rounded-full bg-blue-400 opacity-10 blur-2xl"></div>
+                                    <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-24 h-24 rounded-full bg-blue-600 opacity-10 blur-2xl"></div>
 
                                     {/* Card Content */}
                                     <div className="relative z-10">

@@ -21,7 +21,7 @@ const steps = [
 
 const HowItWorks = () => {
     return (
-        <div id="how-it-works" className="py-24 bg-white dark:bg-black overflow-hidden lg:py-32">
+        <div id="how-it-works" className="py-24 bg-white dark:bg-[#050505] overflow-hidden lg:py-32">
             <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="relative lg:grid lg:grid-cols-2 lg:gap-24 lg:items-center">
                     <motion.div
@@ -49,7 +49,7 @@ const HowItWorks = () => {
                                     className="relative"
                                 >
                                     <dt>
-                                        <div className="absolute flex h-12 w-12 items-center justify-center rounded-xl bg-blue-400 text-white font-bold text-xl ring-2 ring-white dark:ring-black">
+                                        <div className="absolute flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-xl ring-2 ring-white dark:ring-black">
                                             {step.id}
                                         </div>
                                         <p className="ml-16 text-lg font-medium leading-6 text-gray-900 dark:text-white">{step.title}</p>
@@ -77,7 +77,7 @@ const HowItWorks = () => {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="relative transform bg-gradient-to-br from-blue-400 to-indigo-800 rounded-xl shadow-2xl p-8 mx-auto max-w-md skew-y-3 hover:rotate-0 hover:skew-y-0 transition-all duration-300"
+                            className="relative transform bg-gradient-to-br from-blue-600 to-indigo-800 rounded-xl shadow-2xl p-8 mx-auto max-w-md skew-y-3 hover:rotate-0 hover:skew-y-0 transition-all duration-300"
                         >
                             <div className="space-y-4">
                                 <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 text-white">
