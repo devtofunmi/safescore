@@ -16,6 +16,7 @@ interface FootballDataMatch {
     };
     homeTeam: { id: number; name: string };
     awayTeam: { id: number; name: string };
+    competition?: { id: number; name: string };
 }
 
 /**
@@ -127,18 +128,21 @@ function verifyPrediction(
 async function findMatchByTeams(
     homeTeam: string,
     awayTeam: string,
-    date: string | undefined,
+    predictionDate: string | undefined, // The date we predicted the match for
     apiKey: string
 ): Promise<number | null> {
-    if (!date) return null;
+    if (!predictionDate) return null;
 
     try {
-        const matchDate = new Date(date);
+        const todayStr = new Date().toISOString().split('T')[0];
+        const matchDate = new Date(predictionDate);
+
+        // Search from 3 days before predicted date up to today
         const dateFrom = new Date(matchDate);
-        dateFrom.setDate(matchDate.getDate() - 2);
+        dateFrom.setDate(matchDate.getDate() - 3);
 
         const fromStr = dateFrom.toISOString().split('T')[0];
-        const toStr = date;
+        const toStr = todayStr; // Always search up to today to catch rescheduled matches
 
         const response = await axios.get(`https://api.football-data.org/v4/matches`, {
             headers: { 'X-Auth-Token': apiKey },
@@ -146,20 +150,71 @@ async function findMatchByTeams(
         });
 
         const matches = response.data.matches as FootballDataMatch[];
-        const normalize = (n: string) => n.toLowerCase().replace(/\s+(fc|afc|cf|sc|ac|united|city|rovers|albion|town|athletic)\b/g, '').trim();
+        const totalFound = matches?.length || 0;
 
-        const targetH = normalize(homeTeam);
-        const targetA = normalize(awayTeam);
+        // DEBUG: Output all fixtures in the range for deep diagnostics
+        if (totalFound > 0) {
+            const pool = matches.map(m => `${m.id}:${m.homeTeam.name} vs ${m.awayTeam.name}`).join(' | ');
+            console.info(`[Verifier] Searching ${homeTeam} vs ${awayTeam} in range ${fromStr} to ${toStr}. Pool (${totalFound} matches): ${pool}`);
+        }
+
+        const normalize = (n: string) => n.toLowerCase()
+            .replace(/\b(fc|afc|cf|sc|ac|united|city|rovers|albion|town|athletic|clube de|club|de|as|ss|ssc|bc|uc|us|cd|cuba|futebol|sad|sports|sporting|international|internazionale|italy|portugal|spain|france|england|germany)\b/g, '')
+            .replace(/[\W_]+/g, ' ')
+            .trim();
+
+        // Technical Mappings
+        const nicknames: Record<string, string[]> = {
+            'wolves': ['wolverhampton'],
+            'inter': ['internazionale'],
+            'mancity': ['manchester city'],
+            'manutd': ['manchester united'],
+            'avs': ['avs futebol sad'],
+            'porto': ['fc porto', 'futebol clube do porto']
+        };
+
+        const getSearchTerms = (name: string) => {
+            const n = normalize(name);
+            const terms = new Set([n]);
+            // Extract key words (e.g. "Porto" from "FC Porto")
+            n.split(' ').forEach(w => { if (w.length > 3) terms.add(w); });
+            Object.entries(nicknames).forEach(([key, val]) => {
+                if (n.includes(key) || key.includes(n)) val.forEach(v => terms.add(v));
+            });
+            return Array.from(terms);
+        };
+
+        const targetHTerms = getSearchTerms(homeTeam);
+        const targetATerms = getSearchTerms(awayTeam);
 
         const match = matches.find(m => {
             const h = normalize(m.homeTeam.name);
             const a = normalize(m.awayTeam.name);
-            return (h.includes(targetH) || targetH.includes(h)) && (a.includes(targetA) || targetA.includes(a));
+
+            // Stricter matching: ONE team from prediction MUST match Home API, 
+            // AND the OTHER team from prediction MUST match Away API.
+            const homeMatchesH = targetHTerms.some(t => h.includes(t) || t.includes(h));
+            const homeMatchesA = targetHTerms.some(t => a.includes(t) || t.includes(a));
+
+            const awayMatchesH = targetATerms.some(t => h.includes(t) || t.includes(h));
+            const awayMatchesA = targetATerms.some(t => a.includes(t) || t.includes(a));
+
+            const normalOrder = homeMatchesH && awayMatchesA;
+            const swappedOrder = homeMatchesA && awayMatchesH;
+
+            return normalOrder || swappedOrder;
         });
 
-        return match ? match.id : null;
-    } catch (e) {
-        console.error("[Verifier] Search failed for", homeTeam, "vs", awayTeam);
+        if (match) {
+            console.info(`[Verifier] SUCCESS: Found ${match.homeTeam.name} vs ${match.awayTeam.name} for ${homeTeam} vs ${awayTeam}`);
+            return match.id;
+        } else {
+            console.warn(`[Verifier] FAILED: No match found for ${homeTeam} vs ${awayTeam}`);
+            return null;
+        }
+    } catch (e: any) {
+        if (e.response?.status === 429) throw e;
+        console.error("[Verifier] API Error during search:", homeTeam, "vs", awayTeam);
         return null;
     }
 }
@@ -171,7 +226,7 @@ async function findMatchByTeams(
  * settles predictions.
  */
 export async function verifyMatch(item: HistoryItem, apiKey: string, date?: string): Promise<HistoryItem> {
-    let matchId: number | null = extractMatchId(item.id);
+    let matchId: number | null = item.matchId || extractMatchId(item.id || '');
 
     // Trigger Healer if extraction fails (older "local" IDs)
     if (!matchId) {
@@ -189,11 +244,11 @@ export async function verifyMatch(item: HistoryItem, apiKey: string, date?: stri
 
         // Skip verification if match hasn't started or isn't finished enough to be certain
         if (match.status !== 'FINISHED' && match.status !== 'IN_PLAY' && match.status !== 'PAUSED') {
-            return { ...item, result: 'Pending' };
+            return { ...item, result: 'Pending', matchId };
         }
 
         const { home, away } = match.score.fullTime;
-        if (home === null || away === null) return { ...item, result: 'Pending' };
+        if (home === null || away === null) return { ...item, result: 'Pending', matchId };
 
         const result = verifyPrediction(
             item.prediction,
@@ -206,10 +261,12 @@ export async function verifyMatch(item: HistoryItem, apiKey: string, date?: stri
         return {
             ...item,
             result: match.status === 'FINISHED' ? result : 'Pending',
-            score: formatScore(match)
+            score: formatScore(match),
+            matchId
         };
 
-    } catch (error) {
-        return { ...item };
+    } catch (error: any) {
+        if (error.response?.status === 429) throw error;
+        return { ...item, matchId };
     }
 }

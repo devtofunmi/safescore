@@ -58,12 +58,58 @@ export default async function handler(
     cache.set(cacheKey, response);
 
     const { saveToHistory } = await import('@/lib/history/storage');
-    const requestedDate = date || new Date().toISOString().split('T')[0];
 
-    // Non-blocking save to Supabase (cloud persistence)
-    saveToHistory(predictions, requestedDate).catch(err => {
-      console.error('[API] History persist failed:', err.message);
+    // Calculate the reference date for this request 
+    // Uses UTC to avoid server/client timezone drift for the base date
+    const now = new Date();
+    const utcNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+
+    if (day === 'tomorrow') {
+      utcNow.setDate(utcNow.getDate() + 1);
+    } else if (day === 'weekend') {
+      // Find the upcoming Saturday (Day 6)
+      const dayOfWeek = utcNow.getDay();
+      const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
+      // If today is Saturday, we keep it; if not, move to next Saturday
+      utcNow.setDate(utcNow.getDate() + (daysUntilSaturday === 0 ? 0 : daysUntilSaturday));
+    }
+    const referenceDate = date || utcNow.toISOString().split('T')[0];
+
+    // Group predictions by their actual match date
+    const predictionsByDate: Record<string, typeof predictions> = {};
+
+    predictions.forEach(p => {
+      // 1. Try to extract date from matchTime
+      let extractedDate = '';
+      if (p.matchTime && p.matchTime.includes('-')) {
+        extractedDate = p.matchTime.includes('T')
+          ? p.matchTime.split('T')[0]
+          : p.matchTime.split(' ')[0];
+      }
+
+      // 2. Resolve final date: Use extracted if valid, otherwise use the context-aware referenceDate
+      const actualDate = /^\d{4}-\d{2}-\d{2}$/.test(extractedDate)
+        ? extractedDate
+        : referenceDate;
+
+      if (!predictionsByDate[actualDate]) {
+        predictionsByDate[actualDate] = [];
+      }
+      predictionsByDate[actualDate].push(p);
     });
+
+    // Save each group to its respective date in history
+    const savePromises = Object.entries(predictionsByDate).map(async ([mDate, mPredictions]) => {
+      if (mDate && /^\d{4}-\d{2}-\d{2}$/.test(mDate)) {
+        try {
+          await saveToHistory(mPredictions, mDate);
+        } catch (err: any) {
+          console.error(`[API] History persist failed for ${mDate}:`, err.message);
+        }
+      }
+    });
+
+    await Promise.all(savePromises);
 
     return res.status(200).json(response);
 

@@ -12,6 +12,7 @@ export interface HistoryItem {
     result: 'Won' | 'Lost' | 'Pending';
     score: string;           // Final score (e.g., "2-1")
     league?: string;
+    matchId?: number;        // Explicit ID for verification
 }
 
 /**
@@ -29,7 +30,14 @@ export interface DailyRecord {
  * Groups them by date and merges with any existing records for that day.
  */
 export async function saveToHistory(predictions: Prediction[], dateStr: string): Promise<void> {
+    if (!dateStr || dateStr === 'undefined' || dateStr === 'null') {
+        console.error('[History] Cannot save to history: dateStr is invalid:', dateStr);
+        return;
+    }
+
     try {
+        console.info(`[History] Starting save for ${dateStr} (${predictions.length} predictions)`);
+
         // Fetch existing record for this date from Supabase
         const { data: existingRecord, error: fetchError } = await supabase
             .from('history')
@@ -51,7 +59,8 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string):
             prediction: p.betType,
             result: 'Pending',
             score: '-',
-            league: p.league
+            league: p.league,
+            matchId: p.matchId // Assuming it exists in Prediction schema
         }));
 
         // Merge and avoid duplicates (Matched by teams)

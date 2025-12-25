@@ -47,6 +47,7 @@ export const PredictionSchema = z.object({
   confidence: z.number().min(0).max(100),
   league: z.string(),
   matchTime: z.string(),           // Match start time
+  matchId: z.number().optional(),  // Optional explicit match ID
   details: z.object({              // Pre-match statistical analysis
     team1Form: z.string(),
     team2Form: z.string(),

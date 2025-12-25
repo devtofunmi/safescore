@@ -12,7 +12,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const { verifyMatch } = await import('@/lib/history/verifier');
+        const { verifyMatch, extractMatchId } = await import('@/lib/history/verifier');
         const apiKey = process.env.FOOTBALL_DATA_API_KEY;
 
         if (!apiKey) {
@@ -37,38 +37,44 @@ export default async function handler(
         // 2. Settlement Logic
         for (const day of historyData) {
             const today = new Date().toISOString().split('T')[0];
-
             if (day.date > today) continue;
 
-            const updatedPredictions = [];
+            const updatedPredictions: any[] = [];
             let dayChanged = false;
 
             for (const item of day.predictions) {
-                const likelyHasId = item.id.startsWith('pred-');
-                const canVerify = item.result === 'Pending' && (item.matchId || likelyHasId);
+                const canVerify = item.result === 'Pending';
 
                 if (canVerify && requestsMade < MAX_REQUESTS) {
                     try {
-                        console.info(`[Verifier] Settling: ${item.homeTeam} vs ${item.awayTeam}`);
+                        console.info(`[Verifier] Settling: ${item.homeTeam} vs ${item.awayTeam} (${day.date})`);
                         const verifiedItem = await verifyMatch(item, apiKey, day.date);
 
                         updatedPredictions.push(verifiedItem);
 
-                        if (verifiedItem.result !== 'Pending' || verifiedItem.score !== item.score) {
+                        // If status changed or matchId was found/attached, mark day as changed
+                        if (
+                            verifiedItem.result !== item.result ||
+                            verifiedItem.score !== item.score ||
+                            verifiedItem.matchId !== item.matchId
+                        ) {
                             dayChanged = true;
-                            totalUpdated++;
+                            if (verifiedItem.result !== 'Pending') totalUpdated++;
                         }
 
                         requestsMade++;
-                        await new Promise(r => setTimeout(r, 7000));
+                        // Standard delay for free tier (10 req/min)
+                        await new Promise(r => setTimeout(r, 7500));
 
                     } catch (e: any) {
-                        console.error('[Verifier] Match verification failed:', e.message);
+                        console.error(`[Verifier] Match verification failed for ${item.homeTeam}:`, e.message);
+                        updatedPredictions.push(item);
+
                         if (e.response?.status === 429) {
-                            updatedPredictions.push(item);
+                            console.warn("[Verifier] Batch stopped due to rate limiting.");
+                            requestsMade = MAX_REQUESTS; // Stop further processing in this run
                             break;
                         }
-                        updatedPredictions.push(item);
                     }
                 } else {
                     updatedPredictions.push(item);
@@ -77,6 +83,7 @@ export default async function handler(
 
             // 3. Update Supabase if anything changed for this day
             if (dayChanged) {
+                console.info(`[Verifier] Updating records for ${day.date}...`);
                 const { error: updateError } = await supabase
                     .from('history')
                     .update({ predictions: updatedPredictions })
