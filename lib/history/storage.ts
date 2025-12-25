@@ -5,22 +5,25 @@ import type { Prediction } from '../schemas';
  * Interface representing a single historical prediction entry.
  */
 export interface HistoryItem {
-    id: string;               // Unique ID (Format: pred-{matchId}-{timestamp}-{index})
-    homeTeam: string;
-    awayTeam: string;
-    prediction: string;      // The bet type selected
+    id: string;               // Unique ID
+    homeTeam: string;         // Home team
+    awayTeam: string;         // Away team
+    prediction: string;       // The bet type selected
     result: 'Won' | 'Lost' | 'Pending';
-    score: string;           // Final score (e.g., "2-1")
+    score: string;            // Final score (e.g., "2-1")
     league?: string;
-    matchId?: number;        // Explicit ID for verification
+    matchId?: number;         // Explicit ID for verification
+    odds?: number;            // Optional odds value
 }
 
 /**
  * Interface representing a group of predictions for a specific date.
  */
 export interface DailyRecord {
+    id?: string;
     date: string;            // Format: YYYY-MM-DD
     predictions: HistoryItem[];
+    created_at?: string;
 }
 
 /**
@@ -60,7 +63,7 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string):
             result: 'Pending',
             score: '-',
             league: p.league,
-            matchId: p.matchId // Assuming it exists in Prediction schema
+            matchId: p.matchId
         }));
 
         // Merge and avoid duplicates (Matched by teams)
