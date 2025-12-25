@@ -14,6 +14,7 @@ import Footer from '../components/landing/Footer';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import { useAuth } from '@/lib/auth';
+import DashboardLayout from '../components/DashboardLayout';
 
 
 const LoadingText = () => {
@@ -160,7 +161,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white custom-scrollbar">
+    <DashboardLayout>
       <SEO
         title="Dashboard"
         description="Filter high-probability match outcomes by risk level and league."
@@ -173,33 +174,8 @@ const Home: NextPage = () => {
         </div>
       )}
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 py-4 bg-[#0a0a0a]/80 backdrop-blur-xl px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard">
-              <div className="flex-shrink-0 flex items-center cursor-pointer" >
-                <img src="/logos.png" alt="SafeScore" className="h-10" />
-              </div>
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors hidden sm:block">
-                Dashboard
-              </Link>
-              <div className="flex items-center space-x-4">
-                <div className="text-right ">
-                  <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
-                    Prediction Engine
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
-      <main className="mx-auto max-w-4xl px-4 pt-28 pb-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -238,11 +214,10 @@ const Home: NextPage = () => {
             />
           </motion.div>
         </motion.div>
-      </main>
+      </div>
 
-      {/* Footer */}
-      <Footer />
-    </div>
+      
+    </DashboardLayout>
   );
 };
 
