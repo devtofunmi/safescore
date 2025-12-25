@@ -26,7 +26,7 @@ export default async function handler(
     return res.status(400).json({ error: 'Invalid request parameters' });
   }
 
-  const { oddsType, leagues, day, date } = parseResult.data;
+  const { oddsType, leagues, day, date, userId } = parseResult.data;
 
   // Cache Check
   // Sort leagues to ensure cache hit regardless of array order
@@ -102,7 +102,7 @@ export default async function handler(
     const savePromises = Object.entries(predictionsByDate).map(async ([mDate, mPredictions]) => {
       if (mDate && /^\d{4}-\d{2}-\d{2}$/.test(mDate)) {
         try {
-          await saveToHistory(mPredictions, mDate);
+          await saveToHistory(mPredictions, mDate, userId);
         } catch (err: any) {
           console.error(`[API] History persist failed for ${mDate}:`, err.message);
         }
