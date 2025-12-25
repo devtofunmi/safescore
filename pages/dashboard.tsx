@@ -223,9 +223,9 @@ export default function DashboardPage() {
             </aside>
 
             {/* Mobile Nav Top */}
-            <div className="md:hidden flex items-center justify-between p-4 bg-[#0a0a0a] border-b border-white/5">
+            <div className="md:hidden flex items-center justify-between p-4 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
                 <img src="/logos.png" alt="SafeScore" className="h-6" />
-                <button onClick={() => signOut()} className="text-neutral-500">
+                <button onClick={() => signOut()} className="text-neutral-400 hover:text-red-400 transition-colors">
                     <IoLogOutOutline size={24} />
                 </button>
             </div>
