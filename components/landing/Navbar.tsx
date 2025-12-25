@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
 
                             {user ? (
                                 <div className="flex items-center gap-4">
-                                    <Link href="/home" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                                    <Link href="/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
                                         Dashboard
                                     </Link>
                                     <div className="h-8 w-[1px] bg-white/10 italic"></div>
@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
                             {user ? (
                                 <>
                                     <Link
-                                        href="/home"
+                                        href="/dashboard"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="text-2xl font-extrabold text-blue-500 transition-colors"
                                     >
