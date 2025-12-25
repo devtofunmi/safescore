@@ -12,6 +12,8 @@ import Summary from '../components/home/Summary';
 import Footer from '../components/landing/Footer';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import { useAuth } from '@/lib/auth';
+
 
 const LoadingText = () => {
   const [text, setText] = useState('Initializing prediction engine...');
@@ -51,6 +53,14 @@ const Home: NextPage = () => {
   const [day, setDay] = useState('today');
   const [loading, setLoading] = useState(false);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>(['Premier League', 'Championship', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1', 'Champions League']);
+
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login');
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     if (loading) {
