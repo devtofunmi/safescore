@@ -14,6 +14,7 @@ export interface HistoryItem {
     league?: string;
     matchId?: number;         // Explicit ID for verification
     odds?: number;            // Optional odds value
+    userId?: string;          // ID of the user who generated this prediction
 }
 
 /**
@@ -32,7 +33,7 @@ export interface DailyRecord {
  * Persists predictions to Supabase.
  * Groups them by date and merges with any existing records for that day.
  */
-export async function saveToHistory(predictions: Prediction[], dateStr: string): Promise<void> {
+export async function saveToHistory(predictions: Prediction[], dateStr: string, userId?: string): Promise<void> {
     if (!dateStr || dateStr === 'undefined' || dateStr === 'null') {
         console.error('[History] Cannot save to history: dateStr is invalid:', dateStr);
         return;
@@ -63,7 +64,8 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string):
             result: 'Pending',
             score: '-',
             league: p.league,
-            matchId: p.matchId
+            matchId: p.matchId,
+            userId: userId
         }));
 
         // Merge and avoid duplicates (Matched by teams)
