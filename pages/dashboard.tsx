@@ -40,13 +40,28 @@ export default function DashboardPage() {
 
     // Convert date to user-friendly label (Today, Tomorrow, Weekend)
     const getMatchDayLabel = (dateStr: string | undefined): string => {
-        if (!dateStr || dateStr === 'Today') return 'Today';
+        if (!dateStr) return 'Today';
+
+        // Handle pre-formatted strings or session labels
+        const lowerStr = dateStr.toLowerCase();
+        if (lowerStr.includes('today')) return 'Today';
+        if (lowerStr.includes('tomorrow')) return 'Tomorrow';
+        if (lowerStr.includes('weekend')) return 'Weekend';
 
         try {
-            const matchDate = new Date(dateStr);
+            // Normalize input to YYYY-MM-DD
+            const cleanDateStr = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr.split(' ')[0];
+
+            // Parse as local components to avoid UTC shifts
+            const parts = cleanDateStr.split('-');
+            if (parts.length < 3) return dateStr;
+
+            const [y, m, d] = parts.map(Number);
+            if (!y || !m || !d) return dateStr;
+
+            const matchDate = new Date(y, m - 1, d); // Months are 0-indexed
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            matchDate.setHours(0, 0, 0, 0);
 
             const diffTime = matchDate.getTime() - today.getTime();
             const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
@@ -54,14 +69,14 @@ export default function DashboardPage() {
             if (diffDays === 0) return 'Today';
             if (diffDays === 1) return 'Tomorrow';
 
-            // Check if it's this weekend (Saturday or Sunday)
+            // Check if it's this upcoming weekend (Saturday or Sunday within next 6 days)
             const dayOfWeek = matchDate.getDay();
-            if (diffDays >= 0 && diffDays <= 7 && (dayOfWeek === 0 || dayOfWeek === 6)) {
+            if (diffDays >= 0 && diffDays <= 6 && (dayOfWeek === 0 || dayOfWeek === 6)) {
                 return 'Weekend';
             }
 
-            // For other dates, show the actual date
-            return dateStr;
+            // Fallback: Format as "Oct 27"
+            return matchDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         } catch {
             return dateStr || 'Scheduled';
         }
@@ -89,7 +104,8 @@ export default function DashboardPage() {
                 const pendingFromHistory: any[] = [];
                 history?.forEach(record => {
                     record.predictions?.forEach((p: any) => {
-                        if (p.result === 'Pending' || !p.result) {
+                        // Show items belonging to this user OR legacy items without a userId
+                        if ((p.result === 'Pending' || !p.result) && (!p.userId || p.userId === user.id)) {
                             pendingFromHistory.push({
                                 ...p,
                                 // Normalize legacy field names to current format
