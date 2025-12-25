@@ -79,6 +79,7 @@ export const PredictionsRequestSchema = z.object({
   day: z.string().default('today'),
   oddsRange: z.string().optional(),
   date: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 export type PredictionsRequest = z.infer<typeof PredictionsRequestSchema>;
