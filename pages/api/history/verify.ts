@@ -11,6 +11,11 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    // Prevent caching for verification results
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     try {
         const { verifyMatch, extractMatchId } = await import('@/lib/history/verifier');
         const apiKey = process.env.FOOTBALL_DATA_API_KEY;
