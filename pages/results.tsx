@@ -196,7 +196,7 @@ const Results: NextPage = () => {
           className="fixed top-0 left-0 right-0 z-50 border-b-2 border-[#18181b] bg-black backdrop-blur-sm px-4 py-3 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
-              <Link href="/">
+              <Link href="/dashboard">
                 <div className="flex-shrink-0 flex items-center cursor-pointer" >
                   <img src="/logos.png" alt="SafeScore" className="h-10" />
                 </div>
@@ -529,11 +529,13 @@ const Results: NextPage = () => {
           )}
         </AnimatePresence>
 
-        <div className="flex gap-4 mt-8 justify-center">
-          <Link href="/home">
-            <button className="rounded-full cursor-pointer border-2 border-blue-400 bg-blue-400 text-white hover:bg-blue-500 px-8 py-3 font-extrabold transition-all shadow-lg hover:scale-105">New Prediction</button>
+        <div className="flex flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
+          <Link href="/dashboard">
+            <button className="w-full sm:w-auto rounded-full cursor-pointer border-2 border-white/10 bg-white/5 text-white hover:bg-white/10 px-8 py-3 font-extrabold transition-all">Back to Dashboard</button>
           </Link>
-          {/* <button className="rounded-full cursor-pointer border-2 border-black bg-white px-8 py-3 font-extrabold text-black hover:bg-gray-100 transition-all">Save Results</button> */}
+          <Link href="/home">
+            <button className="w-full sm:w-auto rounded-full cursor-pointer border-2 border-blue-400 bg-blue-400 text-white hover:bg-blue-500 px-10 py-3 font-extrabold transition-all shadow-lg shadow-blue-400/20 hover:scale-105">New Prediction</button>
+          </Link>
         </div>
 
         <Footer />
