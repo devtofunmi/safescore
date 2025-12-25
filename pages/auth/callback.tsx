@@ -15,7 +15,7 @@ export default function AuthCallback() {
                 router.push('/auth/login');
             } else {
                 toast.success('Email verified successfully!');
-                router.push('/home');
+                router.push('/dashboard');
             }
         };
 
