@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-toastify';
-import { IoArrowForwardOutline, IoDiamondOutline,  IoRocketOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
+import { IoArrowForwardOutline, IoDiamondOutline, IoRocketOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import { useAuth } from '@/lib/auth';
 
 export default function SignUpPage() {
@@ -19,7 +19,7 @@ export default function SignUpPage() {
 
     useEffect(() => {
         if (user) {
-            router.push('/home');
+            router.push('/dashboard');
         }
     }, [user, router]);
 
@@ -92,8 +92,8 @@ export default function SignUpPage() {
                                 Join the <span className="text-blue-500">Elite.</span>
                             </h2>
                             <p className="text-neutral-400 text-xl leading-relaxed">
-                               Professional-grade football analytics powered by proprietary prediction models.
-                               </p>
+                                Professional-grade football analytics powered by proprietary prediction models.
+                            </p>
                         </motion.div>
 
                         <div className="space-y-4 pt-16">

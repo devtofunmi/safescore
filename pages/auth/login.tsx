@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (user) {
-            router.push('/home');
+            router.push('/dashboard');
         }
     }, [user, router]);
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
             if (error) throw error;
 
             toast.success('Welcome back to SafeScore!');
-            router.push('/home');
+            router.push('/dashboard');
         } catch (error: any) {
             toast.error(error.message || 'Error logging in');
         } finally {
