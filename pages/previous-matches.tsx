@@ -27,6 +27,7 @@ interface HistoryItem {
     result: 'Won' | 'Lost' | 'Pending';
     score: string;
     league?: string;
+    userId?: string;
 }
 
 interface DailyRecord {
@@ -47,13 +48,30 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
     const { user } = useAuth(); // Add hook usage
     // Sort history by date descending
     const sortedHistory = useMemo(() => {
-        return [...historyData].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        // Public View: Show all completed (non-pending) records regardless of user
+        return historyData
+            .map(day => ({
+                ...day,
+                predictions: day.predictions.filter(p => p.result !== 'Pending')
+            }))
+            .filter(day => day.predictions.length > 0)
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [historyData]);
 
     const [history, setHistory] = useState<DailyRecord[]>(sortedHistory);
     const [selectedDate, setSelectedDate] = useState<string>(history[0]?.date || '');
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+
+    // Sync history with sortedHistory whenever it updates
+    React.useEffect(() => {
+        setHistory(sortedHistory);
+        // If current selectedDate is not in the new history, or if nothing selected, select first available
+        const hasDate = sortedHistory.find(d => d.date === selectedDate);
+        if (!hasDate) {
+            setSelectedDate(sortedHistory[0]?.date || '');
+        }
+    }, [sortedHistory, selectedDate]);
 
     // Auto-refresh logic on mount (Settle pending matches)
     React.useEffect(() => {
