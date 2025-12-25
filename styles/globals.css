@@ -25,25 +25,23 @@
   }
 }
 
-/* Custom Scrollbar for Modal */
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #18181b;
-  border-radius: 4px;
+  background: #000;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  /* blue-500 */
-  border-radius: 4px;
+  background: #222;
+  border: 2px solid #000;
+  border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-  /* blue-600 */
+  background: #333;
 }
 
 
