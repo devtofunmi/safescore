@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '@/lib/auth';
 
 const Navbar: React.FC = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { user, signOut } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -30,6 +32,11 @@ const Navbar: React.FC = () => {
 
     const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
+    const handleSignOut = async () => {
+        await signOut();
+        router.push('/');
+    };
+
     return (
         <>
             <motion.nav
@@ -49,12 +56,34 @@ const Navbar: React.FC = () => {
                             <Link href="/previous-matches" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
                                 Previous Matches
                             </Link>
-                            <button
-                                onClick={() => router.push('/home')}
-                                className="bg-blue-400 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-400/30 hover:scale-105 active:scale-95"
-                            >
-                                Launch App
-                            </button>
+
+                            {user ? (
+                                <div className="flex items-center gap-4">
+                                    <Link href="/home" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                                        Dashboard
+                                    </Link>
+                                    <div className="h-8 w-[1px] bg-white/10 italic"></div>
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="flex items-center gap-2 text-red-500 hover:text-red-400 font-bold transition-colors"
+                                    >
+                                        <FaSignOutAlt />
+                                        Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-4">
+                                    <Link href="/auth/login" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                                        Login
+                                    </Link>
+                                    <button
+                                        onClick={() => router.push('/auth/signup')}
+                                        className="bg-blue-400 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-400/30 hover:scale-105 active:scale-95"
+                                    >
+                                        Join Now
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -85,7 +114,7 @@ const Navbar: React.FC = () => {
                             <FaTimes size={32} />
                         </button>
 
-                        <div className="flex flex-col items-center space-y-10">
+                        <div className="flex flex-col items-center space-y-10 w-full px-6">
                             <img src="/logos.png" alt="SafeScore" className="h-12 mb-10" />
 
                             <button
@@ -106,15 +135,45 @@ const Navbar: React.FC = () => {
                                 Previous Matches
                             </Link>
 
-                            <button
-                                onClick={() => {
-                                    router.push('/home');
-                                    setMobileMenuOpen(false);
-                                }}
-                                className="bg-blue-400 text-white px-12 py-4 rounded-2xl text-2xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-400/30 transition-transform active:scale-95"
-                            >
-                                Launch App
-                            </button>
+                            <div className="w-full h-[1px] bg-gray-200 dark:bg-white/10 my-4"></div>
+
+                            {user ? (
+                                <>
+                                    <Link
+                                        href="/home"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="text-2xl font-extrabold text-blue-500 transition-colors"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="text-2xl font-extrabold text-red-500 hover:text-red-400 transition-colors flex items-center gap-2"
+                                    >
+                                        <FaSignOutAlt />
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/auth/login"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="text-2xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
+                                    >
+                                        Login
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            router.push('/auth/signup');
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        className="bg-blue-400 text-white px-12 py-4 rounded-2xl text-2xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-400/30 transition-transform active:scale-95 w-full"
+                                    >
+                                        Join Now
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}
