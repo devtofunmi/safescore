@@ -77,8 +77,8 @@ const readStoredFilters = (): Filters | null => {
 };
 
 const getConfidenceColor = (confidence: number) => {
-  if (confidence >= 90) return 'bg-green-500/10 text-green-500 border border-green-500/20';
-  if (confidence >= 80) return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+  if (confidence >= 85) return 'bg-green-500/10 text-green-500 border border-green-500/20';
+  if (confidence >= 70) return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
   return 'bg-red-500/10 text-red-500 border border-red-500/20';
 };
 
