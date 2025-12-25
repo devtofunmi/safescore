@@ -38,6 +38,11 @@
       },
       {
         "type": "fix",
+        "title": "Prediction History Grouping",
+        "description": "Fixed a bug where predictions for 'weekend' or 'future' dates were mistakenly saved under the current date. They are now correctly grouped by their actual match dates."
+      },
+      {
+        "type": "fix",
         "title": "Responsive UI Fixes",
         "description": "Fixed layout issues in the community section and improved button responsiveness across various screen sizes."
       }
