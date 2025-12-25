@@ -223,24 +223,24 @@ const Results: NextPage = () => {
               <h1 className="mb-2 text-3xl md:text-4xl font-extrabold text-white tracking-tight">Match <span className="text-blue-500">Predictions</span></h1>
               <p className="mb-6 text-neutral-500 text-base font-medium leading-relaxed">Based on your selected filters and data-driven analysis.</p>
               <h2 className="mb-4 text-xl font-extrabold tracking-tight">Your Filters:</h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <motion.div whileHover={{ scale: 1.02 }} className="p-6 bg-[#0a0a0a] border border-white/5 rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
+                <motion.div whileHover={{ scale: 1.02 }} className="p-3 md:p-6 bg-[#0a0a0a] border border-white/5 rounded-2xl md:rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 blur-3xl -mr-12 -mt-12 group-hover:bg-blue-600/10 transition-colors" />
-                  <MdShield className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-6" size={28} />
-                  <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Risk Level</p>
-                  <p className="text-3xl font-black">{filters.oddsType.toUpperCase()}</p>
+                  <MdShield className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-2 md:mb-6" size={24} />
+                  <p className="text-[10px] md:text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Risk Level</p>
+                  <p className="text-lg md:text-3xl font-black">{filters.oddsType.toUpperCase()}</p>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.02 }} className="p-6 bg-[#0a0a0a] border border-white/5 rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                <motion.div whileHover={{ scale: 1.02 }} className="p-3 md:p-6 bg-[#0a0a0a] border border-white/5 rounded-2xl md:rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 blur-3xl -mr-12 -mt-12 group-hover:bg-blue-600/10 transition-colors" />
-                  <IoFootballOutline className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-6" size={28} />
-                  <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Leagues</p>
-                  <p className="text-3xl font-black">{filters.leagues.length} Selected</p>
+                  <IoFootballOutline className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-2 md:mb-6" size={24} />
+                  <p className="text-[10px] md:text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Leagues</p>
+                  <p className="text-lg md:text-3xl font-black">{filters.leagues.length} Selected</p>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.02 }} className="p-6 bg-[#0a0a0a] border border-white/5 rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                <motion.div whileHover={{ scale: 1.02 }} className="p-3 md:p-6 bg-[#0a0a0a] border border-white/5 rounded-2xl md:rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden col-span-2 md:col-span-1">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 blur-3xl -mr-12 -mt-12 group-hover:bg-blue-600/10 transition-colors" />
-                  <MdCalendarToday className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-6" size={28} />
-                  <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Match Day</p>
-                  <p className="text-3xl font-black">{filters.day.charAt(0).toUpperCase() + filters.day.slice(1)}</p>
+                  <MdCalendarToday className="text-neutral-600 group-hover:text-blue-500 transition-colors mb-2 md:mb-6" size={24} />
+                  <p className="text-[10px] md:text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Match Day</p>
+                  <p className="text-lg md:text-3xl font-black">{filters.day.charAt(0).toUpperCase() + filters.day.slice(1)}</p>
                 </motion.div>
               </div>
             </div>
@@ -252,7 +252,7 @@ const Results: NextPage = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex justify-center gap-4 mb-10"
+              className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-10"
             >
               <button
                 onClick={() => setSafestFilter(5)}
@@ -408,7 +408,7 @@ const Results: NextPage = () => {
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="bg-[#0c0c0c] rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/5 p-8 shadow-2xl custom-scrollbar"
+                className="bg-[#0c0c0c] rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/5 p-5 md:p-8 shadow-2xl custom-scrollbar"
                 onClick={e => e.stopPropagation()}
               >
                 <div className="flex justify-between items-start mb-6">
