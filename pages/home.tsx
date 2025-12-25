@@ -123,6 +123,7 @@ const Home: NextPage = () => {
           oddsType,
           leagues: selectedLeagues,
           day,
+          userId: user?.id,
         }),
       });
 
@@ -216,7 +217,7 @@ const Home: NextPage = () => {
         </motion.div>
       </div>
 
-      
+
     </DashboardLayout>
   );
 };
