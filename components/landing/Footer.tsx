@@ -4,9 +4,12 @@ import { AiOutlineHeart } from 'react-icons/ai';
 import { FaXTwitter } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth';
 
 
 const Footer: React.FC = () => {
+    const { user } = useAuth();
+
     return (
         <footer className="bg-white dark:bg-black ">
             <motion.div
@@ -25,6 +28,12 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="flex flex-wrap gap-8 text-sm font-medium">
                         <Link href="/" className="text-gray-500 hover:text-blue-400 transition-colors">Home</Link>
+                        {!user && (
+                            <>
+                                <Link href="/auth/login" className="text-gray-500 hover:text-blue-400 transition-colors">Login</Link>
+                                <Link href="/auth/signup" className="text-gray-500 hover:text-blue-400 transition-colors">Sign Up</Link>
+                            </>
+                        )}
                         <Link href="/changelog" className="text-gray-500 hover:text-blue-400 transition-colors">Changelog</Link>
                         <Link href="/contribute" className="text-gray-500 hover:text-blue-400 transition-colors tracking-tight">Contribute</Link>
                     </div>
