@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
+import { IoStatsChartOutline } from 'react-icons/io5';
 
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
@@ -40,7 +41,7 @@ const LoadingText = () => {
   }, []);
 
   return (
-    <p className="text-white text-xl mt-4 font-bold animate-pulse">
+    <p className="text-white text-xl mt-4 font-extrabold animate-pulse tracking-tight">
       {text}
     </p>
   );
@@ -159,7 +160,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
+    <div className="min-h-screen bg-[#050505] text-white custom-scrollbar">
       <SEO
         title="Dashboard"
         description="Filter high-probability match outcomes by risk level and league."
@@ -173,7 +174,7 @@ const Home: NextPage = () => {
       )}
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b-2 py-3 dark:border-[#18181b] border-gray-200 bg-white/90 backdrop-blur-sm px-4 sm:px-6 lg:px-8 dark:bg-black/50">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 py-4 bg-[#0a0a0a]/80 backdrop-blur-xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <Link href="/dashboard">
@@ -181,13 +182,17 @@ const Home: NextPage = () => {
                 <img src="/logos.png" alt="SafeScore" className="h-10" />
               </div>
             </Link>
-            <div className="flex items-center space-x-4">
-              <div className="text-right ">
-                <p className="text-sm font-bold text-gray-300">
-                  Low-Risk Betting Intelligence
-                </p>
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors hidden sm:block">
+                Dashboard
+              </Link>
+              <div className="flex items-center space-x-4">
+                <div className="text-right ">
+                  <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
+                    Prediction Engine
+                  </p>
+                </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -202,10 +207,10 @@ const Home: NextPage = () => {
           className="space-y-12"
         >
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-              Prediction <span className="text-blue-400">Dashboard</span>
+            <h1 className="text-3xl font-extrabold text-white sm:text-5xl tracking-tight">
+              Prediction <span className="text-blue-500">Engine</span>
             </h1>
-            <p className="mt-2 text-gray-500 dark:text-gray-400 font-medium">Configure your filters to get the most accurate predictions.</p>
+            <p className="mt-4 text-neutral-500 text-lg font-medium leading-relaxed max-w-2xl mx-auto">Configure your filters to generate high-confidence predictions powered by SafeScore's proprietary analysis engine.</p>
           </div>
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
             <RiskLevelSelector oddsType={oddsType} setOddsType={setOddsType} />

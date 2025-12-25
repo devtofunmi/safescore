@@ -4,7 +4,16 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../components/landing/Footer';
-import { FaCheckCircle, FaTimesCircle, FaClock, FaCalendarAlt, FaChartLine, FaChevronDown } from 'react-icons/fa';
+import {
+    IoStatsChartOutline,
+    IoCheckmarkCircleOutline,
+    IoCloseCircleOutline,
+    IoTimeOutline,
+    IoCalendarOutline,
+    IoChevronDownOutline,
+    IoFootballOutline,
+    IoPulseOutline
+} from 'react-icons/io5';
 import { toast } from 'react-toastify';
 import { supabase } from '../lib/supabase';
 
@@ -118,17 +127,17 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                 description="View historical accuracy and results for football predictions across all supported leagues."
             />
 
-            <div className="min-h-screen bg-black text-white font-sans selection:bg-blue-500/30">
-                <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-md">
+            <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500/30 custom-scrollbar">
+                <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md">
                     <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
                         <Link href="/">
                             <img src="/logos.png" alt="SafeScore" className="h-8 cursor-pointer opacity-90 hover:opacity-100 transition-opacity" />
                         </Link>
                         <div className="flex items-center gap-4">
-                            <Link href="/dashboard" className="text-sm font-bold text-gray-400 hover:text-white transition-colors hidden sm:block">
+                            <Link href="/dashboard" className="text-sm font-bold text-neutral-400 hover:text-white transition-colors hidden sm:block">
                                 Dashboard
                             </Link>
-                            <Link href="/home" className="rounded-full cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-gray-200 inline-block font-black uppercase tracking-widest">
+                            <Link href="/home" className="rounded-xl cursor-pointer bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-neutral-200 inline-block font-black uppercase tracking-widest">
                                 Launch Engine
                             </Link>
                         </div>
@@ -140,33 +149,34 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                         initial={{ opacity: 0, y: -20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ margin: "-50px" }}
-                        className="text-center mb-16"
+                        className="text-center mb-16 space-y-4"
                     >
-                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-                            Verified <span className="text-blue-400">Previous Matches</span>
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                            Verified <span className="text-blue-500">History</span>
                         </h1>
-                        <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                        <p className="text-neutral-500 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
                             Full transparency on every prediction. Review our historical performance and see the data behind our accuracy metrics.
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
                         {[
-                            { label: 'Accuracy', val: `${stats.accuracy}%`, icon: FaChartLine, color: 'text-blue-400' },
-                            { label: 'Won', val: stats.won, icon: FaCheckCircle, color: 'text-green-500' },
-                            { label: 'Lost', val: stats.lost, icon: FaTimesCircle, color: 'text-red-500' },
-                            { label: 'Pending', val: stats.pending, icon: FaClock, color: 'text-gray-400' },
+                            { label: 'Accuracy', val: `${stats.accuracy}%`, icon: IoStatsChartOutline, color: 'text-blue-500' },
+                            { label: 'Won', val: stats.won, icon: IoCheckmarkCircleOutline, color: 'text-green-500' },
+                            { label: 'Lost', val: stats.lost, icon: IoCloseCircleOutline, color: 'text-red-500' },
+                            { label: 'Pending', val: stats.pending, icon: IoTimeOutline, color: 'text-neutral-500' },
                         ].map((stat, i) => (
                             <motion.div
                                 key={stat.label}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-[#18181b] border border-white/5 rounded-2xl p-6 text-center shadow-lg"
+                                className="p-6 bg-[#0a0a0a] border border-white/5 rounded-[2rem] hover:border-blue-500/30 transition-all group relative overflow-hidden"
                             >
-                                <div className={`${stat.color} mb-2 flex justify-center`}><stat.icon className="text-2xl" /></div>
-                                <div className="text-3xl font-bold mb-1">{stat.val}</div>
-                                <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">{stat.label}</div>
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/5 blur-3xl -mr-12 -mt-12 group-hover:bg-blue-600/10 transition-colors" />
+                                <stat.icon className={`text-2xl mb-6 ${stat.color}`} />
+                                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">{stat.label}</p>
+                                <p className="text-3xl font-black">{stat.val}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -174,27 +184,28 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
-                        className="bg-[#101012] border border-white/5 rounded-3xl overflow-hidden shadow-2xl"
+                        className="bg-[#0c0c0c] border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl"
                     >
-                        <div className="border-b border-white/5 p-6 flex flex-wrap gap-4 items-center justify-between relative z-20">
+                        <div className="border-b border-white/5 p-8 flex flex-wrap gap-6 items-center justify-between relative z-20">
                             <div className="flex items-center gap-4">
-                                <span className="font-bold text-sm uppercase text-gray-400">Date:</span>
+                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Date</span>
                                 <div className="relative">
                                     <button
                                         onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-                                        className="flex items-center gap-3 bg-[#18181b] px-5 py-2.5 rounded-xl border border-white/10 text-white font-bold min-w-[180px]"
+                                        className={`flex items-center gap-3 bg-[#0a0a0a] px-6 py-3 rounded-2xl border transition-all min-w-[200px] group ${isDateDropdownOpen ? 'border-blue-500/50 ring-2 ring-blue-500/10' : 'border-white/10 hover:border-blue-500/30'}`}
                                     >
-                                        <span className="flex-1 text-left">{selectedDate || 'Choose Date'}</span>
-                                        <FaChevronDown className={`text-gray-500 transition-transform ${isDateDropdownOpen ? 'rotate-180' : ''}`} size={12} />
+                                        <IoCalendarOutline className="text-neutral-500 group-hover:text-blue-500 transition-colors" />
+                                        <span className="flex-1 text-left text-sm font-bold text-white tracking-wide">{selectedDate || 'Select Date'}</span>
+                                        <IoChevronDownOutline className={`text-neutral-500 transition-transform duration-300 ${isDateDropdownOpen ? 'rotate-180 text-blue-500' : ''}`} size={14} />
                                     </button>
 
                                     <AnimatePresence>
                                         {isDateDropdownOpen && (
                                             <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 10 }}
-                                                className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1e] border border-white/10 rounded-xl shadow-2xl overflow-y-auto max-h-[300px] z-50"
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                className="absolute top-full left-0 mt-3 w-full bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-y-auto max-h-[320px] z-50 py-2 custom-scrollbar"
                                             >
                                                 {history.map((day) => (
                                                     <button
@@ -203,9 +214,15 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                                             setSelectedDate(day.date);
                                                             setIsDateDropdownOpen(false);
                                                         }}
-                                                        className={`w-full text-left px-5 py-3 text-sm flex justify-between items-center ${selectedDate === day.date ? 'text-blue-400 bg-blue-500/10' : 'text-gray-400 hover:text-white'}`}
+                                                        className={`w-full text-left px-5 py-3 text-sm flex justify-between items-center transition-all group ${selectedDate === day.date
+                                                                ? 'text-blue-400 bg-blue-600/10 border-l-2 border-blue-500'
+                                                                : 'text-neutral-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'
+                                                            }`}
                                                     >
-                                                        {day.date}
+                                                        <span className="font-bold tracking-wide">{day.date}</span>
+                                                        {selectedDate === day.date && (
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                                        )}
                                                     </button>
                                                 ))}
                                             </motion.div>
@@ -214,17 +231,17 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4 text-sm font-medium text-gray-400">
+                            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-neutral-500">
                                 <span>{currentRecords.length} Predictions</span>
                                 {isRefreshing && (
-                                    <span className="flex items-center gap-2 text-blue-400 text-xs animate-pulse">
-                                        <FaClock className="animate-spin text-[10px]" /> Syncing...
+                                    <span className="flex items-center gap-2 text-blue-500 animate-pulse">
+                                        <IoTimeOutline className="animate-spin" /> Syncing...
                                     </span>
                                 )}
                             </div>
                         </div>
 
-                        <div className="p-6">
+                        <div className="p-4 sm:p-8">
                             <AnimatePresence mode="wait">
                                 {currentRecords.length > 0 ? (
                                     <motion.div
@@ -235,35 +252,53 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                     >
                                         <table className="w-full text-left border-collapse">
                                             <thead>
-                                                <tr className="text-xs text-gray-500 border-b border-white/5">
-                                                    <th className="py-4 font-bold uppercase pl-4">Match</th>
-                                                    <th className="py-4 font-bold uppercase">Prediction</th>
-                                                    <th className="py-4 font-bold uppercase text-center">Result</th>
-                                                    <th className="py-4 font-bold uppercase text-right pr-4">Score</th>
+                                                <tr className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest border-b border-white/5">
+                                                    <th className="py-6 pl-6">Match</th>
+                                                    <th className="py-6">Prediction</th>
+                                                    <th className="py-6 text-center">Result</th>
+                                                    <th className="py-6 text-right pr-6">Score</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="text-sm">
                                                 {currentRecords.map((item) => (
-                                                    <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                                        <td className="py-4 pl-4 font-medium">
-                                                            <span>{truncateText(item.homeTeam)}</span>
-                                                            <span className="text-gray-500 px-2">vs</span>
-                                                            <span>{truncateText(item.awayTeam)}</span>
+                                                    <tr key={item.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                                                        <td className="py-6 pl-6">
+                                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 font-bold text-white">
+                                                                <span className="group-hover:text-blue-400 transition-colors">{item.homeTeam}</span>
+                                                                <span className="text-neutral-600 text-[10px] hidden sm:inline">VS</span>
+                                                                <span className="sm:hidden text-neutral-600 text-xs">vs</span>
+                                                                <span className="group-hover:text-blue-400 transition-colors">{item.awayTeam}</span>
+                                                            </div>
+                                                            <div className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider mt-1">{item.league || 'League Match'}</div>
                                                         </td>
-                                                        <td className="py-4 font-bold text-blue-400">{item.prediction}</td>
-                                                        <td className="py-4 text-center">
-                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase ${item.result === 'Won' ? 'bg-green-500/10 text-green-500' : item.result === 'Lost' ? 'bg-red-500/10 text-red-500' : 'bg-gray-500/10 text-gray-400'}`}>
+                                                        <td className="py-6">
+                                                            <span className="font-black text-blue-500">{item.prediction}</span>
+                                                        </td>
+                                                        <td className="py-6 text-center">
+                                                            <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.result === 'Won' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                                                                item.result === 'Lost' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                                                                    'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                                                }`}>
+                                                                {item.result === 'Won' && <IoCheckmarkCircleOutline size={12} />}
+                                                                {item.result === 'Lost' && <IoCloseCircleOutline size={12} />}
+                                                                {item.result === 'Pending' && <IoTimeOutline size={12} />}
                                                                 {item.result}
                                                             </span>
                                                         </td>
-                                                        <td className="py-4 pr-4 text-right font-mono text-gray-300">{item.score}</td>
+                                                        <td className="py-6 pr-6 text-right font-black text-neutral-300 font-mono tracking-widest">{item.score}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
                                     </motion.div>
                                 ) : (
-                                    <div className="text-center py-12 text-gray-500">No records found.</div>
+                                    <div className="text-center py-20">
+                                        <div className="w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4 text-neutral-600">
+                                            <IoCalendarOutline size={32} />
+                                        </div>
+                                        <h3 className="text-white font-bold text-lg">No records found</h3>
+                                        <p className="text-neutral-500 text-sm mt-2">There were no predictions generated for this date.</p>
+                                    </div>
                                 )}
                             </AnimatePresence>
                         </div>

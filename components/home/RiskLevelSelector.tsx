@@ -8,11 +8,11 @@ interface RiskLevelSelectorProps {
 
 const RiskLevelSelector: React.FC<RiskLevelSelectorProps> = ({ oddsType, setOddsType }) => {
   return (
-    <section className="card">
-      <h2 className="mb-6 text-2xl font-extrabold">
+    <section className="p-8 bg-[#0c0c0c] border border-white/5 rounded-3xl">
+      <h2 className="mb-6 text-2xl font-extrabold tracking-tight">
         1. Select Risk Level
       </h2>
-      <p className="mb-6 font-bold text-gray-300">
+      <p className="mb-6 font-medium text-neutral-500 leading-relaxed">
         Choose your preferred betting risk profile
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -26,9 +26,9 @@ const RiskLevelSelector: React.FC<RiskLevelSelectorProps> = ({ oddsType, setOdds
             <button
               key={option.id}
               onClick={() => setOddsType(option.id)}
-              className={`border-2 p-6 cursor-pointer rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${oddsType === option.id
-                ? 'border-blue-400 bg-blue-400 text-white shadow-lg shadow-blue-400/20'
-                : 'border-[#18181b] bg-black hover:border-blue-400/50 hover:bg-[#18181b] text-gray-300'
+              className={`border p-6 cursor-pointer rounded-2xl font-bold text-lg transition-all transform hover:scale-105 ${oddsType === option.id
+                ? 'border-blue-500/20 bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                : 'border-white/5 bg-[#0a0a0a] hover:border-blue-500/30 hover:bg-white/[0.03] text-neutral-300'
                 }`}
             >
               <div className="text-3xl mb-2 flex justify-center">
