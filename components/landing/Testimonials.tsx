@@ -132,25 +132,32 @@ const MarqueeRow = ({ items, reverse = false }: { items: any[], reverse?: boolea
 
 const Testimonials: React.FC = () => {
     return (
-        <section className="py-24 bg-white dark:bg-[#050505] overflow-hidden border-y border-white/5">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <section className="py-32 bg-[#050505] overflow-hidden border-y border-white/5 relative">
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, margin: "-100px" }}
                     transition={{ duration: 0.8 }}
-                    className="text-center mb-16"
+                    className="text-center mb-20"
                 >
-                    <h2 className="text-base font-semibold uppercase tracking-wide text-blue-400">Wall of Love</h2>
-                    <p className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-                        What Early Users Are Saying
-                    </p>
-                    <p className="mt-4 max-w-2xl text-lg text-gray-500 dark:text-gray-400 mx-auto leading-relaxed">
+                    <motion.span
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold  uppercase tracking-[0.2em] mb-6"
+                    >
+                        Wall of Love
+                    </motion.span>
+                    <h2 className="text-4xl font-black text-white sm:text-6xl tracking-tight">
+                        What Early Users<br /><span className='text-blue-600'>Are Saying</span>
+                    </h2>
+                    <p className="mt-6 max-w-2xl text-lg text-gray-400 mx-auto leading-relaxed font-medium">
                         Real feedback from people testing SafeScore predictions.
                     </p>
                 </motion.div>
 
-                {/* Marquee Rows with Fade-In animation (Repeatable) */}
+                {/* Marquee Rows */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -161,9 +168,9 @@ const Testimonials: React.FC = () => {
                     <MarqueeRow items={Row1} />
                     <MarqueeRow items={Row2} reverse />
 
-                    {/* Global Gradient Fades for Smooth Edges */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white dark:from-black to-transparent z-10"></div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white dark:from-black to-transparent z-10"></div>
+                    {/* Side Shadows / Edge Fades */}
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent z-10"></div>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#050505] via-[#050505]/80 to-transparent z-10"></div>
                 </motion.div>
             </div>
         </section>

@@ -1,119 +1,211 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { FaArrowRight } from 'react-icons/fa6';
-import { motion, Variants } from 'framer-motion';
+import { FaArrowRight, FaChartLine, FaShieldHalved, FaBolt } from 'react-icons/fa6';
+import { motion } from 'framer-motion';
+
+const PredictionCard = ({ teamA, teamB, prob, delay }: { teamA: string, teamB: string, prob: string, delay: number }) => (
+    <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay, duration: 0.8 }}
+        className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl shadow-2xl flex items-center justify-between gap-4 w-full max-w-[280px]"
+    >
+        <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-wider text-blue-400 font-bold mb-1 flex items-center gap-1">
+                <FaBolt className="text-[8px]" /> High Probability
+            </span>
+            <span className="text-sm font-semibold text-white">{teamA} vs {teamB}</span>
+        </div>
+        <div className="flex flex-col items-end">
+            <span className="text-xl font-bold text-blue-400">{prob}%</span>
+            <span className="text-[10px] text-gray-400 uppercase">Confidence</span>
+        </div>
+    </motion.div>
+);
 
 const Hero: React.FC = () => {
     const router = useRouter();
 
-    const fadeIn: Variants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            transition: {
-                delay: i * 0.1,
-                duration: 0.8,
-                ease: [0.21, 0.47, 0.32, 0.98] as const,
-            },
-        }),
-    };
-
     return (
-        <div className="relative h-screen overflow-hidden bg-white dark:bg-[#050505] pt-32 pb-16 sm:pb-24">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ margin: "-100px" }}
-                        transition={{ duration: 0.8 }}
-                        className="inline-flex items-center rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-600 dark:text-blue-500 mb-6"
-                    >
-                        <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span>
-                        v1.2.0 Now Live
-                    </motion.div>
+        <div className="relative min-h-[90vh] lg:min-h-screen overflow-hidden bg-[#050505] pt-32 pb-16 sm:pb-24 flex items-center">
+            {/* Background elements */}
+            <div className="absolute inset-0 z-0">
 
-                    <motion.h1
-                        custom={1}
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        className="text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-7xl mb-6"
-                    >
-                        <span className="block">Predict smarter, </span>
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400">
-                            not harder.
-                        </span>
-                    </motion.h1>
+                <div className="absolute inset-0 bg-[#050505]"></div>
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.08] brightness-100 contrast-100"></div>
 
-                    <motion.p
-                        custom={2}
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        className="mx-auto mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-400"
-                    >
-                        SafeScore analyzes match stats and form across 14+ leagues to generate high-probability football predictions.
-                        Stop guessing. Filter by risk and make more informed picks.
-                    </motion.p>
-
-                    <motion.div
-                        custom={3}
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        className="mt-8 flex flex-col items-center md:flex-row text-center justify-center gap-4"
-                    >
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => router.push('/home')}
-                            className="w-fit cursor-pointer flex justify-center items-center rounded-full bg-blue-600 px-10 py-4 text-base font-semibold text-white shadow-lg hover:bg-blue-500 transition-all duration-200"
-                        >
-                            Start Predicting Free
-                            <FaArrowRight className="ml-2" />
-                        </motion.button>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => {
-                                const element = document.getElementById('how-it-works');
-                                element?.scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            className="w-fit  cursor-pointer items-center rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-zinc-900 px-8 py-4 text-base font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all duration-200"
-                        >
-                            How it Works
-                        </motion.button>
-                    </motion.div>
-
-                    <motion.div
-                        custom={4}
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        className="mt-12 flex flex-col md:flex-row justify-center items-center space-x-8 text-gray-400 text-sm"
-                    >
-                        <div className="flex items-center">
-                            <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            Safe Mode (Low-Risk Picks)
-                        </div>
-                        <div className="flex mt-3 md:mt-0 items-center">
-                            <svg className="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-                            </svg>
-                            14+ Leagues Covered
-                        </div>
-                    </motion.div>
-                </div>
             </div>
 
-            {/* Background Gradient Blob */}
-            <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob dark:mix-blend-normal dark:opacity-20"></div>
-            <div className="absolute top-0 -right-4 w-72 h-72 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000 dark:mix-blend-normal dark:opacity-20"></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000 dark:mix-blend-normal dark:opacity-20"></div>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                    {/* Left content */}
+                    <div className="text-left max-w-2xl mx-auto lg:mx-0">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false }}
+                            className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-bold text-blue-400 mb-8 tracking-widest uppercase"
+                        >
+                            <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2 shadow-[0_0_8px_rgba(59,130,246,0.6)] animate-pulse"></span>
+                            Predictive Intelligence v1.2.0
+                        </motion.div>
+
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
+                            className="text-5xl font-black tracking-tight text-white sm:text-7xl mb-8 leading-[1.1]"
+                        >
+                            Predict smarter, <br />
+                            <span className="text-blue-500">
+                                not harder.
+                            </span>
+                        </motion.h1>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="text-lg text-gray-400 mb-10 leading-relaxed font-medium max-w-xl"
+                        >
+                            SafeScore analyzes match stats and form across 14+ leagues to generate high-probability football predictions. Stop guessing. Filter by risk and make more informed picks.
+                        </motion.p>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="flex flex-col sm:flex-row gap-4"
+                        >
+                            <button
+                                onClick={() => router.push('/home')}
+                                className="group relative overflow-hidden flex justify-center items-center rounded-full bg-blue-600 px-8 py-5 text-base font-bold text-white shadow-xl hover:bg-blue-500 transition-all duration-300 cursor-pointer"
+                            >
+                                <span className="relative flex items-center">
+                                    Start Predicting Now
+                                    <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    const element = document.getElementById('features');
+                                    element?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 backdrop-blur-sm px-8 py-5 text-base font-bold text-white hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                            >
+                                Explore Features
+                            </button>
+                        </motion.div>
+
+
+                    </div>
+
+                    {/* Right content - Abstract Product Mockup */}
+                    <div className="relative hidden lg:block">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{
+                                opacity: 1,
+                                scale: 1,
+                                y: [0, -15, 0]
+                            }}
+                            transition={{
+                                opacity: { duration: 1 },
+                                scale: { duration: 1 },
+                                y: {
+                                    duration: 5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }
+                            }}
+                            className="relative z-10 aspect-square max-w-[500px] ml-auto"
+                        >
+                            {/* Main "Dashboard" Frame */}
+                            <div className="absolute inset-0 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-2xl overflow-hidden flex">
+                                {/* Mockup Sidebar */}
+                                <div className="w-16 sm:w-20 border-r border-white/5 bg-white/5 p-4 flex flex-col items-center gap-4 hidden sm:flex">
+                                    <div className="flex gap-1 mb-6">
+                                        <div className="h-1.5 w-1.5 rounded-full bg-red-400/30"></div>
+                                        <div className="h-1.5 w-1.5 rounded-full bg-yellow-400/30"></div>
+                                        <div className="h-1.5 w-1.5 rounded-full bg-green-400/30"></div>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 mb-6"></div>
+                                    <div className="space-y-4">
+                                        <div className="w-8 h-2 bg-white/10 rounded-full"></div>
+                                        <div className="w-8 h-2 bg-white/5 rounded-full"></div>
+                                        <div className="w-8 h-2 bg-white/5 rounded-full"></div>
+                                        <div className="w-8 h-2 bg-white/5 rounded-full"></div>
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 p-8">
+                                    <div className="flex items-center justify-between mb-8 opacity-50">
+                                        <div className="h-2 w-32 bg-white/10 rounded-full"></div>
+                                        <div className="h-6 w-6 rounded-full bg-white/10"></div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="h-24 bg-white/5 rounded-2xl border border-white/5 p-4 flex flex-col justify-end">
+                                                <div className="h-1 w-1/2 bg-blue-400/50 rounded-full mb-2"></div>
+                                                <div className="h-3 w-3/4 bg-white/20 rounded-full"></div>
+                                            </div>
+                                            <div className="h-24 bg-blue-500/10 rounded-2xl border border-blue-500/20 p-4 flex flex-col justify-end">
+                                                <div className="h-1 w-1/2 bg-teal-400/50 rounded-full mb-2"></div>
+                                                <div className="h-3 w-3/4 bg-white/40 rounded-full"></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="h-40 bg-white/5 rounded-2xl border border-white/5 p-4 relative overflow-hidden">
+                                            <div className="flex justify-between items-center mb-4 relative z-10">
+                                                <div className="h-2 w-20 bg-white/20 rounded-full"></div>
+                                                <div className="h-2 w-10 bg-white/10 rounded-full"></div>
+                                            </div>
+                                            <div className="flex items-end gap-2 h-20 relative z-10">
+                                                {[40, 70, 45, 90, 65, 80, 55].map((h, i) => (
+                                                    <motion.div
+                                                        key={i}
+                                                        initial={{ height: 0 }}
+                                                        animate={{ height: `${h}%` }}
+                                                        transition={{ delay: 1 + (i * 0.1), duration: 1 }}
+                                                        className="flex-1 bg-blue-500/80 rounded-t-sm"
+                                                    />
+                                                ))}
+                                            </div>
+                                            <div className="absolute inset-0 bg-blue-500/5"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Floating Prediction Cards */}
+                            <div className="absolute -right-8 top-12 z-20">
+                                <PredictionCard teamA="Man City" teamB="Arsenal" prob="89" delay={1.2} />
+                            </div>
+                            <div className="absolute -left-12 bottom-20 z-20">
+                                <PredictionCard teamA="Real Madrid" teamB="Barca" prob="76" delay={1.4} />
+                            </div>
+
+                            {/* Feature Pills */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 1.6 }}
+                                className="absolute right-12 bottom-8 z-20 flex gap-2"
+                            >
+                                <div className="bg-green-500/20 border border-green-500/30 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2">
+                                    <FaShieldHalved className="text-green-400 text-xs" />
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">Safe Mode</span>
+                                </div>
+                                <div className="bg-blue-500/20 border border-blue-500/30 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2">
+                                    <FaChartLine className="text-blue-400 text-xs" />
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">AI Analysis</span>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

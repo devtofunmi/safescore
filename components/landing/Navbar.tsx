@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '@/lib/auth';
 
 const Navbar: React.FC = () => {
@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
             <motion.nav
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
-                className={`fixed w-full z-[1000] transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-md shadow-lg border-b border-white/10' : 'bg-transparent'}`}
+                className={`fixed w-full z-[1000] transition-all duration-300 ${scrolled ? 'bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 shadow-2xl shadow-black/50' : 'bg-transparent'}`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-20">
@@ -51,36 +51,36 @@ const Navbar: React.FC = () => {
                         </div>
 
                         {/* Desktop Menu */}
-                        <div className="hidden md:flex items-center space-x-8">
-                            <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="text-gray-600 dark:text-gray-300 hover:text-blue-500 cursor-pointer font-bold transition-colors">How it works</button>
-                            <Link href="/previous-matches" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                        <div className="hidden md:flex items-center space-x-10">
+                            <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="text-gray-400 hover:text-white cursor-pointer font-bold transition-all text-sm tracking-tight">How it works</button>
+                            <Link href="/previous-matches" className="text-gray-400 hover:text-white font-bold transition-all text-sm tracking-tight cursor-pointer">
                                 Previous Matches
                             </Link>
 
                             {user ? (
-                                <div className="flex items-center gap-4">
-                                    <Link href="/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                                <div className="flex items-center gap-6">
+                                    <Link href="/dashboard" className="text-gray-400 hover:text-white font-bold transition-all text-sm tracking-tight cursor-pointer">
                                         Dashboard
                                     </Link>
-                                    <div className="h-8 w-[1px] bg-white/10 italic"></div>
+                                    <div className="h-4 w-[1px] bg-white/10 italic"></div>
                                     <button
                                         onClick={handleSignOut}
-                                        className="flex items-center gap-2 text-red-500 hover:text-red-400 font-bold transition-colors"
+                                        className="flex items-center gap-2 text-red-500/80 hover:text-red-500 font-bold transition-all text-sm cursor-pointer"
                                     >
-                                        <FaSignOutAlt />
+                                        <FaSignOutAlt className="text-xs" />
                                         Logout
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex items-center gap-4">
-                                    <Link href="/auth/login" className="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-bold transition-colors">
+                                <div className="flex items-center gap-6">
+                                    <Link href="/auth/login" className="text-gray-400 hover:text-white font-bold transition-all text-sm tracking-tight cursor-pointer">
                                         Login
                                     </Link>
                                     <button
                                         onClick={() => router.push('/auth/signup')}
-                                        className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-600/30 hover:scale-105 active:scale-95"
+                                        className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-500 cursor-pointer transition-all shadow-lg shadow-blue-600/20 hover:scale-105 active:scale-95 text-sm"
                                     >
-                                        Join Now
+                                        Get Started
                                     </button>
                                 </div>
                             )}

@@ -277,7 +277,7 @@ export default function DashboardPage() {
                         </div>
                         <Link
                             href="/pricing"
-                            className="relative z-10 bg-blue-500/20 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-blue-600/20 flex items-center gap-2 group/btn whitespace-nowrap"
+                            className="relative z-10 bg-white hover:bg-zinc-200 transition-all hover:scale-105 text-black px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-blue-600/20 flex items-center gap-2 group/btn whitespace-nowrap"
                         >
                             Get Unlimited Access
                             <IoChevronForwardOutline className="group-hover/btn:translate-x-1 transition-transform" />
