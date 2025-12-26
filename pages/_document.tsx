@@ -21,7 +21,9 @@ export default function Document() {
         <link rel="icon" type="image/png" sizes="32x32" href="/logo-192x192-black.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/logo-192x192-black.png" />
 
-
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
 
         <script dangerouslySetInnerHTML={{ __html: setInitialTheme }} />
       </Head>
