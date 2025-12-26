@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiDownload, FiX, FiCheckCircle } from 'react-icons/fi';
+import {
+    IoDownloadOutline,
+    IoCloseOutline,
+    IoShieldCheckmarkOutline,
+    IoCheckmarkCircleOutline
+} from 'react-icons/io5';
 
 const PWAInstallPrompt: React.FC = () => {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -69,29 +74,38 @@ const PWAInstallPrompt: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9, y: 50 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 50 }}
-                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md"
+                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-[420px]"
             >
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl bg-opacity-90">
-                    <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 flex-shrink-0 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <img src="/logo.png" alt="SafeScore Icon" className="w-10 h-10 object-contain" />
+                <div className="bg-[#0c0c0c] border border-white/5 rounded-[2rem] p-6 shadow-2xl backdrop-blur-xl bg-opacity-95 relative overflow-hidden group">
+                    {/* Subtle Glow Background */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-3xl -mr-16 -mt-16 group-hover:bg-blue-600/20 transition-colors" />
+
+                    <div className="flex items-start gap-5 relative z-10">
+                        <div className="w-16 h-16 flex-shrink-0 bg-blue-600/10 border border-blue-600/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-lg">
+                            <img src="/logo.png" alt="SafeScore Icon" className="w-10 h-10 object-contain p-1" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-white font-bold text-lg mb-1">Install SafeScore</h3>
-                            <p className="text-zinc-400 text-sm mb-4 leading-relaxed">
-                                Get instant access to predictions and faster scores right from your home screen.
+                            <div className="flex justify-between items-start">
+                                <h3 className="text-white font-black text-xl mb-1 tracking-tight">Install SafeScore</h3>
+                                <button aria-label="Close" onClick={handleDismiss} className="text-neutral-600 hover:text-white transition-colors cursor-pointer">
+                                    <IoCloseOutline size={24} />
+                                </button>
+                            </div>
+                            <p className="text-neutral-500 text-sm mb-6 leading-relaxed font-medium">
+                                Get instant access to daily high-confidence predictions on your home screen.
                             </p>
-                            <div className="flex flex-col md:flex-row gap-3">
+
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleInstallClick}
-                                    className="cursor-pointer flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95"
+                                    className="cursor-pointer flex-1 bg-blue-600/50 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/30"
                                 >
-                                    <FiDownload size={18} />
+                                    <IoDownloadOutline size={20} />
                                     Install Now
                                 </button>
                                 <button
                                     onClick={handleDismiss}
-                                    className="cursor-pointer px-4 py-2.5 text-zinc-400 hover:text-white font-medium transition-colors"
+                                    className="cursor-pointer px-4 py-3 text-neutral-500 hover:text-blue-500 font-bold text-sm transition-colors"
                                 >
                                     Maybe later
                                 </button>
@@ -99,9 +113,9 @@ const PWAInstallPrompt: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-zinc-800 flex items-center gap-2 text-xs text-zinc-500">
-                        <FiCheckCircle className="text-green-500" />
-                        <span>Faster, offline-ready & secure</span>
+                    <div className="mt-6 pt-5 border-t border-white/5 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-600 relative z-10">
+                        <IoShieldCheckmarkOutline className="text-blue-500" size={14} />
+                        <span>Faster • Offline-ready • Secure</span>
                     </div>
                 </div>
             </motion.div>
