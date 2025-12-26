@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaXTwitter } from 'react-icons/fa6';
 import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar } from 'react-icons/fa';
 import { MdShield, MdCalendarToday } from 'react-icons/md';
-import { IoFootballOutline } from 'react-icons/io5';
+import { IoFootballOutline, IoDiamondOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 import Footer from '../components/landing/Footer';
 import { track } from '@vercel/analytics';
@@ -84,13 +84,24 @@ const getConfidenceColor = (confidence: number) => {
 
 
 
+const formatBetType = (betType: string) => {
+  if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score';
+  if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'No BTTS';
+  return betType;
+};
+
 const getBetTypeBadge = (betType: string) => {
   const badges: { [key: string]: JSX.Element } = {
-    'Over 0.5 goals': <FaFutbol />,
-    'Double chance': <FaDice />,
-    'Home win': <FaTrophy />,
-    'Away win': <FaPlaneDeparture />,
-    'Both teams score': <FaBullseye />,
+    'Over 0.5 Goals': <FaFutbol />,
+    'Over 1.5 Goals': <FaFutbol />,
+    'Over 2.5 Goals': <FaFutbol />,
+    'Draw': <FaDice />,
+    'Home Team to Win': <FaTrophy />,
+    'Away Team to Win': <FaPlaneDeparture />,
+    'Both Teams to Score: Yes': <FaBullseye />,
+    'BTTS: Yes': <FaBullseye />,
+    'Home Team to Win or Draw': <FaDice />,
+    'Away Team to Win or Draw': <FaDice />,
   };
   return badges[betType] || <FaChartBar />;
 };
@@ -111,7 +122,7 @@ const Results: NextPage = () => {
 
   const [selectedPrediction, setSelectedPrediction] = React.useState<Prediction | null>(null);
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isPro } = useAuth();
 
   React.useEffect(() => {
     if (!authLoading && !user) {
@@ -319,78 +330,85 @@ const Results: NextPage = () => {
                 layout
                 className="grid grid-cols-1 gap-6 lg:grid-cols-3"
               >
-                {displayedPredictions.map((prediction, index) => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: (index % 3) * 0.1, type: "spring", stiffness: 100 }}
-                    key={prediction.id || index}
-                    className={`border border-white/5 bg-[#0c0c0c] p-6 rounded-3xl transition-all relative overflow-hidden hover:bg-white/[0.03] group ${index < 10
-                      ? 'border-blue-500/20'
-                      : ''
-                      }`}
-                  >
-                    {index < 10 && (
-                      <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-blue-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-bl-2xl shadow-lg shadow-blue-500/20">
-                        AI VERIFIED
-                      </div>
-                    )}
-                    <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-4">
-                      <div>
-                        <p className="text-sm font-bold text-white tracking-tight">{prediction.league}</p>
-                      </div>
-                      <div className={`rounded-full px-4 py-2 font-extrabold text-xs uppercase tracking-widest ${getConfidenceColor(prediction.confidence)}`}>{prediction.confidence}%</div>
-                    </div>
-                    <div className="mb-6">
-                      <div className="grid grid-cols-3 items-center gap-4">
-                        <div className="text-center"><p className="font-bold text-base" title={prediction.team1}>{truncateText(prediction.team1)}</p></div>
-                        <div className="text-center text-neutral-500 font-bold">vs</div>
-                        <div className="text-center"><p className="font-bold text-base" title={prediction.team2}>{truncateText(prediction.team2)}</p></div>
-                      </div>
-                    </div>
-                    <div className="mb-6 space-y-4">
-                      <div className="rounded-2xl bg-[#0a0a0a] border border-white/5 p-4 text-white">
-                        <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">BET TYPE</p>
-                        <div className="mt-2 flex items-center space-x-3">
-                          <span className="text-xl text-blue-500">{getBetTypeBadge(prediction.betType)}</span>
-                          <p className="text-sm font-bold">{prediction.betType}</p>
-                        </div>
-                      </div>
-                      <div className="relative cursor-pointer" onClick={() => handleTooltipToggle(prediction.id)}>
-                        <div className="rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 hover:bg-white/[0.03] transition-all">
-                          <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">CONFIDENCE SCORE</p>
-                          <p className="text-2xl font-bold text-white mt-1">{prediction.confidence}%</p>
-                        </div>
-                        {activeTooltipId === prediction.id && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-2xl bg-[#0a0a0a] border border-blue-500/30 p-4 text-center text-sm text-white z-10 shadow-2xl backdrop-blur-xl"
-                          >
-                            Confidence reflects both the amount of data available and the predicted strength difference between the teams.
-                          </motion.div>
-                        )}
-                      </div>
-                    </div>
+                {displayedPredictions.map((prediction, index) => {
+                  const isLocked = !isPro && index >= 5;
+                  const isConfidenceLocked = !isPro && prediction.confidence >= 80;
+
+                  return (
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 cursor-pointer hover:bg-white/[0.03] transition-all"
-                      onClick={() => openDetails(prediction)}
+                      layout
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: (index % 3) * 0.1, type: "spring", stiffness: 100 }}
+                      key={prediction.id || index}
+                      className={`border border-white/5 bg-[#0c0c0c] p-6 rounded-3xl transition-all relative overflow-hidden hover:bg-white/[0.03] group ${index < 10
+                        ? 'border-blue-500/20'
+                        : ''
+                        }`}
                     >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-xs font-bold text-blue-500 uppercase tracking-widest">AI ANALYSIS</p>
-                          <p className="mt-1 font-bold text-white text-sm">View detailed stats & analysis</p>
+                      {index < 10 && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-blue-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-bl-2xl shadow-lg shadow-blue-500/20">
+                          AI VERIFIED
                         </div>
-                        <div className="bg-blue-500 p-2 rounded-full">
-                          <FaChartBar className="text-white" />
+                      )}
+                      <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+                        <div>
+                          <p className="text-sm font-bold text-white tracking-tight">{prediction.league}</p>
+                        </div>
+                        <div className={`rounded-full px-4 py-2 font-extrabold text-xs uppercase tracking-widest ${getConfidenceColor(prediction.confidence)}`}>
+                          {isConfidenceLocked ? 'PREMIUM' : `${prediction.confidence}%`}
                         </div>
                       </div>
+                      <div className="mb-6">
+                        <div className="grid grid-cols-3 items-center gap-4">
+                          <div className="text-center"><p className="font-bold text-base" title={prediction.team1}>{truncateText(prediction.team1)}</p></div>
+                          <div className="text-center text-neutral-500 font-bold">vs</div>
+                          <div className="text-center"><p className="font-bold text-base" title={prediction.team2}>{truncateText(prediction.team2)}</p></div>
+                        </div>
+                      </div>
+                      <div className="mb-6 space-y-4">
+                        <div className={`rounded-2xl bg-[#0a0a0a] border border-white/5 p-4 text-white relative overflow-hidden ${isConfidenceLocked ? 'blur-[3px]' : ''}`}>
+                          <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">BET TYPE</p>
+                          <div className="mt-2 flex items-center space-x-3">
+                            <span className="text-xl text-blue-500">{isConfidenceLocked ? <FaDice /> : getBetTypeBadge(prediction.betType)}</span>
+                            <p className="text-sm font-bold">{isConfidenceLocked ? 'Unlock Prediction' : formatBetType(prediction.betType)}</p>
+                          </div>
+                          {isConfidenceLocked && (
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[4px]">
+                              <IoDiamondOutline className="text-blue-500 animate-pulse" size={20} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="relative cursor-pointer" onClick={() => !isConfidenceLocked && handleTooltipToggle(prediction.id)}>
+                          <div className={`rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 hover:bg-white/[0.03] transition-all ${isConfidenceLocked ? 'blur-[2px]' : ''}`}>
+                            <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">CONFIDENCE SCORE</p>
+                            <p className="text-2xl font-bold text-white mt-1">{isConfidenceLocked ? 'HIDDEN' : `${prediction.confidence}%`}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`rounded-2xl border border-white/5 p-4 cursor-pointer transition-all ${isLocked || isConfidenceLocked ? 'bg-blue-600 shadow-lg shadow-blue-600/20' : 'bg-[#0a0a0a] hover:bg-white/[0.03]'}`}
+                        onClick={() => (isLocked || isConfidenceLocked) ? router.push('/pricing') : openDetails(prediction)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className={`text-xs font-bold uppercase tracking-widest ${isLocked || isConfidenceLocked ? 'text-white' : 'text-blue-500'}`}>
+                              {isLocked || isConfidenceLocked ? 'UPGRADE TO VIEW' : 'AI ANALYSIS'}
+                            </p>
+                            <p className={`mt-1 font-bold text-sm ${isLocked || isConfidenceLocked ? 'text-white/80' : 'text-white'}`}>
+                              {isLocked || isConfidenceLocked ? 'Unlock for full statistics' : 'View detailed stats & analysis'}
+                            </p>
+                          </div>
+                          <div className={`${isLocked || isConfidenceLocked ? 'bg-white/20' : 'bg-blue-500'} p-2 rounded-full`}>
+                            {isLocked || isConfidenceLocked ? <IoDiamondOutline className="text-white" /> : <FaChartBar className="text-white" />}
+                          </div>
+                        </div>
+                      </motion.div>
                     </motion.div>
-                  </motion.div>
-                ))}
+                  );
+                })}
               </motion.div>
             )}
           </AnimatePresence>
