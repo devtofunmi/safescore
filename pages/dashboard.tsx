@@ -12,6 +12,7 @@ import {
     IoArrowForwardOutline,
     IoChevronForwardOutline,
     IoRocketOutline,
+    IoDiamondOutline,
 } from 'react-icons/io5';
 import { useRouter } from 'next/router';
 import { supabase } from '@/lib/supabase';
@@ -20,7 +21,7 @@ import DashboardLayout from '../components/DashboardLayout';
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { user, signOut, loading: authLoading } = useAuth();
+    const { user, signOut, loading: authLoading, isPro, isTrialActive, daysRemaining } = useAuth();
     const [predictions, setPredictions] = useState<Prediction[]>([]);
     const [stats, setStats] = useState({
         todayCount: 0,
@@ -167,13 +168,13 @@ export default function DashboardPage() {
                 });
 
                 // Sort: Today first, then soonest future, then latest past
-                const sorted = allActiveItems.sort((a, b) => {
+                let sorted = allActiveItems.sort((a, b) => {
                     if (a.pScore !== b.pScore) return a.pScore - b.pScore;
                     if (a.pScore === 1) return a.timestamp - b.timestamp; // Future: chronological
                     return b.timestamp - a.timestamp; // Today or Past: latest first
                 });
 
-                setPredictions(sorted.slice(0, 5));
+                setPredictions(sorted.slice(0, 5)); // Final slice (limit 5)
 
                 // Process Stats - Strictly for current user
                 const todayCount = sorted.filter(p => p.targetDate === todayLocalStr).length;
@@ -231,7 +232,6 @@ export default function DashboardPage() {
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
             </Head>
             <div className="max-w-6xl mx-auto space-y-12">
-
                 {/* Header */}
                 <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                     <div>
@@ -257,6 +257,37 @@ export default function DashboardPage() {
 
                     </div>
                 </header>
+
+                {!isPro && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="p-8 bg-blue-600/5 border border-blue-500/10 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-sm relative overflow-hidden group shadow-2xl shadow-blue-600/5"
+                    >
+                        <div className="relative z-10">
+                            <h2 className="text-2xl md:text-3xl font-black mb-3 flex items-center gap-3 text-white">
+                                <span className="bg-blue-500/20 p-2 rounded-xl text-blue-500">
+                                    <IoDiamondOutline size={28} className="animate-pulse" />
+                                </span>
+                                Upgrade to SafeScore Pro
+                            </h2>
+                            <p className="text-neutral-400 font-medium max-w-xl text-lg">
+                                Unlock unlimited daily predictions, full AI analysis for every match, and exclusive high-confidence signals.
+                            </p>
+                        </div>
+                        <Link
+                            href="/pricing"
+                            className="relative z-10 bg-blue-500/20 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-blue-600/20 flex items-center gap-2 group/btn whitespace-nowrap"
+                        >
+                            Get Unlimited Access
+                            <IoChevronForwardOutline className="group-hover/btn:translate-x-1 transition-transform" />
+                        </Link>
+
+                        {/* Background Accents */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4" />
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-600/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4" />
+                    </motion.div>
+                )}
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
