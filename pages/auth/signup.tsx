@@ -34,6 +34,7 @@ export default function SignUpPage() {
                 options: {
                     data: {
                         full_name: fullName,
+                        plan_type: 'free',
                     },
                     emailRedirectTo: `${window.location.origin}/auth/callback`,
                 },
