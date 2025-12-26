@@ -9,8 +9,6 @@ import {
     IoSpeedometerOutline,
     IoFootballOutline,
     IoPulseOutline,
-    IoDiamondOutline,
-    IoLogOutOutline,
     IoArrowForwardOutline,
     IoChevronForwardOutline,
     IoRocketOutline,
@@ -23,7 +21,7 @@ import DashboardLayout from '../components/DashboardLayout';
 export default function DashboardPage() {
     const router = useRouter();
     const { user, signOut, loading: authLoading } = useAuth();
-    const [realPredictions, setRealPredictions] = useState<Prediction[]>([]);
+    const [predictions, setPredictions] = useState<Prediction[]>([]);
     const [stats, setStats] = useState({
         todayCount: 0,
         avgConfidence: 0,
@@ -92,6 +90,11 @@ export default function DashboardPage() {
         const fetchData = async () => {
             setLoadingData(true);
             try {
+                // Use local date metrics to avoid UTC alignment issues
+                const now = new Date();
+                const todayLocalStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                const todayMidnight = new Date(todayLocalStr).getTime();
+
                 // Fetch History for Stats and Active items
                 const { data: history, error } = await supabase
                     .from('history')
@@ -104,8 +107,8 @@ export default function DashboardPage() {
                 const pendingFromHistory: any[] = [];
                 history?.forEach(record => {
                     record.predictions?.forEach((p: any) => {
-                        // Show items belonging to this user OR legacy items without a userId
-                        if ((p.result === 'Pending' || !p.result) && (!p.userId || p.userId === user.id)) {
+                        // STRICT USER FILTERING: Only show items belonging to this specific user.id
+                        if ((p.result === 'Pending' || !p.result) && p.userId === user.id) {
                             pendingFromHistory.push({
                                 ...p,
                                 // Normalize legacy field names to current format
@@ -114,7 +117,6 @@ export default function DashboardPage() {
                                 betType: p.prediction,
                                 confidence: p.confidence || 75,
                                 league: p.league,
-                                // Use the history record date as the primary source
                                 displayDate: record.date
                             });
                         }
@@ -125,53 +127,75 @@ export default function DashboardPage() {
                 const stored = sessionStorage.getItem('predictions');
                 let sessionPreds: any[] = [];
                 if (stored && stored !== 'undefined') {
-                    sessionPreds = JSON.parse(stored).map((p: any) => ({
-                        ...p,
-                        displayDate: p.matchTime?.split('T')[0] || p.matchTime?.split(' ')[0] || 'Today'
-                    }));
+                    sessionPreds = JSON.parse(stored).map((p: any) => {
+                        let mDate = todayLocalStr;
+                        if (p.matchTime && p.matchTime.includes('-')) {
+                            const datePart = p.matchTime.split('T')[0].split(' ')[0];
+                            if (/^\d{4}-\d{2}-\d{2}/.test(datePart)) {
+                                mDate = datePart;
+                            }
+                        }
+                        return {
+                            ...p,
+                            displayDate: mDate
+                        };
+                    });
                 }
 
-                // Combine sources, prioritizing history (persisted) then session
-                // Use a Map to prevent duplicates by match ID or teams
+                // Combine and prioritized list
                 const combinedMap = new Map();
-                [...pendingFromHistory, ...sessionPreds].forEach(p => {
+
+                // Merge sources: Session (latest) takes priority over History records for today/same teams
+                [...sessionPreds, ...pendingFromHistory].forEach(p => {
                     const key = `${p.team1}-${p.team2}`;
                     if (!combinedMap.has(key)) {
                         combinedMap.set(key, p);
                     }
                 });
 
-                const finalActive = Array.from(combinedMap.values());
-                setRealPredictions(finalActive);
+                // Map all items with priority scores
+                const allActiveItems = Array.from(combinedMap.values()).map(p => {
+                    const targetDate = p.displayDate === 'Today' ? todayLocalStr : p.displayDate;
+                    const timestamp = new Date(targetDate).getTime();
 
-                // Process Stats
-                const todayStr = new Date().toISOString().split('T')[0];
-                const todayRecord = history?.find((h: any) => h.date === todayStr);
-                const todayCountFromHistory = todayRecord?.predictions?.length || 0;
+                    // Priority: 0 (Today), 1 (Future), 2 (Past Pending)
+                    let pScore = 1;
+                    if (targetDate === todayLocalStr) pScore = 0;
+                    else if (timestamp < todayMidnight) pScore = 2;
 
-                const finalTodayCount = Math.max(todayCountFromHistory, sessionPreds.length);
+                    return { ...p, targetDate, timestamp, pScore };
+                });
+
+                // Sort: Today first, then soonest future, then latest past
+                const sorted = allActiveItems.sort((a, b) => {
+                    if (a.pScore !== b.pScore) return a.pScore - b.pScore;
+                    if (a.pScore === 1) return a.timestamp - b.timestamp; // Future: chronological
+                    return b.timestamp - a.timestamp; // Today or Past: latest first
+                });
+
+                setPredictions(sorted.slice(0, 5));
+
+                // Process Stats - Strictly for current user
+                const todayCount = sorted.filter(p => p.targetDate === todayLocalStr).length;
 
                 let avgConf = 0;
-                if (finalActive.length > 0) {
-                    avgConf = Math.round(finalActive.reduce((acc, p) => acc + (p.confidence || 0), 0) / finalActive.length);
+                if (allActiveItems.length > 0) {
+                    avgConf = Math.round(allActiveItems.reduce((acc, p) => acc + (p.confidence || 0), 0) / allActiveItems.length);
                 } else if (history && history.length > 0) {
                     avgConf = 75;
                 }
 
                 const leagues = new Set<string>();
-                finalActive.forEach(p => leagues.add(p.league));
-                history?.slice(0, 5).forEach((h: any) => {
-                    h.predictions?.forEach((p: any) => leagues.add(p.league));
-                });
+                allActiveItems.forEach(p => leagues.add(p.league));
 
                 const lastUpdate = history && history.length > 0
                     ? new Date(history[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                     : 'Just Now';
 
                 setStats({
-                    todayCount: finalTodayCount,
+                    todayCount: todayCount,
                     avgConfidence: avgConf,
-                    markets: leagues.size || 5,
+                    markets: leagues.size,
                     lastUpdate: lastUpdate
                 });
 
@@ -266,9 +290,9 @@ export default function DashboardPage() {
                                 <IoChevronForwardOutline className="group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
-                        {realPredictions.length > 0 ? (
+                        {predictions.length > 0 ? (
                             <div className="space-y-4">
-                                {realPredictions.slice(0, 5).map((p, i) => (
+                                {predictions.slice(0, 5).map((p, i) => (
                                     <motion.div
                                         key={i}
                                         initial={{ opacity: 0, x: -20 }}
