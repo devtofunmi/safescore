@@ -44,6 +44,12 @@ const truncateText = (text: string, length: number = 15) => {
     return text.length > length ? text.substring(0, length) + '...' : text;
 };
 
+const formatBetType = (betType: string) => {
+    if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score';
+    if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'No BTTS';
+    return betType;
+};
+
 const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
     const { user } = useAuth(); // Add hook usage
     // Sort history by date descending
@@ -296,7 +302,7 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                                             <div className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider mt-1">{item.league || 'League Match'}</div>
                                                         </td>
                                                         <td className="py-6">
-                                                            <span className="font-black text-blue-500">{item.prediction}</span>
+                                                            <span className="font-black text-blue-500">{formatBetType(item.prediction)}</span>
                                                         </td>
                                                         <td className="py-6 text-center">
                                                             <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.result === 'Won' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
