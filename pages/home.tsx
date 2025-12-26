@@ -14,6 +14,7 @@ import Footer from '../components/landing/Footer';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import { useAuth } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import DashboardLayout from '../components/DashboardLayout';
 
 
@@ -56,7 +57,7 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>(['Premier League', 'Championship', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1', 'Champions League']);
 
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isPro } = useAuth();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -115,7 +116,43 @@ const Home: NextPage = () => {
     }
 
     setLoading(true);
+
     try {
+      if (!isPro) {
+        // Restricted Days Check
+        if (day === 'tomorrow' || day === 'weekend') {
+          toast.info('Tomorrow & Weekend predictions are Pro features. Upgrade to plan ahead!');
+          router.push('/pricing');
+          setLoading(false);
+          return;
+        }
+
+        // --- NEW RELIABLE LIMIT CHECK (via User Metadata) ---
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const metadata = user?.user_metadata || {};
+        const lastGenDate = metadata.last_gen_date;
+        const currentCount = lastGenDate === todayStr ? (metadata.gen_count || 0) : 0;
+
+        if (currentCount >= 2) {
+          toast.error(`Daily limit reached (${currentCount}/2).`);
+          toast.info('Upgrade to Pro for unlimited daily predictions.');
+          router.push('/pricing');
+          setLoading(false);
+          return;
+        }
+
+        // Increment count for this generation
+        await supabase.auth.updateUser({
+          data: {
+            last_gen_date: todayStr,
+            gen_count: currentCount + 1
+          }
+        });
+        // ----------------------------------------------------
+      }
+
       const response = await fetch('/api/predictions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -129,11 +166,14 @@ const Home: NextPage = () => {
 
       const data = await response.json();
 
-      // Log the raw API response for debugging in the browser console
-      try {
-        console.debug('API /api/predictions response status:', response.status, 'body:', data);
-      } catch (e) {
-        console.debug('Failed to log API response', e);
+      if (!response.ok) {
+        throw new Error(data.error || `Server returned ${response.status}`);
+      }
+
+      if (!data.predictions || data.predictions.length === 0) {
+        toast.info('No matches found for the selected criteria. Try different leagues or dates.');
+        setLoading(false);
+        return;
       }
 
       // Store predictions in session and navigate to results
@@ -153,9 +193,9 @@ const Home: NextPage = () => {
       }));
 
       router.push('/results');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating predictions:', error);
-      toast.error('Prediction generation failed. Please check your connection and try again.');
+      toast.error(error.message || 'Prediction generation failed. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
