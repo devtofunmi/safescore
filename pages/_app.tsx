@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
       <Component {...pageProps} />
       <Analytics />
-      <ToastContainer position="bottom-right" theme="dark" />
+      <ToastContainer position="top-right" theme="dark" />
     </AuthProvider>
   );
 }
