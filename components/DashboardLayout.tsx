@@ -7,6 +7,7 @@ import {
     IoFootballOutline,
     IoPulseOutline,
     IoLogOutOutline,
+    IoHelpCircleOutline,
 } from 'react-icons/io5';
 
 interface DashboardLayoutProps {
@@ -36,6 +37,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         <IoFootballOutline size={20} className={isActive('/home') ? '' : 'group-hover:text-blue-500 transition-colors'} />
                         Predictions
                     </Link>
+                    <a
+                        href="mailto:safescorepro@gmail.com"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent transition-all group"
+                    >
+                        <IoHelpCircleOutline size={20} className="group-hover:text-blue-500 transition-colors" />
+                        Support
+                    </a>
                 </nav>
 
                 <div className="pt-6 border-t border-white/5 space-y-3">
