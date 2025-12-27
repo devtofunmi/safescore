@@ -332,7 +332,7 @@ const Results: NextPage = () => {
               >
                 {displayedPredictions.map((prediction, index) => {
                   const isLocked = !isPro && index >= 5;
-                  const isConfidenceLocked = !isPro && prediction.confidence >= 80;
+                  const isConfidenceLocked = !isPro && index >= 5 && prediction.confidence >= 80;
 
                   return (
                     <motion.div
@@ -555,7 +555,7 @@ const Results: NextPage = () => {
           )}
         </AnimatePresence>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
+        <div className="flex mb-10 flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
           <Link href="/dashboard">
             <button className="w-full sm:w-auto rounded-full cursor-pointer border border-white/10 bg-white/5 text-white hover:bg-white/10 px-8 py-3 font-extrabold transition-all">Back to Dashboard</button>
           </Link>
