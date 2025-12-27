@@ -13,13 +13,16 @@ import {
 import { useAuth } from '@/lib/auth';
 
 export default function PricingPage() {
-    const { isPro, isTrialActive, daysRemaining } = useAuth();
+    const { user, isPro, isTrialActive, days_remaining: daysRemaining } = useAuth() as any;
+
+    const proPrice = "$3.45";
+    const freePrice = "$0";
 
     const plans = [
         {
             name: "Free",
             description: "Essential insights for casual tracking.",
-            price: "₦0",
+            price: freePrice,
             duration: "forever",
             features: [
                 { text: "2 Daily prediction generations", available: true },
@@ -37,7 +40,7 @@ export default function PricingPage() {
         {
             name: "Pro",
             description: "Deep intelligence for serious performance.",
-            price: "₦5,000",
+            price: proPrice,
             duration: "per month",
             features: [
                 { text: "Unlimited daily predictions", available: true },
@@ -49,7 +52,12 @@ export default function PricingPage() {
                 { text: "Direct Upgrade Support", available: true },
             ],
             cta: isPro ? "Active Plan" : "Upgrade to Pro",
-            action: isPro ? "/dashboard" : "/auth/signup",
+            // Dynamically construct Coinbase Checkout URL
+            action: isPro
+                ? "/dashboard"
+                : user
+                    ? `/api/checkout/coinbase?userId=${user.id}`
+                    : "/auth/signup",
             highlight: true
         }
     ];
@@ -200,10 +208,14 @@ export default function PricingPage() {
 
                 <div className="mt-24 text-center">
                     <p className="text-neutral-600 text-sm font-bold uppercase tracking-[0.3em] mb-4">Secured by SafeScore Protocol</p>
-                    <div className="flex justify-center gap-8 opacity-30 grayscale">
-                        {/* Placeholders for payment icons if needed */}
-                        <span className="font-black text-xl italic uppercase font-serif">Stripe</span>
-                        <span className="font-black text-xl italic uppercase font-serif">Paystack</span>
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="flex justify-center gap-8 opacity-30 grayscale items-center">
+                            <span className="font-black text-xl italic uppercase font-serif">Coinbase</span>
+                            <span className="font-black text-xl italic uppercase font-serif">Crypto</span>
+                        </div>
+                        <p className="text-neutral-500 text-xs font-medium">
+                            Need help? Contact <a href="mailto:safescorepro@gmail.com" className="text-blue-500 hover:underline">safescorepro@gmail.com</a>
+                        </p>
                     </div>
                 </div>
             </main>
