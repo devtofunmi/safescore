@@ -51,6 +51,12 @@ const Footer: React.FC = () => {
                             )}
                         </div>
                     </div>
+                    <div>
+                        <h4 className="text-white font-bold mb-6 tracking-tight">Contact</h4>
+                        <div className="flex flex-col gap-4">
+                            <a href="mailto:safescorepro@gmail.com" className="text-gray-500 hover:text-white transition-colors text-sm font-bold cursor-pointer">Support Email</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
