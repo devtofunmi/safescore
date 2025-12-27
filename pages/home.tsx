@@ -118,6 +118,10 @@ const Home: NextPage = () => {
     setLoading(true);
 
     try {
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      let currentCount = 0;
+
       if (!isPro) {
         // Restricted Days Check
         if (day === 'tomorrow' || day === 'weekend') {
@@ -128,12 +132,9 @@ const Home: NextPage = () => {
         }
 
         // --- NEW RELIABLE LIMIT CHECK (via User Metadata) ---
-        const now = new Date();
-        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
         const metadata = user?.user_metadata || {};
         const lastGenDate = metadata.last_gen_date;
-        const currentCount = lastGenDate === todayStr ? (metadata.gen_count || 0) : 0;
+        currentCount = lastGenDate === todayStr ? (metadata.gen_count || 0) : 0;
 
         if (currentCount >= 2) {
           toast.error(`Daily limit reached (${currentCount}/2).`);
@@ -142,15 +143,6 @@ const Home: NextPage = () => {
           setLoading(false);
           return;
         }
-
-        // Increment count for this generation
-        await supabase.auth.updateUser({
-          data: {
-            last_gen_date: todayStr,
-            gen_count: currentCount + 1
-          }
-        });
-        // ----------------------------------------------------
       }
 
       const response = await fetch('/api/predictions', {
@@ -166,15 +158,32 @@ const Home: NextPage = () => {
 
       const data = await response.json();
 
+      // Intelligent Error Handling (404 = No Matches)
+      if (response.status === 404 || (response.ok && (!data.predictions || data.predictions.length === 0))) {
+        toast.info('No matches found for the selected criteria today. Try different leagues or risk levels!');
+        setLoading(false);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(data.error || `Server returned ${response.status}`);
       }
 
-      if (!data.predictions || data.predictions.length === 0) {
-        toast.info('No matches found for the selected criteria. Try different leagues or dates.');
-        setLoading(false);
-        return;
+      // --- FAIR USAGE QUOTA INCREMENT ---
+      // We only consume a generation token if matches were found
+      if (!isPro && data.predictions && data.predictions.length > 0) {
+        try {
+          await supabase.auth.updateUser({
+            data: {
+              last_gen_date: todayStr,
+              gen_count: currentCount + 1
+            }
+          });
+        } catch (err) {
+          console.error('[Quota] Failed to increment usage:', err);
+        }
       }
+      // -----------------------------------
 
       // Store predictions in session and navigate to results
       sessionStorage.setItem('predictions', JSON.stringify(data.predictions));
