@@ -66,9 +66,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
         }
 
-        // If explicitly set to pro (paid), override trial check
+        // If explicitly set to pro (paid), check expiration date
         if (metaPlan === 'pro') {
-            activePlan = 'pro';
+            const expAt = metadata?.pro_expires_at;
+            if (expAt) {
+                const end = new Date(expAt);
+                const now = new Date();
+                const diffTime = end.getTime() - now.getTime();
+
+                if (diffTime > 0) {
+                    activePlan = 'pro';
+                    // Update days remaining to show payment end, not trial end
+                    days = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+                } else {
+                    activePlan = 'free';
+                }
+            } else {
+                activePlan = 'pro'; // Fallback for existing pro users without date
+            }
         }
 
         setPlan(activePlan);
