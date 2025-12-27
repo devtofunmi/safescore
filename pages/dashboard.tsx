@@ -477,22 +477,22 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Transparency Section */}
-                <footer className="pt-12 pb-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-60 hover:opacity-100 transition-opacity">
-                    <div className="flex gap-12">
+                <footer className="pt-12 pb-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center md:items-start gap-8 opacity-60 hover:opacity-100 transition-opacity">
+                    <div className="flex flex-wrap justify-center md:justify-start gap-8 md:gap-12">
                         <div>
-                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Engine Core</p>
-                            <p className="text-sm font-bold tracking-tight">SafeScore Architecture v1.4</p>
+                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1 text-center md:text-left">Engine Core</p>
+                            <p className="text-sm font-bold tracking-tight text-center md:text-left">SafeScore Architecture v1.3</p>
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Global Status</p>
-                            <p className="text-sm font-bold text-green-500 uppercase tracking-widest flex items-center gap-2">
+                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1 text-center md:text-left">Global Status</p>
+                            <p className="text-sm font-bold text-green-500 uppercase tracking-widest flex items-center justify-center md:justify-start gap-2">
                                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                                 Operational
                             </p>
                         </div>
                         <div>
-                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Direct Support</p>
-                            <a href="mailto:safescorepro@gmail.com" className="text-sm font-bold hover:text-blue-500 transition-colors">safescorepro@gmail.com</a>
+                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1 text-center md:text-left">Direct Support</p>
+                            <a href="mailto:safescorepro@gmail.com" className="text-sm font-bold hover:text-blue-500 transition-colors block text-center md:text-left">safescorepro@gmail.com</a>
                         </div>
                     </div>
                     <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">
