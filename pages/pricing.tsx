@@ -23,10 +23,10 @@ export default function PricingPage() {
             duration: "forever",
             features: [
                 { text: "2 Daily prediction generations", available: true },
-                { text: "Top 5 AI Insights (Non-banker matches)", available: true },
+                { text: "Top 5 Full Analysis (Bankers included)", available: true },
                 { text: "Today's basic matches", available: true },
-                { text: "80%+ Confidence Lock", available: false },
-                { text: "Full Bet Types & Scores", available: false },
+                { text: "80%+ Lock (Matches 6+)", available: false },
+                { text: "Revealed Bet Types (Matches 6+)", available: false },
                 { text: "Unlimited daily predictions", available: false },
                 { text: "Tomorrow & Weekend insights", available: false },
             ],
