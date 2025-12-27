@@ -16,12 +16,14 @@ import {
 } from 'react-icons/io5';
 import { useRouter } from 'next/router';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'react-toastify';
 import type { Prediction } from '@/lib/schemas';
 import DashboardLayout from '../components/DashboardLayout';
+import { IoCheckmarkCircle } from 'react-icons/io5';
 
 export default function DashboardPage() {
     const router = useRouter();
-    const { user, signOut, loading: authLoading, isPro, isTrialActive, daysRemaining } = useAuth();
+    const { user, loading: authLoading, isPro, daysRemaining } = useAuth();
     const [predictions, setPredictions] = useState<Prediction[]>([]);
     const [stats, setStats] = useState({
         todayCount: 0,
@@ -80,6 +82,27 @@ export default function DashboardPage() {
             return dateStr || 'Scheduled';
         }
     };
+
+    useEffect(() => {
+        if (router.query.status === 'success') {
+            if (isPro) {
+                toast.success('Welcome to SafeScore Pro! Your account has been upgraded.', {
+                    icon: <IoCheckmarkCircle className="text-blue-500" />,
+                    style: { background: '#0c0c0c', color: '#fff', border: '1px solid rgba(59, 130, 246, 0.2)' },
+                    progressClassName: 'bg-blue-600'
+                });
+            } else {
+                toast.info('Crypto Payment Received! We are verifying your transaction on the blockchain. This usually takes 2-5 minutes.', {
+                    icon: <IoPulseOutline className="text-blue-400 animate-pulse" />,
+                    style: { background: '#0c0c0c', color: '#fff', border: '1px solid rgba(59, 130, 246, 0.2)' },
+                    progressClassName: 'bg-blue-600',
+                    autoClose: 10000
+                });
+            }
+            // Clear the query param
+            router.replace('/dashboard', undefined, { shallow: true });
+        }
+    }, [router.query.status, isPro]);
 
     useEffect(() => {
         if (authLoading) return;
@@ -249,12 +272,20 @@ export default function DashboardPage() {
                             </span>
                         </p>
                     </div>
-                    <div className="flex ">
-                        <div className="px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full flex items-center gap-2 backdrop-blur-md">
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <div className="px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full flex items-center gap-2 backdrop-blur-md self-end lg:self-center">
                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                             <span className="text-[10px] md:text-xs font-bold text-green-500 uppercase tracking-widest">Engine Online</span>
                         </div>
 
+                        {isPro && (
+                            <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center gap-2 backdrop-blur-md self-end lg:self-center group cursor-default">
+                                <IoDiamondOutline className="text-blue-500 animate-pulse" size={14} />
+                                <span className="text-[10px] md:text-xs font-bold text-blue-500 uppercase tracking-widest">
+                                    Pro Active: <span className="text-white ml-1">{daysRemaining} Days</span>
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </header>
 
@@ -458,6 +489,10 @@ export default function DashboardPage() {
                                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                                 Operational
                             </p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">Direct Support</p>
+                            <a href="mailto:safescorepro@gmail.com" className="text-sm font-bold hover:text-blue-500 transition-colors">safescorepro@gmail.com</a>
                         </div>
                     </div>
                     <p className="text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em]">
