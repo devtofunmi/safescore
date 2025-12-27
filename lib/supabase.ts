@@ -7,9 +7,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn('[Supabase] Missing credentials. Supabase features will not work.');
 }
 
-// We define a fallback client so the export doesn't fail, 
-// but it will only work if the URL is valid.
+// Standard client for client-side use
 export const supabase = createClient(
     supabaseUrl || 'https://placeholder-url.supabase.co',
     supabaseAnonKey || 'placeholder-key'
+);
+
+// Admin client for server-side secret operations (Webhook/Cron)
+export const supabaseAdmin = createClient(
+    supabaseUrl || 'https://placeholder-url.supabase.co',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key'
 );
