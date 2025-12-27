@@ -1,10 +1,52 @@
 [
   {
+    "version": "1.3.0",
+    "date": "2025-12-27",
+    "title": "Monetization & Premium Experience",
+    "description": "Introduced the SafeScore Pro tier with crypto payment integration and a subscription-based access model.",
+    "changes": [
+      {
+        "type": "feat",
+        "title": "Coinbase Commerce Integration",
+        "description": "Added global crypto payment support (BTC, ETH, SOL, USDC) via Coinbase Commerce with blockchain verification."
+      },
+      {
+        "type": "feat",
+        "title": "Pro & Free Plan Gating",
+        "description": "Implemented tiered access. Free users get limited daily predictions, while Pro users unlock unlimited matches, future dates (Tomorrow/Weekend), and deeper AI analysis."
+      },
+      {
+        "type": "feat",
+        "title": "Automated Subscription Lifecycle",
+        "description": "Developed a 30-day access model for crypto payments. Pro status is automatically granted upon confirmation and gracefully expires precisely after one month."
+      },
+      {
+        "type": "feat",
+        "title": "Premium Dashboard UI/UX",
+        "description": "Refined the dashboard with a 'Pro Active' status badge, live countdown timer for subscription days remaining, and new success notifications."
+      },
+      {
+        "type": "feat",
+        "title": "Global Support Infrastructure",
+        "description": "Added direct support integration via email and updated the landing page footer with professional contact channels."
+      },
+      {
+        "type": "refactor",
+        "title": "Simplified USD Pricing",
+        "description": "Standardized pricing to a global USD $3.45/month rate to ensure consistency across international crypto markets."
+      },
+      {
+        "type": "feat",
+        "title": "Landing Page UI Enhancement",
+        "description": "Redesigned the landing page with glassmorphism effects, improved navigation consistency, and a more cohesive aesthetic across all components (Hero, Features, Testimonials)."
+      }
+    ]
+  },
+  {
     "version": "1.2.0",
     "date": "2025-12-23",
     "title": "Open Source Release",
-    "description": "SafeScore is now open source at the platform level. We've decoupled the architecture so the frontend and developer experience are open for collaboration, while the core prediction engine remains private."
-,
+    "description": "SafeScore is now open source at the platform level. We've decoupled the architecture so the frontend and developer experience are open for collaboration, while the core prediction engine remains private.",
     "changes": [
       {
         "type": "feat",

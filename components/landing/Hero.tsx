@@ -47,7 +47,7 @@ const Hero: React.FC = () => {
                             className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-bold text-blue-400 mb-8 tracking-widest uppercase"
                         >
                             <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2 shadow-[0_0_8px_rgba(59,130,246,0.6)] animate-pulse"></span>
-                            Predictive Intelligence v1.2.0
+                            Predictive Intelligence v1.3.0
                         </motion.div>
 
                         <motion.h1
