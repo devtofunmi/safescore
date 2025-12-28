@@ -98,7 +98,7 @@ const PWAInstallPrompt: React.FC = () => {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleInstallClick}
-                                    className="cursor-pointer flex-1 bg-blue-600/50 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/30"
+                                    className="cursor-pointer flex-1 bg-blue-600/50 hover:bg-blue-700 text-white font-bold py-3 px-3 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/30"
                                 >
                                     <IoDownloadOutline size={20} />
                                     Install Now
