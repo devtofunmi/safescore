@@ -1,4 +1,4 @@
-import { supabase } from '../supabase';
+import { supabaseAdmin } from '../supabase';
 import type { Prediction } from '../schemas';
 
 /**
@@ -32,6 +32,7 @@ export interface DailyRecord {
  * 
  * Persists predictions to Supabase.
  * Groups them by date and merges with any existing records for that day.
+ * Uses supabaseAdmin to bypass RLS since this runs on the server.
  */
 export async function saveToHistory(predictions: Prediction[], dateStr: string, userId?: string): Promise<void> {
     if (!dateStr || dateStr === 'undefined' || dateStr === 'null') {
@@ -40,18 +41,30 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string, 
     }
 
     try {
-        console.info(`[History] Starting save for ${dateStr} (${predictions.length} predictions)`);
+        console.info(`[History] Starting save for ${dateStr} (${predictions.length} predictions) user=${userId || 'anon'}`);
 
-        // Fetch existing record for this date from Supabase
-        const { data: existingRecord, error: fetchError } = await supabase
+        // Fetch existing record for this date (and user) from Supabase
+        let query = supabaseAdmin
             .from('history')
             .select('*')
-            .eq('date', dateStr)
-            .single();
+            .eq('date', dateStr);
 
-        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means not found
+        if (userId) {
+            query = query.eq('user_id', userId);
+        }
+
+        // DEBUG: Check if we have a service key
+        // We can't easily check internal properties, but we can assume if it's 'placeholder-key' it will fail auth.
+        // Let's rely on the query error to tell us.
+
+        const { data: existingRecords, error: fetchError } = await query;
+
+        if (fetchError) {
+            console.error('[History] Fetch error:', fetchError);
             throw fetchError;
         }
+
+        const existingRecord = existingRecords && existingRecords.length > 0 ? existingRecords[0] : null;
 
         const existingPredictions: HistoryItem[] = existingRecord?.predictions || [];
 
@@ -73,21 +86,58 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string, 
             !existingPredictions.find(ex => ex.homeTeam === newItem.homeTeam && ex.awayTeam === newItem.awayTeam)
         );
 
+        if (filteredNewItems.length === 0) {
+            console.info(`[History] No new items to add for ${dateStr}.`);
+            return;
+        }
+
         const updatedPredictions = [...existingPredictions, ...filteredNewItems];
 
         // Upsert into Supabase
-        const { error: upsertError } = await supabase
+        const payload: any = {
+            date: dateStr,
+            predictions: updatedPredictions
+        };
+        if (userId) {
+            payload.user_id = userId;
+        }
+
+        // We assume constraint is (date, user_id) or just (id).
+        if (existingRecord?.id) {
+            payload.id = existingRecord.id;
+        }
+
+        // DEBUG: Log payload
+        console.log('[History] Upserting payload:', JSON.stringify(payload));
+
+        const { error: upsertError } = await supabaseAdmin
             .from('history')
-            .upsert({
-                date: dateStr,
-                predictions: updatedPredictions
-            }, { onConflict: 'date' });
+            .upsert(payload, { onConflict: userId ? 'date, user_id' : 'date' });
 
-        if (upsertError) throw upsertError;
+        if (upsertError) {
+            console.error('[History] Upsert error with Admin:', upsertError);
 
-        console.info(`[History] Successfully saved ${newItems.length} entries for ${dateStr} to Supabase.`);
+            // FALLBACK: Try with standard client if admin failed (maybe env var is missing?)
+            // This is unlikely to work if RLS is strict, but worth a shot if the failure was due to bad admin key.
+            if (upsertError.code === '401' || upsertError.message.includes('JWT')) {
+                console.warn('[History] Falling back to anon client...');
+                const { supabase } = await import('../supabase'); // Dynamic import to avoid circular dependency issues if any
+                const { error: fallbackError } = await supabase
+                    .from('history')
+                    .upsert(payload, { onConflict: userId ? 'date, user_id' : 'date' });
 
-    } catch (err) {
-        console.error('[History] Supabase save operation failed:', err);
+                if (fallbackError) {
+                    console.error('[History] Fallback failed:', fallbackError);
+                    throw fallbackError;
+                }
+            } else {
+                throw upsertError;
+            }
+        }
+
+        console.info(`[History] Successfully saved ${filteredNewItems.length} new entries for ${dateStr} to Supabase.`);
+
+    } catch (err: any) {
+        console.error('[History] Supabase save operation failed FULL ERROR:', err);
     }
 }

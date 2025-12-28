@@ -35,6 +35,41 @@ export default async function handler(
   const cachedResponse = cache.get<PredictionsResponse>(cacheKey, CACHE_DURATIONS.FIXTURES);
 
   if (cachedResponse) {
+    // If cached, we still need to persist to history for this user (if not already there)
+    // We proceed to the saving logic below using the cached data
+    const { saveToHistory } = await import('@/lib/history/storage');
+
+    // Group cached predictions by date (re-creating the grouping logic)
+    const predictionsByDate: Record<string, any[]> = {};
+    cachedResponse.predictions.forEach(p => {
+      let extractedDate = '';
+      if (p.matchTime && p.matchTime.includes('-')) {
+        extractedDate = p.matchTime.includes('T') ? p.matchTime.split('T')[0] : p.matchTime.split(' ')[0];
+      }
+      // Use the extracted date or fallback to today (though cached items should have dates)
+      const actualDate = /^\d{4}-\d{2}-\d{2}$/.test(extractedDate) ? extractedDate : (date || new Date().toISOString().split('T')[0]);
+
+      if (!predictionsByDate[actualDate]) {
+        predictionsByDate[actualDate] = [];
+      }
+      predictionsByDate[actualDate].push(p);
+    });
+
+    // Save to history
+    const savePromises = Object.entries(predictionsByDate).map(async ([mDate, mPredictions]) => {
+      if (mDate && /^\d{4}-\d{2}-\d{2}$/.test(mDate)) {
+        try {
+          await saveToHistory(mPredictions, mDate, userId);
+        } catch (err: any) {
+          console.error(`[API] History persist failed for ${mDate}:`, err.message);
+        }
+      }
+    });
+
+    // We don't await savePromises to block response, but we trigger them. 
+    // Actually, for serverless, we usually should await to ensure execution before freeze.
+    await Promise.all(savePromises);
+
     return res.status(200).json(cachedResponse);
   }
 

@@ -4,14 +4,11 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
-import { IoStatsChartOutline } from 'react-icons/io5';
 
 import RiskLevelSelector from '../components/home/RiskLevelSelector';
 import LeagueSelector from '../components/home/LeagueSelector';
 import DaySelector from '../components/home/DaySelector';
 import Summary from '../components/home/Summary';
-import Footer from '../components/landing/Footer';
-import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
@@ -183,7 +180,7 @@ const Home: NextPage = () => {
           console.error('[Quota] Failed to increment usage:', err);
         }
       }
-      
+
 
       // Store predictions in session and navigate to results - USER SPECIFIC
       if (!user) {

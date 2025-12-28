@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '../components/landing/Footer';
-import { useAuth } from '../lib/auth'; // Import useAuth
+import { useAuth } from '../lib/auth';
 import {
     IoStatsChartOutline,
     IoCheckmarkCircleOutline,
@@ -12,8 +12,6 @@ import {
     IoTimeOutline,
     IoCalendarOutline,
     IoChevronDownOutline,
-    IoFootballOutline,
-    IoPulseOutline
 } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 import { supabase } from '../lib/supabase';
@@ -39,7 +37,7 @@ interface HistoryProps {
     historyData: DailyRecord[];
 }
 
-const truncateText = (text: string, length: number = 15) => {
+const truncateText = (text: string, length: number = 10) => {
     if (!text) return '';
     return text.length > length ? text.substring(0, length) + '...' : text;
 };
@@ -294,10 +292,10 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                                     <tr key={item.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
                                                         <td className="py-6 pl-6">
                                                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 font-bold text-white">
-                                                                <span className="group-hover:text-blue-400 transition-colors">{item.homeTeam}</span>
+                                                                <span className="group-hover:text-blue-400 transition-colors" title={item.homeTeam}>{truncateText(item.homeTeam)}</span>
                                                                 <span className="text-neutral-600 text-[10px] hidden sm:inline">VS</span>
                                                                 <span className="sm:hidden text-neutral-600 text-xs">vs</span>
-                                                                <span className="group-hover:text-blue-400 transition-colors">{item.awayTeam}</span>
+                                                                <span className="group-hover:text-blue-400 transition-colors" title={item.awayTeam}>{truncateText(item.awayTeam)}</span>
                                                             </div>
                                                             <div className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider mt-1">{item.league || 'League Match'}</div>
                                                         </td>
@@ -344,7 +342,9 @@ export async function getServerSideProps() {
     let historyData: DailyRecord[] = [];
 
     try {
-        const { data, error } = await supabase
+        // Use supabaseAdmin to bypass RLS and fetch GLOBAL history for the public page
+        const { supabaseAdmin } = await import('../lib/supabase');
+        const { data, error } = await supabaseAdmin
             .from('history')
             .select('*')
             .order('date', { ascending: false });
