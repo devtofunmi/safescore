@@ -49,16 +49,17 @@ interface Filters {
   day: string;
 }
 
-const readStoredPredictions = (): Prediction[] => {
+const readStoredPredictions = (userId?: string): Prediction[] => {
   if (typeof window === 'undefined') return [];
-  const raw = sessionStorage.getItem('predictions');
+  const storageKey = userId ? `predictions_${userId}` : 'predictions';
+  const raw = sessionStorage.getItem(storageKey);
   if (!raw || raw === 'undefined') return [];
   try {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
     console.warn('Invalid storedPredictions in sessionStorage, clearing it.', e);
-    sessionStorage.removeItem('predictions');
+    sessionStorage.removeItem(storageKey);
     return [];
   }
 };
@@ -114,7 +115,8 @@ const truncateText = (text: string, length: number = 10) => {
 };
 
 const Results: NextPage = () => {
-  const [predictions] = React.useState<Prediction[]>(() => readStoredPredictions());
+  const { user, loading: authLoading, isPro } = useAuth();
+  const [predictions, setPredictions] = React.useState<Prediction[]>([]);
   const [filters] = React.useState<Filters | null>(() => readStoredFilters());
   const [safestFilter, setSafestFilter] = React.useState<number | null>(10);
   const [copyStatus, setCopyStatus] = React.useState('Copy');
@@ -122,7 +124,13 @@ const Results: NextPage = () => {
 
   const [selectedPrediction, setSelectedPrediction] = React.useState<Prediction | null>(null);
   const router = useRouter();
-  const { user, loading: authLoading, isPro } = useAuth();
+
+  // Load predictions when user is available
+  React.useEffect(() => {
+    if (user) {
+      setPredictions(readStoredPredictions(user.id));
+    }
+  }, [user]);
 
   React.useEffect(() => {
     if (!authLoading && !user) {
