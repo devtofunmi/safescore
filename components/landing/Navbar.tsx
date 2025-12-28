@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
                                     document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
                                     setMobileMenuOpen(false);
                                 }}
-                                className="text-2xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
+                                className="text-xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
                             >
                                 How it works
                             </button>
@@ -130,25 +130,25 @@ const Navbar: React.FC = () => {
                             <Link
                                 href="/previous-matches"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="text-2xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
+                                className="text-xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
                             >
                                 Previous Matches
                             </Link>
 
-                            <div className="w-full h-[1px] bg-gray-200 dark:bg-white/10 my-4"></div>
+                            <div className="w-full h-[1px] bg-gray-200 dark:bg-white/10 my-2"></div>
 
                             {user ? (
                                 <>
                                     <Link
                                         href="/dashboard"
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="text-2xl font-extrabold text-blue-500 transition-colors"
+                                        className="text-xl font-extrabold text-blue-500 transition-colors"
                                     >
                                         Dashboard
                                     </Link>
                                     <button
                                         onClick={handleSignOut}
-                                        className="text-2xl font-extrabold text-red-500 hover:text-red-400 transition-colors flex items-center gap-2"
+                                        className="text-xl font-extrabold text-red-500 hover:text-red-400 transition-colors flex items-center gap-2"
                                     >
                                         <FaSignOutAlt />
                                         Logout
@@ -159,7 +159,7 @@ const Navbar: React.FC = () => {
                                     <Link
                                         href="/auth/login"
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="text-2xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
+                                        className="text-xl font-extrabold text-gray-800 dark:text-gray-100 hover:text-blue-500 transition-colors"
                                     >
                                         Login
                                     </Link>
@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
                                             router.push('/auth/signup');
                                             setMobileMenuOpen(false);
                                         }}
-                                        className="bg-blue-600 text-white px-12 py-4 rounded-2xl text-2xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-600/30 transition-transform active:scale-95 w-full"
+                                        className="bg-blue-600 text-white px-10 py-3 rounded-2xl text-xl font-black hover:bg-blue-500 shadow-2xl shadow-blue-600/30 transition-transform active:scale-95 w-full"
                                     >
                                         Join Now
                                     </button>
