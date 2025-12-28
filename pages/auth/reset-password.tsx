@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Head from 'next/head';
+import SEO from '../../components/SEO';
 import Link from 'next/link';
-import { motion  } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-toastify';
 import { IoArrowForwardOutline, IoArrowBackOutline, IoCheckmarkCircleOutline, IoKeyOutline, IoHelpCircleOutline, IoLockOpenOutline } from 'react-icons/io5';
@@ -33,9 +33,10 @@ export default function ResetPasswordPage() {
 
     return (
         <div className="min-h-screen bg-neutral-950 text-white flex flex-col md:flex-row h-screen overflow-hidden">
-            <Head>
-                <title>Reset Password | SafeScore</title>
-            </Head>
+            <SEO
+                title="Reset Password | SafeScore"
+                description="Reset your SafeScore account password securely."
+            />
 
             {/* Left Side - Visual Sidebar (50% Width) */}
             <motion.div
