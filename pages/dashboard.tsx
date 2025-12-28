@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
 import {
@@ -13,13 +13,13 @@ import {
     IoChevronForwardOutline,
     IoRocketOutline,
     IoDiamondOutline,
+    IoCheckmarkCircle,
 } from 'react-icons/io5';
 import { useRouter } from 'next/router';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-toastify';
 import type { Prediction } from '@/lib/schemas';
 import DashboardLayout from '../components/DashboardLayout';
-import { IoCheckmarkCircle } from 'react-icons/io5';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -250,10 +250,10 @@ export default function DashboardPage() {
 
     return (
         <DashboardLayout>
-            <Head>
-                <title>Dashboard | SafeScore - Prediction Intelligence</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-            </Head>
+            <SEO
+                title="Dashboard | SafeScore - Prediction Intelligence"
+                description="Access your personalized football prediction dashboard with AI-powered insights, confidence tiers, and performance analytics."
+            />
             <div className="max-w-6xl mx-auto space-y-12">
                 {/* Header */}
                 <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">

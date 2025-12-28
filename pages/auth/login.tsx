@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO from '../../components/SEO';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
@@ -45,10 +45,10 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-neutral-950 text-white flex flex-col md:flex-row h-screen overflow-hidden">
-            <Head>
-                <title>Login | SafeScore - Access Premium Predictions</title>
-                <meta name="description" content="Log in to your SafeScore account to access premium football predictions and analytics." />
-            </Head>
+            <SEO
+                title="Login | SafeScore - Access Premium Predictions"
+                description="Log in to your SafeScore account to access premium football predictions and analytics."
+            />
 
             {/* Left Side - Visual Sidebar (50% Width) */}
             <motion.div

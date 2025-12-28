@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO from '../../components/SEO';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
@@ -53,10 +53,10 @@ export default function SignUpPage() {
 
     return (
         <div className="min-h-screen bg-neutral-950 text-white flex flex-col md:flex-row h-screen overflow-hidden">
-            <Head>
-                <title>Sign Up | SafeScore - Join Premium Analytics</title>
-                <meta name="description" content="Create your SafeScore account today and start accessing high-accuracy football predictions." />
-            </Head>
+            <SEO
+                title="Sign Up | SafeScore - Join Premium Analytics"
+                description="Create your SafeScore account today and start accessing high-accuracy football predictions powered by AI."
+            />
 
             {/* Left Side - Visual Sidebar (50% Width) */}
             <motion.div

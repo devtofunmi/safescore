@@ -1,5 +1,5 @@
 import React from 'react';
-import Head from 'next/head';
+import SEO from '../components/SEO';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -64,10 +64,10 @@ export default function PricingPage() {
 
     return (
         <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30">
-            <Head>
-                <title>Pricing | SafeScore - Invest in Accuracy</title>
-                <meta name="description" content="Unlock high-confidence football predictions and advanced AI analytics with SafeScore Pro." />
-            </Head>
+            <SEO
+                title="Pricing | SafeScore - Invest in Accuracy"
+                description="Unlock high-confidence football predictions and advanced AI analytics with SafeScore Pro. Pay with crypto (BTC, ETH, SOL, USDC) for $3.45/month."
+            />
 
             <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5 py-4 px-6 md:px-12">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
