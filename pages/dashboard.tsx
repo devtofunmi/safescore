@@ -216,7 +216,7 @@ export default function DashboardPage() {
 
                 const lastUpdate = history && history.length > 0
                     ? new Date(history[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                    : 'Just Now';
+                    : '---';
 
                 setStats({
                     todayCount: todayCount,
