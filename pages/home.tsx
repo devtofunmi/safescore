@@ -24,7 +24,7 @@ const LoadingText = () => {
   useEffect(() => {
     const messages = [
       'Scanning daily fixture list...',
-      'Analyzing team form and recent performance...',
+      'Analyzing recent team form...',
       'Comparing head-to-head statistics...',
       'Calculating goal probabilities...',
       'Applying statistical models...',
@@ -183,10 +183,15 @@ const Home: NextPage = () => {
           console.error('[Quota] Failed to increment usage:', err);
         }
       }
-      // -----------------------------------
+      
 
-      // Store predictions in session and navigate to results
-      sessionStorage.setItem('predictions', JSON.stringify(data.predictions));
+      // Store predictions in session and navigate to results - USER SPECIFIC
+      if (!user) {
+        toast.error('User session expired. Please log in again.');
+        return;
+      }
+      const userStorageKey = `predictions_${user.id}`;
+      sessionStorage.setItem(userStorageKey, JSON.stringify(data.predictions));
 
       // Track prediction generation event
       track('generate_predictions', {
