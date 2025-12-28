@@ -119,10 +119,11 @@ export default function DashboardPage() {
                 const todayLocalStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
                 const todayMidnight = new Date(todayLocalStr).getTime();
 
-                // Fetch History for Stats and Active items
+                // Fetch History for Stats and Active items - ONLY for current user
                 const { data: history, error } = await supabase
                     .from('history')
                     .select('*')
+                    .eq('user_id', user.id)
                     .order('date', { ascending: false });
 
                 if (error) throw error;
@@ -147,8 +148,9 @@ export default function DashboardPage() {
                     });
                 });
 
-                // Get Session Predictions (immediate context)
-                const stored = sessionStorage.getItem('predictions');
+                // Get Session Predictions (immediate context) - USER SPECIFIC
+                const userStorageKey = `predictions_${user.id}`;
+                const stored = sessionStorage.getItem(userStorageKey);
                 let sessionPreds: any[] = [];
                 if (stored && stored !== 'undefined') {
                     sessionPreds = JSON.parse(stored).map((p: any) => {
@@ -239,7 +241,7 @@ export default function DashboardPage() {
         </div>
     );
 
-    const userName = user?.user_metadata?.full_name?.split(' ')[0] || 'Jay';
+    const userName = user?.user_metadata?.full_name?.split(' ')[0] || 'Jay!';
 
     const statCards = [
         { title: "Predictions Today", value: stats.todayCount > 0 ? stats.todayCount.toString() : "0", icon: IoFootballOutline },
