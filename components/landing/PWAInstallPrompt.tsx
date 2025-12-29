@@ -81,7 +81,7 @@ const PWAInstallPrompt: React.FC = () => {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-3xl -mr-16 -mt-16 group-hover:bg-blue-600/20 transition-colors" />
 
                     <div className="flex items-start gap-5 relative z-10">
-                        <div className="w-16 h-16 flex-shrink-0 bg-blue-600/10 border border-blue-600/20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-lg">
+                        <div className="w-16 h-16 flex-shrink-0 bg-blue-600 border border-blue-600 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-lg">
                             <img src="/logo.png" alt="SafeScore Icon" className="w-10 h-10 object-contain p-1" />
                         </div>
                         <div className="flex-1">
@@ -95,17 +95,17 @@ const PWAInstallPrompt: React.FC = () => {
                                 Get instant access to daily high-confidence predictions on your home screen.
                             </p>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                                 <button
                                     onClick={handleInstallClick}
-                                    className="cursor-pointer flex-1 bg-blue-600/50 hover:bg-blue-700 text-white font-bold py-3 px-3 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/30"
+                                    className="cursor-pointer w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-600/30"
                                 >
                                     <IoDownloadOutline size={20} />
                                     Install Now
                                 </button>
                                 <button
                                     onClick={handleDismiss}
-                                    className="cursor-pointer px-4 py-3 text-neutral-500 hover:text-blue-500 font-bold text-sm transition-colors"
+                                    className="cursor-pointer w-full sm:w-auto py-3 px-4 text-neutral-500 hover:text-blue-500 font-bold text-sm transition-colors text-center"
                                 >
                                     Maybe later
                                 </button>
