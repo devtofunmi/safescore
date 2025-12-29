@@ -23,11 +23,7 @@ const SEO = ({
             <meta name="description" content={description} />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <meta name="robots" content="index, follow" />
-            <link rel="icon" href="/favicon.png" sizes="any" />
-            <link rel="shortcut icon" href="/favicon.png" type="image/png" />
-            <link rel="apple-touch-icon" href="/logo-192x192-black.png" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/logo-192x192-black.png" />
-            <link rel="icon" type="image/png" sizes="16x16" href="/logo-192x192-black.png" />
+
             <link rel="canonical" href={url} />
             <meta name="keywords" content="football predictions, soccer betting tips, high probability bets, data driven football analysis, safescore, sports betting data, soccer stats, betting algorithms" />
 
