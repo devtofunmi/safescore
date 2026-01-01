@@ -2,7 +2,7 @@
 
 **SafeScore** is a professional, data-driven football prediction platform that leverages advanced statistical analysis to provide high-probability betting insights. Built with modern web technologies, it offers users a sleek, responsive, and real-time experience.
 
-This repository contains the **frontend and proxy layer** for SafeScore. It is designed to work with the [SafeScore Core Engine](https://huggingface.co/spaces/devtofunmi/safescore-core) but can be adapted for other data sources.
+
 
 ## Features
 
@@ -23,10 +23,10 @@ This repository contains the **frontend and proxy layer** for SafeScore. It is d
 
 ## Core Logic
 
-### 🚀 Prediction Engine
+###  Prediction Engine
 The frontend delegates prediction requests to a private core engine via the `CORE_ENGINE_URL`. This allows for proprietary analysis while keeping the UI and contribution layer open.
 
-### ✅ Automated Verification
+###  Automated Verification
 SafeScore features an automated settlement system that:
 1.  Saves predictions to a Supabase `history` table.
 2.  Periodically verifies pending matches against real-world scores using the Football-Data API.
