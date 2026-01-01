@@ -14,7 +14,7 @@ import {
     IoChevronDownOutline,
 } from 'react-icons/io5';
 import { toast } from 'react-toastify';
-import { supabase } from '../lib/supabase';
+
 
 // --- Types ---
 interface HistoryItem {
@@ -56,7 +56,7 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
         return historyData
             .map(day => ({
                 ...day,
-                predictions: day.predictions.filter(p => p.result !== 'Pending')
+                predictions: day.predictions // Show all records including Pending
             }))
             .filter(day => day.predictions.length > 0)
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());

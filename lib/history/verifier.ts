@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { HistoryItem } from './storage';
 
 /**
  * Football Data API match structure for type safety.
  */
-interface FootballDataMatch {
+export interface FootballDataMatch {
     id: number;
     utcDate: string;
     status: string;
@@ -51,7 +50,15 @@ export function extractMatchId(id: string): number | null {
  * 
  * Note: Contributors adding new bet types should add cases here.
  */
-function verifyPrediction(
+/**
+ * verifyPrediction
+ * 
+ * The core mathematical engine that compares a prediction against result data.
+ * Handles diverse markets like 1X2, Over/Under, BTTS, and Half-time specific bets.
+ * 
+ * Note: Contributors adding new bet types should add cases here.
+ */
+export function verifyPrediction(
     prediction: string,
     homeGoals: number,
     awayGoals: number,
@@ -120,153 +127,88 @@ function verifyPrediction(
 }
 
 /**
- * findMatchByTeams
- * 
- * Fallback "Healer" logic. If a match ID is missing, searches the API for a match 
- * between the two teams on or near the predicted date.
+ * Searches a provided list of matches for a fuzzy string match.
  */
-async function findMatchByTeams(
+export function findMatchInList(
     homeTeam: string,
     awayTeam: string,
-    predictionDate: string | undefined, // The date we predicted the match for
-    apiKey: string
-): Promise<number | null> {
-    if (!predictionDate) return null;
-
-    try {
-        const todayStr = new Date().toISOString().split('T')[0];
-        const matchDate = new Date(predictionDate);
-
-        // Search from 3 days before predicted date up to today
-        const dateFrom = new Date(matchDate);
-        dateFrom.setDate(matchDate.getDate() - 3);
-
-        const fromStr = dateFrom.toISOString().split('T')[0];
-        const toStr = todayStr; // Always search up to today to catch rescheduled matches
-
-        const response = await axios.get(`https://api.football-data.org/v4/matches`, {
-            headers: { 'X-Auth-Token': apiKey },
-            params: { dateFrom: fromStr, dateTo: toStr }
-        });
-
-        const matches = response.data.matches as FootballDataMatch[];
-        const totalFound = matches?.length || 0;
-
-        // DEBUG: Output all fixtures in the range for deep diagnostics
-        if (totalFound > 0) {
-            const pool = matches.map(m => `${m.id}:${m.homeTeam.name} vs ${m.awayTeam.name}`).join(' | ');
-            console.info(`[Verifier] Searching ${homeTeam} vs ${awayTeam} in range ${fromStr} to ${toStr}. Pool (${totalFound} matches): ${pool}`);
-        }
-
-        const normalize = (n: string) => n.toLowerCase()
-            .replace(/\b(fc|afc|cf|sc|ac|united|city|rovers|albion|town|athletic|clube de|club|de|as|ss|ssc|bc|uc|us|cd|cuba|futebol|sad|sports|sporting|international|internazionale|italy|portugal|spain|france|england|germany)\b/g, '')
+    matches: FootballDataMatch[]
+): FootballDataMatch | null {
+    const normalize = (n: string) => {
+        if (!n) return '';
+        return n.toLowerCase()
+            .replace(/\b(fc|afc|cf|sc|ac|rovers|albion|town|athletic|clube de|club|de|as|ss|ssc|bc|uc|us|cd|cuba|futebol|sad|sports|sporting|international|internazionale|italy|portugal|spain|france|england|germany)\b/g, '')
             .replace(/[\W_]+/g, ' ')
             .trim();
+    };
 
-        // Technical Mappings
-        const nicknames: Record<string, string[]> = {
-            'wolves': ['wolverhampton'],
-            'inter': ['internazionale'],
-            'mancity': ['manchester city'],
-            'manutd': ['manchester united'],
-            'avs': ['avs futebol sad'],
-            'porto': ['fc porto', 'futebol clube do porto']
-        };
+    const nicknames: Record<string, string[]> = {
+        'wolves': ['wolverhampton', 'wolverhampton wanderers'],
+        'inter': ['internazionale', 'inter milan', 'internazionale milano'],
+        'mancity': ['manchester city'],
+        'manutd': ['manchester united', 'man utd'],
+        'spurs': ['tottenham', 'tottenham hotspur'],
+        'avs': ['avs futebol sad'],
+        'porto': ['fc porto', 'futebol clube do porto'],
+        'benfica': ['sl benfica', 'sport lisboa e benfica'],
+        'milan': ['ac milan'],
+        'verona': ['hellas verona']
+    };
 
-        const getSearchTerms = (name: string) => {
-            const n = normalize(name);
-            const terms = new Set([n]);
-            // Extract key words (e.g. "Porto" from "FC Porto")
-            n.split(' ').forEach(w => { if (w.length > 3) terms.add(w); });
-            Object.entries(nicknames).forEach(([key, val]) => {
-                if (n.includes(key) || key.includes(n)) val.forEach(v => terms.add(v));
-            });
-            return Array.from(terms);
-        };
-
-        const targetHTerms = getSearchTerms(homeTeam);
-        const targetATerms = getSearchTerms(awayTeam);
-
-        const match = matches.find(m => {
-            const h = normalize(m.homeTeam.name);
-            const a = normalize(m.awayTeam.name);
-
-            // Stricter matching: ONE team from prediction MUST match Home API, 
-            // AND the OTHER team from prediction MUST match Away API.
-            const homeMatchesH = targetHTerms.some(t => h.includes(t) || t.includes(h));
-            const homeMatchesA = targetHTerms.some(t => a.includes(t) || t.includes(a));
-
-            const awayMatchesH = targetATerms.some(t => h.includes(t) || t.includes(h));
-            const awayMatchesA = targetATerms.some(t => a.includes(t) || t.includes(a));
-
-            const normalOrder = homeMatchesH && awayMatchesA;
-            const swappedOrder = homeMatchesA && awayMatchesH;
-
-            return normalOrder || swappedOrder;
+    const getSearchTerms = (name: string) => {
+        const n = normalize(name);
+        const terms = new Set([n]);
+        // Extract key words (e.g. "Porto" from "FC Porto")
+        n.split(' ').forEach(w => { if (w.length > 3) terms.add(w); });
+        Object.entries(nicknames).forEach(([key, val]) => {
+            if (n.includes(key) || key.includes(n)) val.forEach(v => terms.add(v));
         });
+        return Array.from(terms);
+    };
 
-        if (match) {
-            console.info(`[Verifier] SUCCESS: Found ${match.homeTeam.name} vs ${match.awayTeam.name} for ${homeTeam} vs ${awayTeam}`);
-            return match.id;
-        } else {
-            console.warn(`[Verifier] FAILED: No match found for ${homeTeam} vs ${awayTeam}`);
-            return null;
-        }
-    } catch (e: any) {
-        if (e.response?.status === 429) throw e;
-        console.error("[Verifier] API Error during search:", homeTeam, "vs", awayTeam);
-        return null;
-    }
+    const targetHTerms = getSearchTerms(homeTeam);
+    const targetATerms = getSearchTerms(awayTeam);
+
+    return matches.find(m => {
+        const h = normalize(m.homeTeam.name);
+        const a = normalize(m.awayTeam.name);
+
+        const homeMatchesH = targetHTerms.some(t => h.includes(t) || t.includes(h));
+        const homeMatchesA = targetHTerms.some(t => a.includes(t) || t.includes(a));
+        const awayMatchesH = targetATerms.some(t => h.includes(t) || t.includes(h));
+        const awayMatchesA = targetATerms.some(t => a.includes(t) || t.includes(a));
+
+        const normalOrder = homeMatchesH && awayMatchesA;
+        const swappedOrder = homeMatchesA && awayMatchesH;
+
+        return normalOrder || swappedOrder;
+    }) || null;
 }
 
 /**
- * verifyMatch
- * 
- * Main orchestration for match verification. Retrieves match status/results and 
- * settles predictions.
+ * Verifies a prediction using a provided Match object (avoids API calls)
  */
-export async function verifyMatch(item: HistoryItem, apiKey: string, date?: string): Promise<HistoryItem> {
-    let matchId: number | null = item.matchId || extractMatchId(item.id || '');
-
-    // Trigger Healer if extraction fails (older "local" IDs)
-    if (!matchId) {
-        matchId = await findMatchByTeams(item.homeTeam, item.awayTeam, date, apiKey);
+export function verifyMatchFromData(item: HistoryItem, match: FootballDataMatch): HistoryItem {
+    if (match.status !== 'FINISHED' && match.status !== 'IN_PLAY' && match.status !== 'PAUSED') {
+        return { ...item, result: 'Pending', matchId: match.id };
     }
 
-    if (!matchId) return { ...item, result: 'Pending' };
+    const { home, away } = match.score.fullTime;
+    if (home === null || away === null) return { ...item, result: 'Pending', matchId: match.id };
 
-    try {
-        const response = await axios.get(`https://api.football-data.org/v4/matches/${matchId}`, {
-            headers: { 'X-Auth-Token': apiKey }
-        });
+    const result = verifyPrediction(
+        item.prediction,
+        home,
+        away,
+        match.score.halfTime.home,
+        match.score.halfTime.away
+    );
 
-        const match = response.data as FootballDataMatch;
-
-        // Skip verification if match hasn't started or isn't finished enough to be certain
-        if (match.status !== 'FINISHED' && match.status !== 'IN_PLAY' && match.status !== 'PAUSED') {
-            return { ...item, result: 'Pending', matchId };
-        }
-
-        const { home, away } = match.score.fullTime;
-        if (home === null || away === null) return { ...item, result: 'Pending', matchId };
-
-        const result = verifyPrediction(
-            item.prediction,
-            home,
-            away,
-            match.score.halfTime.home,
-            match.score.halfTime.away
-        );
-
-        return {
-            ...item,
-            result: match.status === 'FINISHED' ? result : 'Pending',
-            score: formatScore(match),
-            matchId
-        };
-
-    } catch (error: any) {
-        if (error.response?.status === 429) throw error;
-        return { ...item, matchId };
-    }
+    return {
+        ...item,
+        result: match.status === 'FINISHED' ? result : 'Pending',
+        score: formatScore(match),
+        matchId: match.id
+    };
 }
+
