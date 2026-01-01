@@ -86,8 +86,8 @@ const getConfidenceColor = (confidence: number) => {
 
 
 const formatBetType = (betType: string) => {
-  if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score';
-  if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'No BTTS';
+  if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score: Yes';
+  if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'Both Teams to Score: No';
   return betType;
 };
 
@@ -101,6 +101,8 @@ const getBetTypeBadge = (betType: string) => {
     'Away Team to Win': <FaPlaneDeparture />,
     'Both Teams to Score: Yes': <FaBullseye />,
     'BTTS: Yes': <FaBullseye />,
+    'Both Teams to Score: No': <FaBullseye />,
+    'BTTS: No': <FaBullseye />,
     'Home Team to Win or Draw': <FaDice />,
     'Away Team to Win or Draw': <FaDice />,
   };
@@ -453,7 +455,7 @@ const Results: NextPage = () => {
                   <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-5 flex justify-between items-center">
                     <div>
                       <p className="text-blue-500 font-bold text-xs uppercase tracking-widest mb-1">Recommended Bet</p>
-                      <p className="text-white font-extrabold text-lg tracking-tight">{selectedPrediction.betType}</p>
+                      <p className="text-white font-extrabold text-lg tracking-tight">{formatBetType(selectedPrediction.betType)}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-blue-500 font-bold text-xs uppercase tracking-widest mb-1">Confidence</p>

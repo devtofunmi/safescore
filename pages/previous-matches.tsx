@@ -43,8 +43,8 @@ const truncateText = (text: string, length: number = 10) => {
 };
 
 const formatBetType = (betType: string) => {
-    if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score';
-    if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'No BTTS';
+    if (betType === 'Both Teams to Score: Yes' || betType === 'BTTS: Yes') return 'Both Teams to Score: Yes';
+    if (betType === 'Both Teams to Score: No' || betType === 'BTTS: No') return 'Both Teams to Score: No';
     return betType;
 };
 
