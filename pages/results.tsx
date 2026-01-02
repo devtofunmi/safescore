@@ -12,6 +12,7 @@ import Footer from '../components/landing/Footer';
 import { track } from '@vercel/analytics';
 import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/router';
+import { FaTicketAlt } from 'react-icons/fa';
 
 
 
@@ -207,6 +208,8 @@ const Results: NextPage = () => {
   };
 
 
+
+
   return (
     <>
       <SEO
@@ -272,51 +275,121 @@ const Results: NextPage = () => {
 
         <main className="mx-auto w-full px-4 pt-12 pb-12 sm:px-6 lg:px-8">
           {predictions.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-10"
-            >
-              <button
-                onClick={() => setSafestFilter(5)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === 5
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
-                  }`}
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-10"
               >
-                Top 5
-              </button>
-              <button
-                onClick={() => setSafestFilter(10)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === 10
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
-                  }`}
+                <button
+                  onClick={() => setSafestFilter(5)}
+                  className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === 5
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
+                    }`}
+                >
+                  Top 5
+                </button>
+                <button
+                  onClick={() => setSafestFilter(10)}
+                  className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === 10
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
+                    }`}
+                >
+                  Top 10
+                </button>
+                <button
+                  onClick={() => setSafestFilter(null)}
+                  className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === null
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
+                    }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={copyToClipboard}
+                  className="rounded-xl hidden md:block cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-black text-gray-300 border-[#18181b] hover:border-gray-500"
+                >
+                  {copyStatus}
+                </button>
+                <button
+                  onClick={shareToTwitter}
+                  className="rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-[#1DA1F2] text-white border-[#1DA1F2]"
+                >
+                  <FaXTwitter />
+                </button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="max-w-7xl mx-auto mb-16"
               >
-                Top 10
-              </button>
-              <button
-                onClick={() => setSafestFilter(null)}
-                className={`rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all border-blue-500 ${safestFilter === null
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-transparent text-gray-300 hover:bg-blue-500/20'
-                  }`}
-              >
-                All
-              </button>
-              <button
-                onClick={copyToClipboard}
-                className="rounded-xl hidden md:block cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-black text-gray-300 border-[#18181b] hover:border-gray-500"
-              >
-                {copyStatus}
-              </button>
-              <button
-                onClick={shareToTwitter}
-                className="rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-[#1DA1F2] text-white border-[#1DA1F2]"
-              >
-                <FaXTwitter />
-              </button>
-            </motion.div>
+                <div className="flex  md:items-center justify-between gap-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-600 text-white px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-sm font-black italic tracking-tighter flex items-center gap-2">
+                      <FaTicketAlt />
+                      PREDICTION SLIPS
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full">
+                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest leading-none">Quick Summary</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {(['Top 5', 'Top 10', 'All'] as const).map((cat) => {
+                    const count = cat === 'Top 5' ? 5 : cat === 'Top 10' ? 10 : predictions.length;
+                    const catPredictions = [...predictions]
+                      .sort((a, b) => b.confidence - a.confidence)
+                      .slice(0, count);
+
+                    return (
+                      <motion.div
+                        key={cat}
+                        whileHover={{ y: -5 }}
+                        className="bg-[#0c0c0c] border border-white/5 rounded-[2rem] p-6 flex flex-col hover:border-blue-500/30 transition-all shadow-2xl relative overflow-hidden group"
+                      >
+                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+                          <FaTicketAlt size={120} className="rotate-12 text-white" />
+                        </div>
+
+                        <div className="flex justify-between items-start mb-6 relative z-10">
+                          <div>
+                            <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">{cat} TICKET</p>
+                            <h4 className="text-2xl font-black text-white italic tracking-tighter">{count} SELECTIONS</h4>
+                          </div>
+                          <div className="bg-blue-600/10 p-2.5 rounded-xl border border-blue-500/20">
+                            <FaTicketAlt className="text-blue-500" />
+                          </div>
+                        </div>
+
+                        <div className="flex-1 space-y-3 relative z-10 max-h-[300px] overflow-y-auto custom-scrollbar pr-2 mb-2">
+                          {catPredictions.map((p, idx) => (
+                            <div key={idx} className="flex gap-3 items-start border-b border-white/[0.03] pb-3">
+                              <span className="text-[10px] font-bold text-neutral-500 bg-white/5 w-5 h-5 flex items-center justify-center rounded shrink-0 mt-0.5">{idx + 1}</span>
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-white truncate truncate-2-lines">{p.team1} v {p.team2}</p>
+                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-wider mt-0.5">{formatBetType(p.betType)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-8 flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+                  <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em]">
+                    How to play: Open any bet app ➔ Add games manually
+                  </p>
+                </div>
+              </motion.div>
+            </>
           )}
 
           <AnimatePresence mode="popLayout">
