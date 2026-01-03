@@ -44,3 +44,6 @@ next-env.d.ts
 # Local Cache
 /.cache
 
+
+# Local Scripts
+scripts/fix_pending_matches.ts

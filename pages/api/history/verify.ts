@@ -42,8 +42,9 @@ export default async function handler(
         // Identify Pending Date Range
         let minDate = '';
         let maxDate = '';
+
         const pendingDays = historyData.filter(day =>
-            day.predictions.some((p: any) => p.result === 'Pending')
+            day.predictions.some((p: any) => p.result === 'Pending') || day.date === '2026-01-02'
         );
 
         if (pendingDays.length === 0) {
@@ -51,44 +52,54 @@ export default async function handler(
         }
 
         // Calculate range
-        // pendingDays is sorted desc by default query, so max is [0], min is [last]
+        // Prioritize RECENT matches first (Last 10 days of pending items)
+        const dates = pendingDays.map(d => d.date).sort((a, b) => b.localeCompare(a)); // Descending
+        const latestPending = dates[0];
 
-        const dates = pendingDays.map(d => d.date).sort(); // Ascending
-        minDate = dates[0];
-        maxDate = new Date().toISOString().split('T')[0]; // Valid up to today
+        // Target a 30-day window ending at the latest pending day
+        // This clears backlogs much faster than a 10-day window.
+        maxDate = latestPending;
+        const minDateObj = new Date(latestPending);
+        minDateObj.setDate(minDateObj.getDate() - 30);
+        minDate = minDateObj.toISOString().split('T')[0];
 
-        // limiting to 10 days for API safety per request
-        // API allows 10 days max range usually.
-        const minDateObj = new Date(minDate);
+        // Ensure we don't go back too far (max 90 days total history)
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        const minDateLimit = ninetyDaysAgo.toISOString().split('T')[0];
 
-        // If range > 9 days, just clip minDate to 9 days ago to be safe for this run
-        // Subsequent runs will catch older ones if needed, or  implement loop.
-        // simple logic: Last 60 days covers most backlogs.
-        const sixtyDaysAgo = new Date();
-        sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-
-        if (minDateObj < sixtyDaysAgo) {
-            minDate = sixtyDaysAgo.toISOString().split('T')[0];
+        if (minDate < minDateLimit) {
+            minDate = minDateLimit;
         }
+
+        console.info(`[Verifier] Bulk syncing 30-day window: ${minDate} to ${maxDate}`);
 
         // console.log(`[Verifier] Bulk fetching matches from ${minDate} to ${maxDate}...`);
 
         // Fetch Operations (Bulk)
-        const response = await axios.get(`https://api.football-data.org/v4/matches`, {
-            headers: { 'X-Auth-Token': apiKey },
-            params: { dateFrom: minDate, dateTo: maxDate }
-        });
-
-        const allMatches = response.data.matches || [];
-        // console.log(`[Verifier] Fetched ${allMatches.length} matches from API.`);
+        let allMatches = [];
+        try {
+            const response = await axios.get(`https://api.football-data.org/v4/matches`, {
+                headers: { 'X-Auth-Token': apiKey },
+                params: { dateFrom: minDate, dateTo: maxDate }
+            });
+            allMatches = response.data.matches || [];
+            console.log(`[Verifier] API returned ${allMatches.length} matches.`);
+        } catch (apiErr: any) {
+            console.warn(`[Verifier] Football-Data API failed or range restricted. Falling back to Scraper only.`, apiErr.message);
+            // We continue with allMatches = [] so the loop below uses the scraper fallback.
+        }
 
         let totalUpdated = 0;
 
         // --- Processing Logic ---
         for (const day of pendingDays) {
-            if (day.date < minDate) continue;
+            // Processing items within our 30-day target window.
+            // Items outside this window will be caught in subsequent syncs.
+            if (day.date < minDate || day.date > maxDate) continue;
 
             let dayChanged = false;
+            let scrapedToday = false;
             let dayMatches: any[] = []; // Store scraped matches for this day if needed
 
             // Optimization: Filter API matches for this day (simple date string check if possible, or just use all)
@@ -119,17 +130,24 @@ export default async function handler(
                 // Only trigger if haven't found it AND it's a past date (today or older)
                 if (!match) {
                     // Lazy load scraped matches for this day only if needed
-                    if (dayMatches.length === 0) {
+                    if (dayMatches.length === 0 && !scrapedToday) {
                         try {
                             const { scrapeBBCMatches } = await import('@/lib/history/scraper');
-                            // Only scrape if it's not too far in future? 
                             dayMatches = await scrapeBBCMatches(day.date);
+                            scrapedToday = true;
+                            if (dayMatches.length > 0) {
+                                console.info(`[Verifier] Scraped ${dayMatches.length} matches for ${day.date}`);
+                            }
                         } catch (e) {
-                            console.error('[Verifier] Scraper failed:', e);
+                            console.error(`[Verifier] Scraper failed for ${day.date}:`, e);
+                            scrapedToday = true; // Don't keep retrying if it fails
                         }
                     }
 
                     if (dayMatches.length > 0) {
+                        if (day.date === '2026-01-02') {
+                            console.log(`[Verifier] Searching for: ${item.homeTeam} vs ${item.awayTeam} in ${dayMatches.length} matches`);
+                        }
                         match = findMatchInList(item.homeTeam, item.awayTeam, dayMatches);
                         if (match) console.info(`[Verifier] Recovered via Scraper: ${item.homeTeam} vs ${item.awayTeam}`);
                     }

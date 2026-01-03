@@ -30,13 +30,36 @@ export async function scrapeBBCMatches(date: string): Promise<FootballDataMatch[
         // Strategy: Look for the specific "qa-match-block" or similar components.
         // As of 2025/26, BBC might use new classes.  try generic selectors first.
 
-        // Select all match containers using the GridContainer class identified
-        $('div[class*="GridContainer"]').each((_, el) => {
+        // BBC structure varies. We look for common match containers like GridContainer, Match- row list items, etc.
+        const containers = $('div[class*="GridContainer"], li[class*="Match-"], div[class*="Match-"]');
+
+        containers.each((_, el) => {
             const $el = $(el);
 
+            // Skip if it doesn't look like a match row (needs at least one team)
+            if ($el.find('div[class*="TeamHome"], [data-testid="home-team-name"]').length === 0) return;
+
             // Extract Teams
-            const homeTeamName = $el.find('div[class*="TeamHome"] span[class*="DesktopValue"], [data-testid="home-team-name"]').first().text().trim();
-            const awayTeamName = $el.find('div[class*="TeamAway"] span[class*="DesktopValue"], [data-testid="away-team-name"]').first().text().trim();
+            // BBC includes multiple spans for responsiveness. Prefer DesktopValue if present.
+            const homeSpan = $el.find('div[class*="TeamHome"] span[class*="DesktopValue"], [data-testid="home-team-name"]').first();
+            const awaySpan = $el.find('div[class*="TeamAway"] span[class*="DesktopValue"], [data-testid="away-team-name"]').first();
+
+            let homeTeamName = homeSpan.text().trim();
+            let awayTeamName = awaySpan.text().trim();
+
+            // Handle BBC's multiple spans (Mobile/Desktop/Screenreader) which create duplicate text
+            if (homeTeamName.includes('\n')) homeTeamName = homeTeamName.split('\n')[0].trim();
+            if (awayTeamName.includes('\n')) awayTeamName = awayTeamName.split('\n')[0].trim();
+
+            // Fallback: If spans still empty, try the parent container
+            if (!homeTeamName) {
+                const rawHome = $el.find('div[class*="TeamHome"]').text().trim();
+                homeTeamName = rawHome.split('\n')[0].trim();
+            }
+            if (!awayTeamName) {
+                const rawAway = $el.find('div[class*="TeamAway"]').text().trim();
+                awayTeamName = rawAway.split('\n')[0].trim();
+            }
 
             if (!homeTeamName || !awayTeamName) return;
 
@@ -48,13 +71,20 @@ export async function scrapeBBCMatches(date: string): Promise<FootballDataMatch[
             const awayScore = parseInt(awayScoreText);
 
             // Match Status
-            const statusText = $el.find('div[class*="StyledPeriod"], div[class*="Status"]').text().trim().toUpperCase();
+            const $statusEl = $el.find('div[class*="StyledPeriod"], div[class*="Status"], div[class*="MatchProgress"]');
+            const statusText = $statusEl.text().trim().toUpperCase();
             let status = 'SCHEDULED';
 
             if (!isNaN(homeScore) && !isNaN(awayScore)) {
                 status = 'FINISHED';
-                if (statusText === 'FT' || statusText.includes('FINISHED')) status = 'FINISHED';
-                else if (statusText.includes('LIVE') || statusText.includes('MINS')) status = 'IN_PLAY';
+                // Check for explicit finished status
+                if (statusText.includes('FT') || statusText.includes('FINISHED') || statusText.includes('FULL TIME')) {
+                    status = 'FINISHED';
+                } else if (statusText.includes('LIVE') || statusText.includes('MINS') || statusText.includes('\'')) {
+                    status = 'IN_PLAY';
+                }
+            } else if (statusText.includes('POSTP') || statusText.includes('CANC')) {
+                status = 'CANCELLED';
             }
 
             const id = Math.abs((homeTeamName + awayTeamName).split('').reduce((a, b) => a = ((a << 5) - a) + b.charCodeAt(0) | 0, 0));
@@ -80,7 +110,7 @@ export async function scrapeBBCMatches(date: string): Promise<FootballDataMatch[
             // Look for "Team A versus Team B" patterns
             const text = $('body').text();
             // This is a very complex regex because BBC text is often jumbled in the DOM-to-text conversion
-           
+
             $('a, li, div').each((_, el) => {
                 const elText = $(el).text();
                 if (elText.includes(' versus ') && (elText.includes('FT') || elText.match(/\d+-\d+/))) {
