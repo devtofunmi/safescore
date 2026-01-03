@@ -3,6 +3,7 @@ import { HistoryItem } from './storage';
 /**
  * Football Data API match structure for type safety.
  */
+
 export interface FootballDataMatch {
     id: number;
     utcDate: string;
@@ -42,14 +43,7 @@ export function extractMatchId(id: string): number | null {
     return null;
 }
 
-/**
- * verifyPrediction
- * 
- * The core mathematical engine that compares a prediction against result data.
- * Handles diverse markets like 1X2, Over/Under, BTTS, and Half-time specific bets.
- * 
- * Note: Contributors adding new bet types should add cases here.
- */
+
 /**
  * verifyPrediction
  * 
@@ -137,7 +131,12 @@ export function findMatchInList(
     const normalize = (n: string) => {
         if (!n) return '';
         return n.toLowerCase()
-            .replace(/\b(fc|afc|cf|sc|ac|rovers|albion|town|athletic|clube de|club|de|as|ss|ssc|bc|uc|us|cd|cuba|futebol|sad|sports|sporting|international|internazionale|italy|portugal|spain|france|england|germany)\b/g, '')
+            // First remove specific long phrases
+            .replace(/\bclube de portugal\b/g, '')
+            .replace(/\bde portugal\b/g, '')
+            // Then remove common club suffixes
+            .replace(/\b(calcio|futebol clube|clube de|racing club de)\b/g, '')
+            .replace(/\b(fc|afc|cf|sc|ac|club|de|ss|ssc|bc|uc|us|cd|sad|cp)\b/g, '')
             .replace(/[\W_]+/g, ' ')
             .trim();
     };
@@ -151,8 +150,28 @@ export function findMatchInList(
         'avs': ['avs futebol sad'],
         'porto': ['fc porto', 'futebol clube do porto'],
         'benfica': ['sl benfica', 'sport lisboa e benfica'],
-        'milan': ['ac milan'],
-        'verona': ['hellas verona']
+        'milan': ['ac milan', 'milan ac'],
+        'verona': ['hellas verona'],
+        'fiorentina': ['acf fiorentina'],
+        'atletico': ['atletico madrid', 'club atletico de madrid'],
+        'madrid': ['real madrid', 'atletico madrid'],
+        'psg': ['paris saint-germain', 'paris sg'],
+        'bayern': ['bayern munich', 'bayern münchen'],
+        'bilbao': ['athletic club', 'athletic bilbao'],
+        'al-nasr': ['al nasr', 'al-nasr', 'al ahly'],
+        'sporting': ['sporting cp', 'sporting lisbon', 'sporting clube de portugal', 'portugal'],
+        'vitoria': ['vitoria guimaraes', 'vitoria sc', 'vitoria de guimaraes', 'guimaraes'],
+        'gil vicente': ['gil vicente fc', 'gil vicente'],
+        'heart': ['hearts', 'heart of midlothian'],
+        'lazio': ['ss lazio'],
+        'napoli': ['ssc napoli'],
+        'coleraine': ['coleraine fc'],
+        'cagliari': ['cagliari calcio'],
+        'lens': ['racing club de lens', 'rc lens', 'lens'],
+        'toulouse': ['toulouse fc', 'toulouse'],
+        'rayo': ['rayo vallecano', 'rayo vallecano de madrid', 'rayo'],
+        'getafe': ['getafe cf', 'getafe'],
+        'nacional': ['cd nacional', 'nacional']
     };
 
     const getSearchTerms = (name: string) => {
@@ -188,6 +207,7 @@ export function findMatchInList(
 /**
  * Verifies a prediction using a provided Match object (avoids API calls)
  */
+
 export function verifyMatchFromData(item: HistoryItem, match: FootballDataMatch): HistoryItem {
     if (match.status !== 'FINISHED' && match.status !== 'IN_PLAY' && match.status !== 'PAUSED') {
         return { ...item, result: 'Pending', matchId: match.id };
