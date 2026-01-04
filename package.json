@@ -15,6 +15,7 @@
     "coinbase-commerce-node": "^1.0.4",
     "crypto-js": "^4.2.0",
     "framer-motion": "^12.23.26",
+    "html-to-image": "^1.11.13",
     "next": "16.0.10",
     "next-pwa": "^5.6.0",
     "react": "19.2.0",
