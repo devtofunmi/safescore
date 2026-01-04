@@ -4,7 +4,8 @@ import React, { JSX } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaXTwitter } from 'react-icons/fa6';
-import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar } from 'react-icons/fa';
+import { FaFutbol, FaDice, FaTrophy, FaPlaneDeparture, FaBullseye, FaChartBar, FaTicketAlt, FaImage } from 'react-icons/fa';
+import ShareModal from '../components/results/ShareModal';
 import { MdShield, MdCalendarToday } from 'react-icons/md';
 import { IoFootballOutline, IoDiamondOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
@@ -12,7 +13,7 @@ import Footer from '../components/landing/Footer';
 import { track } from '@vercel/analytics';
 import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/router';
-import { FaTicketAlt } from 'react-icons/fa';
+
 
 
 
@@ -117,13 +118,21 @@ const truncateText = (text: string, length: number = 10) => {
   return text.length > length ? text.substring(0, length) + '...' : text;
 };
 
+
 const Results: NextPage = () => {
   const { user, loading: authLoading, isPro } = useAuth();
   const [predictions, setPredictions] = React.useState<Prediction[]>([]);
-  const [filters] = React.useState<Filters | null>(() => readStoredFilters());
+  const [filters, setFilters] = React.useState<Filters | null>(null);
   const [safestFilter, setSafestFilter] = React.useState<number | null>(10);
+
+  React.useEffect(() => {
+    setFilters(readStoredFilters());
+  }, []);
+
   const [copyStatus, setCopyStatus] = React.useState('Copy');
-  const [activeTooltipId, setActiveTooltipId] = React.useState<string | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+  const [shareCount, setShareCount] = React.useState(5);
+
 
   const [selectedPrediction, setSelectedPrediction] = React.useState<Prediction | null>(null);
   const router = useRouter();
@@ -142,13 +151,9 @@ const Results: NextPage = () => {
   }, [user, authLoading, router]);
 
 
-  const handleTooltipToggle = (predictionId: string) => {
-    setActiveTooltipId(prevId => (prevId === predictionId ? null : predictionId));
-  };
+
 
   const openDetails = (prediction: Prediction) => {
-    // console.debug('Opening AI Details for:', prediction.team1, 'vs', prediction.team2);
-    // console.debug('Raw details data:', JSON.stringify(prediction.details, null, 2));
     setSelectedPrediction(prediction);
   };
 
@@ -195,6 +200,7 @@ const Results: NextPage = () => {
       }
     );
   };
+
 
   const shareToTwitter = () => {
     const textToShare = displayedPredictions
@@ -320,6 +326,14 @@ const Results: NextPage = () => {
                 >
                   <FaXTwitter />
                 </button>
+                <button
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="rounded-xl cursor-pointer border-2 px-3 md:px-6 py-2 font-extrabold transition-all bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-transparent hover:scale-105 shadow-lg shadow-purple-500/20"
+                >
+                  <FaImage />
+                </button>
+
+
               </motion.div>
 
               <motion.div
@@ -462,7 +476,7 @@ const Results: NextPage = () => {
                             </div>
                           )}
                         </div>
-                        <div className="relative cursor-pointer" onClick={() => !isConfidenceLocked && handleTooltipToggle(prediction.id)}>
+                        <div className="relative">
                           <div className={`rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 hover:bg-white/[0.03] transition-all ${isConfidenceLocked ? 'blur-[2px]' : ''}`}>
                             <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">CONFIDENCE SCORE</p>
                             <p className="text-2xl font-bold text-white mt-1">{isConfidenceLocked ? 'HIDDEN' : `${prediction.confidence}%`}</p>
@@ -637,6 +651,15 @@ const Results: NextPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          predictions={predictions}
+          shareCount={shareCount}
+          setShareCount={setShareCount}
+        />
+
 
         <div className="flex mb-10 flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
           <Link href="/dashboard">
