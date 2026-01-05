@@ -9,7 +9,7 @@ export interface HistoryItem {
     homeTeam: string;         // Home team
     awayTeam: string;         // Away team
     prediction: string;       // The bet type selected
-    result: 'Won' | 'Lost' | 'Pending';
+    result: 'Won' | 'Lost' | 'Pending' | 'Postponed';
     score: string;            // Final score (e.g., "2-1")
     league?: string;
     matchId?: number;         // Explicit ID for verification
@@ -53,9 +53,6 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string, 
             query = query.eq('user_id', userId);
         }
 
-        // DEBUG: Check if we have a service key
-        // We can't easily check internal properties, but we can assume if it's 'placeholder-key' it will fail auth.
-        // Let's rely on the query error to tell us.
 
         const { data: existingRecords, error: fetchError } = await query;
 
@@ -106,9 +103,6 @@ export async function saveToHistory(predictions: Prediction[], dateStr: string, 
         if (existingRecord?.id) {
             payload.id = existingRecord.id;
         }
-
-        // DEBUG: Log payload
-        console.log('[History] Upserting payload:', JSON.stringify(payload));
 
         const { error: upsertError } = await supabaseAdmin
             .from('history')

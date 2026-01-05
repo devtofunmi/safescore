@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import axios from 'axios';
 
 /**
@@ -29,7 +29,7 @@ export default async function handler(
         }
 
         // Fetch History from Supabase
-        const { data: historyData, error: fetchError } = await supabase
+        const { data: historyData, error: fetchError } = await supabaseAdmin
             .from('history')
             .select('*')
             .order('date', { ascending: false });
@@ -43,8 +43,13 @@ export default async function handler(
         let minDate = '';
         let maxDate = '';
 
+        const now = new Date();
+        const threeDaysAgo = new Date(now);
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        const threeDaysAgoStr = threeDaysAgo.toISOString().split('T')[0];
+
         const pendingDays = historyData.filter(day =>
-            day.predictions.some((p: any) => p.result === 'Pending') || day.date === '2026-01-02'
+            day.predictions.some((p: any) => p.result === 'Pending') || day.date >= threeDaysAgoStr
         );
 
         if (pendingDays.length === 0) {
@@ -109,7 +114,9 @@ export default async function handler(
             const updatedPredictions = [];
 
             for (const item of day.predictions) {
-                if (item.result !== 'Pending') {
+                // Normally we only verify Pending. But if we have legacy 'Lost' matches with 'PPD' score,
+                // we want to re-verify them to transition to the actual 'Postponed' status.
+                if (item.result !== 'Pending' && !(item.result === 'Lost' && item.score === 'PPD')) {
                     updatedPredictions.push(item);
                     continue;
                 }
@@ -145,9 +152,6 @@ export default async function handler(
                     }
 
                     if (dayMatches.length > 0) {
-                        if (day.date === '2026-01-02') {
-                            console.log(`[Verifier] Searching for: ${item.homeTeam} vs ${item.awayTeam} in ${dayMatches.length} matches`);
-                        }
                         match = findMatchInList(item.homeTeam, item.awayTeam, dayMatches);
                         if (match) console.info(`[Verifier] Recovered via Scraper: ${item.homeTeam} vs ${item.awayTeam}`);
                     }
@@ -175,7 +179,7 @@ export default async function handler(
             // Update Supabase
             if (dayChanged) {
                 console.info(`[Verifier] Updating records for ${day.date}...`);
-                const { error: updateError } = await supabase
+                const { error: updateError } = await supabaseAdmin
                     .from('history')
                     .update({ predictions: updatedPredictions })
                     .eq('date', day.date);

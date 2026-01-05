@@ -57,8 +57,8 @@ export function verifyPrediction(
     homeGoals: number,
     awayGoals: number,
     homeHT: number | null = null,
-    awayHT: number | null = null
-): 'Won' | 'Lost' | 'Pending' {
+    awayHT: number | null
+): 'Won' | 'Lost' | 'Pending' | 'Postponed' {
     const totalGoals = homeGoals + awayGoals;
 
     // Result of the 2nd half alone
@@ -134,9 +134,9 @@ export function findMatchInList(
             // First remove specific long phrases
             .replace(/\bclube de portugal\b/g, '')
             .replace(/\bde portugal\b/g, '')
-            // Then remove common club suffixes
-            .replace(/\b(calcio|futebol clube|clube de|racing club de)\b/g, '')
-            .replace(/\b(fc|afc|cf|sc|ac|club|de|ss|ssc|bc|uc|us|cd|sad|cp)\b/g, '')
+            // Then remove common club suffixes and prefixes
+            .replace(/\b(calcio|futebol clube|clube de|racing club de|clube)\b/g, '')
+            .replace(/\b(fc|afc|cf|sc|ac|club|de|ss|ssc|bc|uc|us|cd|sad|cp|osc|stade|as|ogc|rc|fcc|vfl|tsv|ud|ca|sd|cf|rsc|rbfc|fbk|sk|if|bk|jk|aik|ff|aek|paok|fenerbahce|galatasaray|besiktas)\b/g, '')
             .replace(/[\W_]+/g, ' ')
             .trim();
     };
@@ -171,7 +171,20 @@ export function findMatchInList(
         'toulouse': ['toulouse fc', 'toulouse'],
         'rayo': ['rayo vallecano', 'rayo vallecano de madrid', 'rayo'],
         'getafe': ['getafe cf', 'getafe'],
-        'nacional': ['cd nacional', 'nacional']
+        'nacional': ['cd nacional', 'nacional'],
+        'lille': ['lille osc', 'lille'],
+        'rennes': ['stade rennais', 'rennes'],
+        'reims': ['stade de reims', 'reims'],
+        'strasbourg': ['rc strasbourg', 'strasbourg'],
+        'nice': ['ogc nice', 'nice'],
+        'saint-etienne': ['as saint-etienne', 'st etienne'],
+        'monaco': ['as monaco', 'monaco'],
+        'marseille': ['olympique marseille', 'om'],
+        'lyon': ['olympique lyon', 'ol'],
+        'hull': ['hull city'],
+        'watford': ['watford fc'],
+        'ipswich': ['ipswich town'],
+        'portsmouth': ['portsmouth fc']
     };
 
     const getSearchTerms = (name: string) => {
@@ -209,6 +222,11 @@ export function findMatchInList(
  */
 
 export function verifyMatchFromData(item: HistoryItem, match: FootballDataMatch): HistoryItem {
+    // Handle Postponed/Cancelled matches as 'Postponed' to clear pending status
+    if (match.status === 'CANCELLED' || match.status === 'POSTPONED' || match.status === 'SUSPENDED') {
+        return { ...item, result: 'Postponed', score: 'PPD', matchId: match.id };
+    }
+
     if (match.status !== 'FINISHED' && match.status !== 'IN_PLAY' && match.status !== 'PAUSED') {
         return { ...item, result: 'Pending', matchId: match.id };
     }

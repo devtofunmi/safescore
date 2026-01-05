@@ -23,57 +23,66 @@ export async function scrapeBBCMatches(date: string): Promise<FootballDataMatch[
         const $ = cheerio.load(data);
         const matches: FootballDataMatch[] = [];
 
-        // BBC structure varies, but generally matches are in "group" containers or list items.
-        // search for elements that contain team names and scores.
-        // Identify semantic containers for matches.
-
-        // Strategy: Look for the specific "qa-match-block" or similar components.
-        // As of 2025/26, BBC might use new classes.  try generic selectors first.
-
         // BBC structure varies. We look for common match containers like GridContainer, Match- row list items, etc.
-        const containers = $('div[class*="GridContainer"], li[class*="Match-"], div[class*="Match-"]');
+        const containers = $('div[class*="GridContainer"], li[class*="Match-"], div[class*="Match-"], a[class*="OnwardJourneyLink"], [data-testid*="match-fixture"], [class*="MatchFixture"]');
 
         containers.each((_, el) => {
             const $el = $(el);
 
-            // Skip if it doesn't look like a match row (needs at least one team)
-            if ($el.find('div[class*="TeamHome"], [data-testid="home-team-name"]').length === 0) return;
-
             // Extract Teams
-            // BBC includes multiple spans for responsiveness. Prefer DesktopValue if present.
-            const homeSpan = $el.find('div[class*="TeamHome"] span[class*="DesktopValue"], [data-testid="home-team-name"]').first();
-            const awaySpan = $el.find('div[class*="TeamAway"] span[class*="DesktopValue"], [data-testid="away-team-name"]').first();
+            // Updated for new BBC structure (e.g. ssrcss-1ucldln-StyledTeam-HomeTeam)
+            // search for children spans and take the one that represents the full name (DesktopValue)
+            const homeContainer = $el.find('[class*="StyledTeam-HomeTeam"] [class*="TeamNameWrapper"]');
+            const awayContainer = $el.find('[class*="StyledTeam-AwayTeam"] [class*="TeamNameWrapper"]');
 
-            let homeTeamName = homeSpan.text().trim();
-            let awayTeamName = awaySpan.text().trim();
+            let homeTeamName = homeContainer.find('[class*="DesktopValue"]').first().text().trim() ||
+                homeContainer.find('span').first().text().trim();
+            let awayTeamName = awayContainer.find('[class*="DesktopValue"]').first().text().trim() ||
+                awayContainer.find('span').first().text().trim();
+
+            // Fallback for older structure or nested spans
+            if (!homeTeamName) {
+                const homeSpan = $el.find('div[class*="TeamHome"] [class*="DesktopValue"], [data-testid="home-team-name"], [class*="HomeTeamName"]').first();
+                homeTeamName = homeSpan.text().trim() || $el.find('div[class*="TeamHome"]').text().trim();
+            }
+            if (!awayTeamName) {
+                const awaySpan = $el.find('div[class*="TeamAway"] [class*="DesktopValue"], [data-testid="away-team-name"], [class*="AwayTeamName"]').first();
+                awayTeamName = awaySpan.text().trim() || $el.find('div[class*="TeamAway"]').text().trim();
+            }
 
             // Handle BBC's multiple spans (Mobile/Desktop/Screenreader) which create duplicate text
             if (homeTeamName.includes('\n')) homeTeamName = homeTeamName.split('\n')[0].trim();
             if (awayTeamName.includes('\n')) awayTeamName = awayTeamName.split('\n')[0].trim();
 
-            // Fallback: If spans still empty, try the parent container
-            if (!homeTeamName) {
-                const rawHome = $el.find('div[class*="TeamHome"]').text().trim();
-                homeTeamName = rawHome.split('\n')[0].trim();
-            }
-            if (!awayTeamName) {
-                const rawAway = $el.find('div[class*="TeamAway"]').text().trim();
-                awayTeamName = rawAway.split('\n')[0].trim();
-            }
-
-            if (!homeTeamName || !awayTeamName) return;
+            if (!homeTeamName && !awayTeamName) return;
 
             // Extract Score
-            const homeScoreText = $el.find('div[class*="HomeScore"], [data-testid="home-score"]').first().text().trim();
-            const awayScoreText = $el.find('div[class*="AwayScore"], [data-testid="away-score"]').first().text().trim();
+            // Try new score classes first
+            let homeScoreText = $el.find('[class*="StyledHomeScore"], [class*="HomeScore"]').first().text().trim();
+            let awayScoreText = $el.find('[class*="StyledAwayScore"], [class*="AwayScore"]').first().text().trim();
+
+            // Fallback to visually hidden text parsing (v. robust)
+            // Example: "Celtic 1 , Rangers 3 at Full time"
+            const screenReaderText = $el.find('span.visually-hidden').text().trim();
+            if ((!homeScoreText || !awayScoreText) && screenReaderText.includes(',') && (screenReaderText.includes('at Full time') || screenReaderText.includes('FT'))) {
+                const scoreMatch = screenReaderText.match(/(\d+)\s*,\s*.*?(\d+)/);
+                if (scoreMatch) {
+                    homeScoreText = scoreMatch[1];
+                    awayScoreText = scoreMatch[2];
+                }
+            }
+
+            // Fallback for older structure
+            if (!homeScoreText) homeScoreText = $el.find('div[class*="HomeScore"], [data-testid="home-score"]').first().text().trim();
+            if (!awayScoreText) awayScoreText = $el.find('div[class*="AwayScore"], [data-testid="away-score"]').first().text().trim();
+
+            // Match Status
+            const $statusEl = $el.find('div[class*="StyledPeriod"], div[class*="Status"], div[class*="MatchProgress"], [class*="AbbrPeriod"]');
+            const statusText = ($statusEl.text().trim() || screenReaderText).toUpperCase();
+            let status = 'SCHEDULED';
 
             const homeScore = parseInt(homeScoreText);
             const awayScore = parseInt(awayScoreText);
-
-            // Match Status
-            const $statusEl = $el.find('div[class*="StyledPeriod"], div[class*="Status"], div[class*="MatchProgress"]');
-            const statusText = $statusEl.text().trim().toUpperCase();
-            let status = 'SCHEDULED';
 
             if (!isNaN(homeScore) && !isNaN(awayScore)) {
                 status = 'FINISHED';
@@ -83,9 +92,11 @@ export async function scrapeBBCMatches(date: string): Promise<FootballDataMatch[
                 } else if (statusText.includes('LIVE') || statusText.includes('MINS') || statusText.includes('\'')) {
                     status = 'IN_PLAY';
                 }
-            } else if (statusText.includes('POSTP') || statusText.includes('CANC')) {
+            } else if (statusText.includes('POSTP') || statusText.includes('CANC') || homeScoreText === 'P' || statusText.includes('P-P')) {
                 status = 'CANCELLED';
             }
+
+            if (!homeTeamName || !awayTeamName) return;
 
             const id = Math.abs((homeTeamName + awayTeamName).split('').reduce((a, b) => a = ((a << 5) - a) + b.charCodeAt(0) | 0, 0));
 

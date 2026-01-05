@@ -22,7 +22,7 @@ interface HistoryItem {
     homeTeam: string;
     awayTeam: string;
     prediction: string;
-    result: 'Won' | 'Lost' | 'Pending';
+    result: 'Won' | 'Lost' | 'Pending' | 'Postponed';
     score: string;
     league?: string;
     userId?: string;
@@ -123,21 +123,24 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
         let won = 0;
         let lost = 0;
         let pending = 0;
+        let postponed = 0;
 
         history.forEach(day => {
             day.predictions.forEach(p => {
                 total++;
                 if (p.result === 'Won') won++;
                 else if (p.result === 'Lost') lost++;
+                else if (p.result === 'Postponed') postponed++;
                 else pending++;
             });
         });
 
-        const accuracy = total - pending > 0
-            ? Math.round((won / (total - pending)) * 100)
+        const activeCount = total - pending - postponed;
+        const accuracy = activeCount > 0
+            ? Math.round((won / activeCount) * 100)
             : 0;
 
-        return { total, won, lost, pending, accuracy };
+        return { total, won, lost, pending, postponed, accuracy };
     }, [history]);
 
     const currentRecords = useMemo(() => {
@@ -187,11 +190,12 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                         </p>
                     </motion.div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-16">
                         {[
                             { label: 'Accuracy', val: `${stats.accuracy}%`, icon: IoStatsChartOutline, color: 'text-blue-500' },
                             { label: 'Won', val: stats.won, icon: IoCheckmarkCircleOutline, color: 'text-green-500' },
                             { label: 'Lost', val: stats.lost, icon: IoCloseCircleOutline, color: 'text-red-500' },
+                            { label: 'Postponed', val: stats.postponed, icon: IoCalendarOutline, color: 'text-orange-500' },
                             { label: 'Pending', val: stats.pending, icon: IoTimeOutline, color: 'text-neutral-500' },
                         ].map((stat, i) => (
                             <motion.div
@@ -305,10 +309,12 @@ const PreviousMatches: NextPage<HistoryProps> = ({ historyData }) => {
                                                         <td className="py-6 text-center">
                                                             <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.result === 'Won' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
                                                                 item.result === 'Lost' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
-                                                                    'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                                                    item.result === 'Postponed' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+                                                                        'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
                                                                 }`}>
                                                                 {item.result === 'Won' && <IoCheckmarkCircleOutline size={12} />}
                                                                 {item.result === 'Lost' && <IoCloseCircleOutline size={12} />}
+                                                                {item.result === 'Postponed' && <IoCalendarOutline size={12} />}
                                                                 {item.result === 'Pending' && <IoTimeOutline size={12} />}
                                                                 {item.result}
                                                             </span>
