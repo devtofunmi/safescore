@@ -23,6 +23,11 @@ import {
     IoShieldCheckmarkOutline,
     IoChevronBackOutline,
     IoLogOutOutline,
+    IoEyeOutline,
+    IoListOutline,
+    IoGridOutline,
+    IoRocketOutline,
+    IoChevronForwardOutline,
 } from 'react-icons/io5';
 
 interface AdminStats {
@@ -70,6 +75,16 @@ const AdminDashboard: NextPage = () => {
     const [searching, setSearching] = useState(false);
     const [upgrading, setUpgrading] = useState(false);
     const [resetting, setResetting] = useState(false);
+    const [viewMode, setViewMode] = useState<'overview' | 'users'>('overview');
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [userList, setUserList] = useState<any[]>([]);
+    const [userListLoading, setUserListLoading] = useState(false);
+    const [userListPage, setUserListPage] = useState(1);
+    const [userListTotal, setUserListTotal] = useState(0);
+    const [userListFilter, setUserListFilter] = useState<'all' | 'pro' | 'free'>('all');
+    const [userListSearch, setUserListSearch] = useState('');
+    const [userDetailData, setUserDetailData] = useState<any>(null);
+    const [userDetailLoading, setUserDetailLoading] = useState(false);
 
     // Check if user is admin
     useEffect(() => {
@@ -254,12 +269,104 @@ const AdminDashboard: NextPage = () => {
             if (searchResult?.id === userId) {
                 await handleSearch(); // Refresh search result
             }
+            if (selectedUserId === userId) {
+                await fetchUserDetail(userId); // Refresh user detail
+            }
         } catch (err: any) {
             toast.error(err.message || 'Failed to reset quota');
         } finally {
             setResetting(false);
         }
     };
+
+    const fetchUserList = async (page: number = 1, filter: string = 'all', search: string = '') => {
+        setUserListLoading(true);
+        try {
+            const token = await getAuthToken();
+            if (!token) return;
+
+            const params = new URLSearchParams({
+                page: page.toString(),
+                limit: '20',
+            });
+            if (filter !== 'all') {
+                params.append('planType', filter);
+            }
+            if (search) {
+                params.append('search', search);
+            }
+
+            const response = await fetch(`/api/admin/users/list?${params}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) throw new Error('Failed to fetch users');
+            const data = await response.json();
+            setUserList(data.users || []);
+            setUserListTotal(data.total || 0);
+            setUserListPage(page);
+        } catch (err) {
+            console.error('Error fetching user list:', err);
+            toast.error('Failed to load users');
+        } finally {
+            setUserListLoading(false);
+        }
+    };
+
+    const fetchUserDetail = async (userId: string) => {
+        setUserDetailLoading(true);
+        try {
+            const token = await getAuthToken();
+            if (!token) return;
+
+            const [dashboardRes, predictionsRes, historyRes] = await Promise.all([
+                fetch(`/api/admin/users/dashboard?userId=${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                }),
+                fetch(`/api/admin/users/predictions?userId=${userId}&limit=10`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                }),
+                fetch(`/api/admin/users/history?userId=${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                }),
+            ]);
+
+            if (!dashboardRes.ok || !predictionsRes.ok || !historyRes.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+
+            const [dashboard, predictions, history] = await Promise.all([
+                dashboardRes.json(),
+                predictionsRes.json(),
+                historyRes.json(),
+            ]);
+
+            setUserDetailData({
+                dashboard,
+                predictions,
+                history,
+            });
+        } catch (err) {
+            console.error('Error fetching user detail:', err);
+            toast.error('Failed to load user data');
+        } finally {
+            setUserDetailLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (viewMode === 'users' && !selectedUserId) {
+            fetchUserList(userListPage, userListFilter, userListSearch);
+        }
+    }, [viewMode, userListPage, userListFilter, userListSearch]);
+
+    useEffect(() => {
+        if (selectedUserId) {
+            fetchUserDetail(selectedUserId);
+        }
+    }, [selectedUserId]);
 
     if (authLoading || loading) {
         return (
@@ -335,8 +442,43 @@ const AdminDashboard: NextPage = () => {
                     </div>
                 </header>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {/* View Mode Tabs */}
+                <div className="flex gap-4 border-b border-white/5">
+                    <button
+                        onClick={() => {
+                            setViewMode('overview');
+                            setSelectedUserId(null);
+                        }}
+                        className={`px-6 py-3 font-bold transition-all border-b-2 ${
+                            viewMode === 'overview'
+                                ? 'text-blue-500 border-blue-500'
+                                : 'text-neutral-500 border-transparent hover:text-white'
+                        }`}
+                    >
+                        <IoStatsChartOutline className="inline mr-2" />
+                        Overview
+                    </button>
+                    <button
+                        onClick={() => {
+                            setViewMode('users');
+                            setSelectedUserId(null);
+                        }}
+                        className={`px-6 py-3 font-bold transition-all border-b-2 ${
+                            viewMode === 'users'
+                                ? 'text-blue-500 border-blue-500'
+                                : 'text-neutral-500 border-transparent hover:text-white'
+                        }`}
+                    >
+                        <IoPeopleOutline className="inline mr-2" />
+                        Users
+                    </button>
+                </div>
+
+                {/* Conditional Rendering Based on View Mode */}
+                {viewMode === 'overview' && (
+                    <>
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     {statCards.map((stat, i) => (
                         <motion.div
                             key={stat.title}
@@ -583,6 +725,263 @@ const AdminDashboard: NextPage = () => {
                         </div>
                     )}
                 </motion.div>
+                    </>
+                )}
+
+                {/* Users View */}
+                {viewMode === 'users' && !selectedUserId && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6"
+                    >
+                        {/* User List Filters */}
+                        <div className="p-6 bg-[#0c0c0c] border border-white/5 rounded-[2.5rem] space-y-4">
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <div className="flex-1 relative">
+                                    <IoSearchOutline className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={20} />
+                                    <input
+                                        type="text"
+                                        value={userListSearch}
+                                        onChange={(e) => {
+                                            setUserListSearch(e.target.value);
+                                            setUserListPage(1);
+                                        }}
+                                        placeholder="Search users by email..."
+                                        className="w-full pl-12 pr-4 py-3 bg-[#0a0a0a] border border-white/10 rounded-2xl text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-all"
+                                    />
+                                </div>
+                                <div className="flex gap-2">
+                                    {(['all', 'pro', 'free'] as const).map((filter) => (
+                                        <button
+                                            key={filter}
+                                            onClick={() => {
+                                                setUserListFilter(filter);
+                                                setUserListPage(1);
+                                            }}
+                                            className={`px-4 py-3 rounded-xl font-bold transition-all ${
+                                                userListFilter === filter
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-[#0a0a0a] border border-white/10 text-neutral-400 hover:text-white'
+                                            }`}
+                                        >
+                                            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* User List */}
+                        <div className="p-6 bg-[#0c0c0c] border border-white/5 rounded-[2.5rem] space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-bold">
+                                    All Users ({userListTotal})
+                                </h3>
+                                {userListLoading && (
+                                    <div className="w-5 h-5 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
+                                )}
+                            </div>
+
+                            {userListLoading && userList.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
+                                    <p className="text-neutral-500">Loading users...</p>
+                                </div>
+                            ) : userList.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <p className="text-neutral-500">No users found</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="space-y-2">
+                                        {userList.map((user) => (
+                                            <motion.div
+                                                key={user.id}
+                                                whileHover={{ scale: 1.01 }}
+                                                className="p-4 bg-[#0a0a0a] border border-white/5 rounded-2xl hover:border-blue-500/30 transition-all cursor-pointer"
+                                                onClick={() => setSelectedUserId(user.id)}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex-1">
+                                                        <p className="font-bold text-white">{user.email}</p>
+                                                        <div className="flex items-center gap-4 mt-2 text-sm text-neutral-500">
+                                                            <span>Created: {new Date(user.createdAt).toLocaleDateString()}</span>
+                                                            <span>Quota: {user.genCount}/2</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                                                            user.planType === 'pro'
+                                                                ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                                                                : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                                        }`}>
+                                                            {user.planType}
+                                                        </span>
+                                                        <IoChevronForwardOutline className="text-neutral-500" />
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+
+                                    {/* Pagination */}
+                                    {userListTotal > 20 && (
+                                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                            <button
+                                                onClick={() => setUserListPage(p => Math.max(1, p - 1))}
+                                                disabled={userListPage === 1}
+                                                className="px-4 py-2 bg-[#0a0a0a] border border-white/10 rounded-xl text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 transition-all"
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className="text-neutral-500">
+                                                Page {userListPage} of {Math.ceil(userListTotal / 20)}
+                                            </span>
+                                            <button
+                                                onClick={() => setUserListPage(p => p + 1)}
+                                                disabled={userListPage >= Math.ceil(userListTotal / 20)}
+                                                className="px-4 py-2 bg-[#0a0a0a] border border-white/10 rounded-xl text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/5 transition-all"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* User Detail View */}
+                {viewMode === 'users' && selectedUserId && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="space-y-6"
+                    >
+                        <button
+                            onClick={() => setSelectedUserId(null)}
+                            className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors"
+                        >
+                            <IoChevronBackOutline />
+                            Back to Users
+                        </button>
+
+                        {userDetailLoading ? (
+                            <div className="text-center py-12">
+                                <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
+                                <p className="text-neutral-500">Loading user data...</p>
+                            </div>
+                        ) : userDetailData ? (
+                            <>
+                                {/* User Info Card */}
+                                <div className="p-6 bg-[#0c0c0c] border border-white/5 rounded-[2.5rem]">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h3 className="text-2xl font-bold">{userDetailData.dashboard.user.email}</h3>
+                                            <p className="text-neutral-500 text-sm">ID: {userDetailData.dashboard.user.id}</p>
+                                        </div>
+                                        <span className={`px-4 py-2 rounded-full text-xs font-bold uppercase ${
+                                            userDetailData.dashboard.user.planType === 'pro'
+                                                ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                                                : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                        }`}>
+                                            {userDetailData.dashboard.user.planType}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <p className="text-neutral-500 text-sm mb-1">Today's Predictions</p>
+                                            <p className="text-2xl font-black">{userDetailData.dashboard.stats.todayCount}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-neutral-500 text-sm mb-1">Avg Confidence</p>
+                                            <p className="text-2xl font-black">{userDetailData.dashboard.stats.avgConfidence}%</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-neutral-500 text-sm mb-1">Markets</p>
+                                            <p className="text-2xl font-black">{userDetailData.dashboard.stats.markets}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-neutral-500 text-sm mb-1">Active Predictions</p>
+                                            <p className="text-2xl font-black">{userDetailData.dashboard.stats.activePredictions}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 mt-6 pt-6 border-t border-white/5">
+                                        <button
+                                            onClick={() => handleUpgrade(userDetailData.dashboard.user.id, 30)}
+                                            disabled={upgrading || userDetailData.dashboard.user.planType === 'pro'}
+                                            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            <IoDiamondOutline />
+                                            Upgrade to Pro
+                                        </button>
+                                        <button
+                                            onClick={() => handleResetQuota(userDetailData.dashboard.user.id)}
+                                            disabled={resetting}
+                                            className="px-4 py-2 bg-orange-600/10 hover:bg-orange-600/20 text-orange-500 border border-orange-500/20 font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            <IoRefreshOutline />
+                                            Reset Quota
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Active Predictions */}
+                                {userDetailData.dashboard.activePredictions.length > 0 && (
+                                    <div className="p-6 bg-[#0c0c0c] border border-white/5 rounded-[2.5rem]">
+                                        <h4 className="text-xl font-bold mb-4">Active Predictions</h4>
+                                        <div className="space-y-2">
+                                            {userDetailData.dashboard.activePredictions.map((p: any, i: number) => (
+                                                <div key={i} className="p-4 bg-[#0a0a0a] border border-white/5 rounded-xl">
+                                                    <p className="font-bold">{p.team1} vs {p.team2}</p>
+                                                    <p className="text-sm text-blue-500">{p.betType}</p>
+                                                    <p className="text-xs text-neutral-500 mt-1">{p.league} • {p.displayDate}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* History Stats */}
+                                {userDetailData.history && (
+                                    <div className="p-6 bg-[#0c0c0c] border border-white/5 rounded-[2.5rem]">
+                                        <h4 className="text-xl font-bold mb-4">Match History</h4>
+                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                                            <div>
+                                                <p className="text-neutral-500 text-sm mb-1">Accuracy</p>
+                                                <p className="text-2xl font-black text-blue-500">{userDetailData.history.stats.accuracy}%</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-500 text-sm mb-1">Won</p>
+                                                <p className="text-2xl font-black text-green-500">{userDetailData.history.stats.won}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-500 text-sm mb-1">Lost</p>
+                                                <p className="text-2xl font-black text-red-500">{userDetailData.history.stats.lost}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-500 text-sm mb-1">Pending</p>
+                                                <p className="text-2xl font-black text-orange-500">{userDetailData.history.stats.pending}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-neutral-500 text-sm mb-1">Total</p>
+                                                <p className="text-2xl font-black">{userDetailData.history.stats.total}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="text-center py-12">
+                                <p className="text-neutral-500">Failed to load user data</p>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
             </div>
         </DashboardLayout>
     );
