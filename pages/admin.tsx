@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import SEO from '../components/SEO';
-import { useAuth } from '@/lib/auth';
+import { useAdminAuth } from '@/lib/admin-auth';
 import { supabase } from '@/lib/supabase';
 import DashboardLayout from '../components/DashboardLayout';
 import {
@@ -22,6 +22,7 @@ import {
     IoSpeedometerOutline,
     IoShieldCheckmarkOutline,
     IoChevronBackOutline,
+    IoLogOutOutline,
 } from 'react-icons/io5';
 
 interface AdminStats {
@@ -59,7 +60,7 @@ interface UserSearchResult {
 
 const AdminDashboard: NextPage = () => {
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
+    const { adminUser, loading: authLoading, isAdminUser, signOut: adminSignOut } = useAdminAuth();
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [latency, setLatency] = useState<{ latency: number; status: string } | null>(null);
     const [pendingMatches, setPendingMatches] = useState<PendingMatch[]>([]);
@@ -72,33 +73,30 @@ const AdminDashboard: NextPage = () => {
 
     // Check if user is admin
     useEffect(() => {
-        const checkAdmin = async () => {
-            if (authLoading) return;
-            if (!user) {
-                router.push('/auth/login');
-                return;
-            }
+        if (authLoading) return;
+        
+        if (!isAdminUser || !adminUser) {
+            router.push('/admin/login');
+            return;
+        }
 
-            const metadata = user.user_metadata || {};
-            if (metadata.is_admin !== true) {
-                toast.error('Access denied. Admin privileges required.');
-                router.push('/dashboard');
-                return;
-            }
-
-            // Fetch initial data
-            await fetchStats();
-            await fetchLatency();
-            await fetchPendingMatches();
-            setLoading(false);
-        };
-
-        checkAdmin();
-    }, [user, authLoading, router]);
+        // Fetch initial data
+        fetchStats();
+        fetchLatency();
+        fetchPendingMatches();
+        setLoading(false);
+    }, [adminUser, isAdminUser, authLoading, router]);
 
     const getAuthToken = async (): Promise<string | null> => {
+        // Get admin session token
         const { data: { session } } = await supabase.auth.getSession();
-        return session?.access_token || null;
+        if (!session) return null;
+        
+        // Verify it's still an admin session
+        const adminSessionFlag = sessionStorage.getItem('admin_session');
+        if (!adminSessionFlag) return null;
+        
+        return session.access_token || null;
     };
 
     const fetchStats = async () => {
@@ -311,18 +309,30 @@ const AdminDashboard: NextPage = () => {
                             Manage users, monitor system performance, and track prediction accuracy.
                         </p>
                     </div>
-                    <button
-                        onClick={() => {
-                            fetchStats();
-                            fetchLatency();
-                            fetchPendingMatches();
-                            toast.info('Data refreshed');
-                        }}
-                        className="px-6 py-3 bg-blue-600/10 border border-blue-500/20 rounded-2xl text-blue-500 font-bold hover:bg-blue-600/20 transition-all flex items-center gap-2"
-                    >
-                        <IoRefreshOutline />
-                        Refresh
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => {
+                                fetchStats();
+                                fetchLatency();
+                                fetchPendingMatches();
+                                toast.info('Data refreshed');
+                            }}
+                            className="px-6 py-3 bg-blue-600/10 border border-blue-500/20 rounded-2xl text-blue-500 font-bold hover:bg-blue-600/20 transition-all flex items-center gap-2"
+                        >
+                            <IoRefreshOutline />
+                            Refresh
+                        </button>
+                        <button
+                            onClick={async () => {
+                                await adminSignOut();
+                                router.push('/admin/login');
+                            }}
+                            className="px-6 py-3 bg-red-600/10 border border-red-500/20 rounded-2xl text-red-500 font-bold hover:bg-red-600/20 transition-all flex items-center gap-2"
+                        >
+                            <IoLogOutOutline />
+                            Sign Out
+                        </button>
+                    </div>
                 </header>
 
                 {/* Stats Grid */}
