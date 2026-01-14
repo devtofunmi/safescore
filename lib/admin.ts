@@ -26,16 +26,21 @@ export async function isAdmin(userId: string): Promise<boolean> {
  */
 export async function getUserByIdentifier(identifier: string): Promise<User | null> {
     try {
-        // Try as ID first
-        const { data: userById, error: errorById } = await supabaseAdmin.auth.admin.getUserById(identifier);
-        if (!errorById && userById?.user) {
-            return userById.user;
+        // Try as ID first (UUIDs are typically 36 chars)
+        if (identifier.length >= 30) {
+            const { data: userById, error: errorById } = await supabaseAdmin.auth.admin.getUserById(identifier);
+            if (!errorById && userById?.user) {
+                return userById.user;
+            }
         }
 
-        // Try as email
-        const { data: usersByEmail, error: errorByEmail } = await supabaseAdmin.auth.admin.listUsers();
-        if (!errorByEmail && usersByEmail?.users) {
-            const user = usersByEmail.users.find(u => u.email === identifier);
+        // Try as email - list all users and search
+        // Note: This is not ideal for large user bases, but Supabase doesn't have a direct email search endpoint
+        const { data: usersList, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+        if (!listError && usersList?.users) {
+            const user = usersList.users.find(u => 
+                u.email?.toLowerCase() === identifier.toLowerCase()
+            );
             if (user) return user;
         }
 
