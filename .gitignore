@@ -47,3 +47,6 @@ next-env.d.ts
 
 # Local Scripts
 scripts/fix_pending_matches.ts
+
+
+bun.lock
