@@ -118,11 +118,11 @@ export default function AdminLoginPage() {
                                 <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20">
                                     <IoShieldCheckmarkOutline className="text-red-500" size={32} />
                                 </div>
-                                <h2 className="text-5xl font-extrabold leading-[1.1] tracking-tight">
+                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.1] tracking-tight">
                                     Admin <span className="text-red-500">Portal</span>
                                 </h2>
                             </div>
-                            <p className="text-neutral-400 text-xl leading-relaxed">
+                            <p className="text-neutral-400 text-base md:text-lg lg:text-xl leading-relaxed">
                                 Secure access to platform management and analytics
                             </p>
                         </motion.div>
@@ -151,8 +151,8 @@ export default function AdminLoginPage() {
                                         <item.icon size={28} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-lg text-white mb-1">{item.title}</h4>
-                                        <p className="text-neutral-500 leading-relaxed">{item.desc}</p>
+                                        <h4 className="font-bold text-base md:text-lg text-white mb-1">{item.title}</h4>
+                                        <p className="text-neutral-500 text-sm md:text-base leading-relaxed">{item.desc}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -169,11 +169,11 @@ export default function AdminLoginPage() {
             </motion.div>
 
             {/* Right Side - Form */}
-            <div className="flex-1 md:w-1/2 flex flex-col justify-center items-center px-10 py-12 bg-[#0a0a0a] relative">
+            <div className="flex-1 md:w-1/2 flex flex-col justify-center items-center px-4 sm:px-6 md:px-10 py-8 md:py-12 bg-[#0a0a0a] relative">
                 {/* Mobile Logo */}
-                <div className="md:hidden absolute top-10 left-10">
+                <div className="md:hidden absolute top-4 sm:top-6 left-4 sm:left-6">
                     <Link href="/">
-                        <img src="/logos.png" alt="SafeScore" className="h-8" />
+                        <img src="/logos.png" alt="SafeScore" className="h-6 sm:h-8" />
                     </Link>
                 </div>
 
@@ -183,21 +183,21 @@ export default function AdminLoginPage() {
                     transition={{ duration: 0.8 }}
                     className="w-full max-w-[440px]"
                 >
-                    <div className="mb-12 mt-10">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
-                                <IoShieldCheckmarkOutline className="text-red-500" size={24} />
+                    <div className="mb-8 md:mb-12 mt-6 md:mt-10">
+                        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                            <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20 shrink-0">
+                                <IoShieldCheckmarkOutline className="text-red-500" size={20} />
                             </div>
-                            <h1 className="text-4xl font-extrabold tracking-tight">Admin Access</h1>
+                            <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight">Admin Access</h1>
                         </div>
-                        <p className="text-neutral-500 text-lg font-medium">
+                        <p className="text-neutral-500 text-sm md:text-lg font-medium">
                             Enter your admin credentials to access the management dashboard.
                         </p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-8">
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">
+                    <form onSubmit={handleLogin} className="space-y-6 md:space-y-8 w-full">
+                        <div className="space-y-2 md:space-y-3">
+                            <label className="text-xs md:text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">
                                 Admin Email
                             </label>
                             <div className="relative group">
@@ -206,14 +206,14 @@ export default function AdminLoginPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-[#111] border border-white/5 hover:border-white/10 rounded-xl py-4 px-5 outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/40 transition-all font-medium text-base"
+                                    className="w-full bg-[#111] border border-white/5 hover:border-white/10 rounded-xl py-3 md:py-4 px-4 md:px-5 outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/40 transition-all font-medium text-sm md:text-base"
                                     placeholder="admin@example.com"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">
+                        <div className="space-y-2 md:space-y-3">
+                            <label className="text-xs md:text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">
                                 Password
                             </label>
                             <div className="relative group">
@@ -222,15 +222,15 @@ export default function AdminLoginPage() {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-[#111] border border-white/5 hover:border-white/10 rounded-xl py-4 pl-5 pr-12 outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/40 transition-all font-medium text-base"
+                                    className="w-full bg-[#111] border border-white/5 hover:border-white/10 rounded-xl py-3 md:py-4 pl-4 md:pl-5 pr-10 md:pr-12 outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/40 transition-all font-medium text-sm md:text-base"
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-red-500 transition-colors"
+                                    className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-red-500 transition-colors"
                                 >
-                                    {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+                                    {showPassword ? <IoEyeOffOutline size={18} /> : <IoEyeOutline size={18} />}
                                 </button>
                             </div>
                         </div>
@@ -240,33 +240,33 @@ export default function AdminLoginPage() {
                             whileTap={{ scale: 0.99 }}
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-2xl shadow-red-600/20 flex items-center justify-center gap-3 group"
+                            className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 md:py-4 rounded-xl transition-all shadow-2xl shadow-red-600/20 flex items-center justify-center gap-2 md:gap-3 group text-sm md:text-base"
                         >
                             {loading ? (
-                                <div className="w-6 h-6 border-3 border-white/20 border-t-white rounded-full animate-spin" />
+                                <div className="w-5 h-5 md:w-6 md:h-6 border-3 border-white/20 border-t-white rounded-full animate-spin" />
                             ) : (
                                 <>
-                                    <IoShieldCheckmarkOutline size={20} />
-                                    <span className="text-lg">Authenticate</span>
-                                    <IoArrowForwardOutline className="group-hover:translate-x-1.5 transition-transform text-xl" />
+                                    <IoShieldCheckmarkOutline size={18} />
+                                    <span>Authenticate</span>
+                                    <IoArrowForwardOutline className="group-hover:translate-x-1.5 transition-transform hidden sm:block" size={18} />
                                 </>
                             )}
                         </motion.button>
                     </form>
 
-                    <div className="mt-16 text-center">
+                    <div className="mt-8 md:mt-16 text-center">
                         <Link 
                             href="/auth/login" 
-                            className="text-neutral-500 hover:text-white font-medium transition-colors text-sm"
+                            className="text-neutral-500 hover:text-white font-medium transition-colors text-xs md:text-sm"
                         >
                             ← Back to regular login
                         </Link>
                     </div>
 
-                    <div className="mt-8 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                        <div className="flex items-start gap-3">
-                            <IoAlertCircleOutline className="text-red-500 mt-0.5 flex-shrink-0" size={20} />
-                            <p className="text-xs text-neutral-400 leading-relaxed">
+                    <div className="mt-6 md:mt-8 p-3 md:p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+                        <div className="flex items-start gap-2 md:gap-3">
+                            <IoAlertCircleOutline className="text-red-500 mt-0.5 flex-shrink-0" size={18} />
+                            <p className="text-[10px] md:text-xs text-neutral-400 leading-relaxed">
                                 This portal is restricted to authorized administrators only. Unauthorized access attempts are logged and monitored.
                             </p>
                         </div>
