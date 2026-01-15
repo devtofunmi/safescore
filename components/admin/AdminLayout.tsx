@@ -38,7 +38,7 @@ const navGroups: NavGroup[] = [
         label: 'Overview',
         icon: IoStatsChartOutline,
         items: [
-            { href: '/admin', label: 'Dashboard', icon: IoStatsChartOutline },
+            { href: '/admin/dashboard', label: 'Dashboard', icon: IoStatsChartOutline },
             { href: '/admin/pending', label: 'Pending Matches', icon: IoTimeOutline },
         ],
     },

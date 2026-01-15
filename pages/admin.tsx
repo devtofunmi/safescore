@@ -1,13 +1,16 @@
-import type { NextPage } from 'next';
-import React, { useState, useEffect } from 'react';
+// Redirect to dashboard
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-toastify';
-import SEO from '../components/SEO';
-import { useAdminAuth } from '@/lib/hooks/use-admin-auth';
-import { useAdminAuthToken } from '@/lib/stores/admin-auth-store';
-import AdminLayout from '../components/admin/AdminLayout';
+
+export default function AdminIndex() {
+    const router = useRouter();
+    
+    useEffect(() => {
+        router.replace('/admin/dashboard');
+    }, [router]);
+
+    return null;
+}
 import {
     IoStatsChartOutline,
     IoPeopleOutline,
