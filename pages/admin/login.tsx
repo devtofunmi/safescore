@@ -3,9 +3,7 @@ import SEO from '../../components/SEO';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { supabase } from '@/lib/supabase';
-import { isAdmin } from '@/lib/admin';
-import { toast } from 'react-toastify';
+import { useAdminAuth } from '@/lib/hooks/use-admin-auth';
 import { 
     IoArrowForwardOutline, 
     IoShieldCheckmarkOutline, 
@@ -23,57 +21,15 @@ export default function AdminLoginPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Check if already logged in as admin
-        const checkAdminSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                const adminStatus = await isAdmin(session.user.id);
-                if (adminStatus) {
-                    // Store admin session
-                    sessionStorage.setItem('admin_session', 'true');
-                    router.push('/admin');
-                }
-            }
-        };
-        checkAdminSession();
-    }, [router]);
+        // Redirect if already authenticated
+        if (isAuthenticated) {
+            router.push('/admin');
+        }
+    }, [isAuthenticated, router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-
-        try {
-            // First, authenticate with Supabase
-            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (authError) throw authError;
-
-            if (!authData.user) {
-                throw new Error('Authentication failed');
-            }
-
-            // Verify admin status
-            const adminStatus = await isAdmin(authData.user.id);
-            if (!adminStatus) {
-                // Sign out if not admin
-                await supabase.auth.signOut();
-                throw new Error('Access denied. Admin privileges required.');
-            }
-
-            // Store admin session indicator
-            sessionStorage.setItem('admin_session', 'true');
-            sessionStorage.setItem('admin_user_id', authData.user.id);
-
-            toast.success('Admin access granted');
-            router.push('/admin');
-        } catch (error: any) {
-            toast.error(error.message || 'Error logging in');
-        } finally {
-            setLoading(false);
-        }
+        login({ email, password });
     };
 
     return (
@@ -239,10 +195,10 @@ export default function AdminLoginPage() {
                             whileHover={{ scale: 1.01, y: -2 }}
                             whileTap={{ scale: 0.99 }}
                             type="submit"
-                            disabled={loading}
+                            disabled={isLoggingIn}
                             className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 md:py-4 rounded-xl transition-all shadow-2xl shadow-red-600/20 flex items-center justify-center gap-2 md:gap-3 group text-sm md:text-base"
                         >
-                            {loading ? (
+                            {isLoggingIn ? (
                                 <div className="w-5 h-5 md:w-6 md:h-6 border-3 border-white/20 border-t-white rounded-full animate-spin" />
                             ) : (
                                 <>
@@ -265,7 +221,7 @@ export default function AdminLoginPage() {
 
                     <div className="mt-6 md:mt-8 p-3 md:p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
                         <div className="flex items-start gap-2 md:gap-3">
-                            <IoAlertCircleOutline className="text-red-500 mt-0.5 flex-shrink-0" size={18} />
+                            <IoAlertCircleOutline className="text-red-500 mt-0.5 shrink-0" size={18} />
                             <p className="text-[10px] md:text-xs text-neutral-400 leading-relaxed">
                                 This portal is restricted to authorized administrators only. Unauthorized access attempts are logged and monitored.
                             </p>
