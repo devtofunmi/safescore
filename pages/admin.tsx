@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import SEO from '../components/SEO';
 import { useAdminAuth } from '@/lib/hooks/use-admin-auth';
 import { useAdminAuthToken } from '@/lib/stores/admin-auth-store';
-import DashboardLayout from '../components/DashboardLayout';
+import AdminLayout from '../components/admin/AdminLayout';
 import {
     IoStatsChartOutline,
     IoPeopleOutline,
@@ -473,58 +473,39 @@ const AdminDashboard: NextPage = () => {
     };
 
     return (
-        <DashboardLayout>
+        <AdminLayout>
             <SEO
                 title="Admin Dashboard | SafeScore"
                 description="Admin dashboard for managing SafeScore platform"
             />
 
-            <div className="max-w-7xl mx-auto space-y-12">
+            <div className="space-y-8">
                 {/* Header */}
-                <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 md:gap-6">
-                    <div className="flex-1 min-w-0">
-                        <motion.h1
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight flex items-center gap-2 md:gap-3"
-                        >
-                            <IoShieldCheckmarkOutline className="text-blue-500 shrink-0" size={28} />
-                            <span className="truncate">Admin <span className="text-blue-500">Dashboard</span></span>
-                        </motion.h1>
-                        <p className="max-w-xl text-neutral-500 text-sm md:text-lg mt-2 md:mt-4 font-medium leading-relaxed">
-                            Manage users, monitor system performance, and track prediction accuracy.
+                <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2">Dashboard</h1>
+                        <p className="text-neutral-400 text-sm">
+                            Overview of platform statistics and key metrics
                         </p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <button
-                            onClick={() => {
-                                fetchStats();
-                                fetchLatency();
-                                fetchPendingMatches();
-                                if (viewMode === 'users' && !selectedUserId) {
-                                    fetchUserList(userListPage, userListFilter, userListSearch);
-                                }
-                                if (selectedUserId) {
-                                    fetchUserDetail(selectedUserId);
-                                }
-                                toast.info('Data refreshed');
-                            }}
-                            className="px-4 md:px-6 py-3 bg-blue-600/10 border border-blue-500/20 rounded-2xl text-blue-500 font-bold hover:bg-blue-600/20 transition-all flex items-center gap-2 text-sm md:text-base"
-                        >
-                            <IoRefreshOutline />
-                            <span className="hidden sm:inline">Refresh</span>
-                        </button>
-                        <button
-                            onClick={async () => {
-                                await adminSignOut();
-                                router.push('/admin/login');
-                            }}
-                            className="px-4 md:px-6 py-3 bg-red-600/10 border border-red-500/20 rounded-2xl text-red-500 font-bold hover:bg-red-600/20 transition-all flex items-center gap-2 text-sm md:text-base"
-                        >
-                            <IoLogOutOutline />
-                            <span className="hidden sm:inline">Sign Out</span>
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => {
+                            fetchStats();
+                            fetchLatency();
+                            fetchPendingMatches();
+                            if (viewMode === 'users' && !selectedUserId) {
+                                fetchUserList(userListPage, userListFilter, userListSearch);
+                            }
+                            if (selectedUserId) {
+                                fetchUserDetail(selectedUserId);
+                            }
+                            toast.info('Data refreshed');
+                        }}
+                        className="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium flex items-center gap-2"
+                    >
+                        <IoRefreshOutline />
+                        Refresh
+                    </button>
                 </header>
 
                 {/* View Mode Tabs */}
@@ -1242,7 +1223,7 @@ const AdminDashboard: NextPage = () => {
                     )}
                 </AnimatePresence>
             </div>
-        </DashboardLayout>
+        </AdminLayout>
     );
 };
 
