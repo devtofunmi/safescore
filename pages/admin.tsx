@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import SEO from '../components/SEO';
-import { useAdminAuth } from '@/lib/admin-auth';
-import { supabase } from '@/lib/supabase';
+import { useAdminAuth } from '@/lib/hooks/use-admin-auth';
+import { useAdminAuthToken } from '@/lib/stores/admin-auth-store';
 import DashboardLayout from '../components/DashboardLayout';
 import {
     IoStatsChartOutline,
@@ -65,7 +65,8 @@ interface UserSearchResult {
 
 const AdminDashboard: NextPage = () => {
     const router = useRouter();
-    const { adminUser, loading: authLoading, isAdminUser, signOut: adminSignOut } = useAdminAuth();
+    const { adminUser, isAuthenticated, isLoading: authLoading, logout: adminSignOut } = useAdminAuth();
+    const token = useAdminAuthToken();
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [latency, setLatency] = useState<{ latency: number; status: string } | null>(null);
     const [pendingMatches, setPendingMatches] = useState<PendingMatch[]>([]);
@@ -98,7 +99,7 @@ const AdminDashboard: NextPage = () => {
     useEffect(() => {
         if (authLoading) return;
         
-        if (!isAdminUser || !adminUser) {
+        if (!isAuthenticated || !adminUser) {
             router.push('/admin/login');
             return;
         }
@@ -108,23 +109,16 @@ const AdminDashboard: NextPage = () => {
         fetchLatency();
         fetchPendingMatches();
         setLoading(false);
-    }, [adminUser, isAdminUser, authLoading, router]);
+    }, [adminUser, isAuthenticated, authLoading, router]);
 
-    const getAuthToken = async (): Promise<string | null> => {
-        // Get admin session token
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return null;
-        
-        // Verify it's still an admin session
-        const adminSessionFlag = sessionStorage.getItem('admin_session');
-        if (!adminSessionFlag) return null;
-        
-        return session.access_token || null;
+    const getAuthToken = (): string | null => {
+        // Get admin session token from Zustand store
+        return token;
     };
 
     const fetchStats = async () => {
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) return;
 
             const response = await fetch('/api/admin/stats', {
@@ -144,7 +138,7 @@ const AdminDashboard: NextPage = () => {
 
     const fetchLatency = async () => {
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) return;
 
             const response = await fetch('/api/admin/latency', {
@@ -163,7 +157,7 @@ const AdminDashboard: NextPage = () => {
 
     const fetchPendingMatches = async () => {
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) return;
 
             const response = await fetch('/api/admin/pending-matches', {
@@ -188,7 +182,7 @@ const AdminDashboard: NextPage = () => {
 
         setSearching(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) {
                 toast.error('Authentication required');
                 return;
@@ -218,7 +212,7 @@ const AdminDashboard: NextPage = () => {
     const handleUpgrade = async (userId: string, days: number = 30) => {
         setUpgrading(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) {
                 toast.error('Authentication required');
                 return;
@@ -260,7 +254,7 @@ const AdminDashboard: NextPage = () => {
     const handleResetQuota = async (userId: string) => {
         setResetting(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) {
                 toast.error('Authentication required');
                 return;
@@ -301,7 +295,7 @@ const AdminDashboard: NextPage = () => {
     const handleGeneratePredictions = async (userId: string) => {
         setGeneratingPredictions(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) {
                 toast.error('Authentication required');
                 return;
@@ -362,7 +356,7 @@ const AdminDashboard: NextPage = () => {
     const fetchUserList = async (page: number = 1, filter: string = 'all', search: string = '') => {
         setUserListLoading(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) return;
 
             const params = new URLSearchParams({
@@ -398,7 +392,7 @@ const AdminDashboard: NextPage = () => {
     const fetchUserDetail = async (userId: string) => {
         setUserDetailLoading(true);
         try {
-            const token = await getAuthToken();
+            const token = getAuthToken();
             if (!token) return;
 
             const [dashboardRes, predictionsRes, historyRes] = await Promise.all([
