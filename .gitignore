@@ -48,5 +48,8 @@ next-env.d.ts
 # Local Scripts
 scripts/fix_pending_matches.ts
 
+# Database
+# Note: SQL migration files are tracked, but sensitive data should not be committed
+
 
 bun.lock

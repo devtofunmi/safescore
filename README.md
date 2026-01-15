@@ -39,6 +39,7 @@ SafeScore features an automated settlement system that:
 *   Node.js (v18 or higher)
 *   An API Key from [Football-Data.org](https://www.football-data.org/)
 *   (Optional) A SafeScore Core Engine API Key
+*   Supabase account and project
 
 ### Installation
 
@@ -58,12 +59,39 @@ SafeScore features an automated settlement system that:
     ```bash
     cp .env.example .env.local
     ```
+    
+    Required variables:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+    FOOTBALL_DATA_API_KEY=your_football_data_api_key
+    ```
 
-4.  **Run the development server:**
+4.  **Setup Database & Admin Users:**
+    
+    **Quick Method (Recommended):**
+    1. Open Supabase Dashboard > SQL Editor
+    2. Run `supabase/complete-setup.sql` (replace email with your admin email)
+    3. Or use the one-liner: `supabase/one-liner-admin.sql`
+    
+    **Automated Method:**
+    ```bash
+    npm run seed:admin
+    ```
+    
+    See `supabase/QUICK_SETUP.md` for detailed instructions.
+
+5.  **Run the development server:**
     ```bash
     npm run dev
     ```
     Open [http://localhost:3000](http://localhost:3000) to see the result.
+    
+6.  **Access Admin Dashboard:**
+    - Go to `/admin/login`
+    - Login with your admin credentials
+    - Access the admin dashboard at `/admin`
 
 ## Contributing
 

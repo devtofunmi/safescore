@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin": "ts-node --project tsconfig.scripts.json scripts/seed-admin.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
