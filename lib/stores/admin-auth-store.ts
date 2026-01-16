@@ -149,6 +149,24 @@ export const useAdminAuthStore = create<AdminAuthState>()(
         adminSession: state.adminSession,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        // After rehydration, verify the session is still valid
+        if (state?.adminSession && typeof window !== 'undefined') {
+          // Check if session is expired
+          const now = Math.floor(Date.now() / 1000);
+          if (state.adminSession.expires_at && state.adminSession.expires_at < now) {
+            // Session expired, clear it
+            state.clearAuth();
+          } else {
+            // Verify with Supabase
+            supabase.auth.getSession().then(({ data: { session }, error }) => {
+              if (error || !session) {
+                state?.clearAuth();
+              }
+            });
+          }
+        }
+      },
     }
   )
 );

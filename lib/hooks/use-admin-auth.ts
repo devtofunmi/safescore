@@ -58,7 +58,7 @@ export const useAdminAuth = () => {
     onSuccess: async (data) => {
       await store.setAuth(data.user, data.session);
       toast.success('Admin access granted');
-      router.push('/admin');
+      router.push('/admin/dashboard');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Login failed');
