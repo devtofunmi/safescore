@@ -133,7 +133,7 @@ const AdminPending: NextPage = () => {
                 </header>
 
                 {/* Pending Matches Table */}
-                <div className="bg-[#161616] rounded-lg border border-white/10 overflow-hidden">
+                <div className="bg-[#0a0a0a] rounded-lg border border-white/10 overflow-hidden">
                     {pendingMatches.length > 0 ? (
                         <>
                             <div className="overflow-x-auto">

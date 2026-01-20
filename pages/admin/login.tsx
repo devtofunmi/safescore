@@ -152,6 +152,14 @@ export default function AdminLoginPage() {
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6 md:space-y-8 w-full">
+                         <div className="mt-6 md:mt-8 p-3 md:p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+                        <div className="flex items-start gap-2 md:gap-3">
+                            <IoAlertCircleOutline className="text-red-500 mt-0.5 shrink-0" size={18} />
+                            <p className="text-[10px] md:text-xs text-neutral-400 leading-relaxed">
+                                This portal is restricted to authorized administrators only. Unauthorized access attempts are logged and monitored.
+                            </p>
+                        </div>
+                    </div>
                         <div className="space-y-2 md:space-y-3">
                             <label className="text-xs md:text-sm font-bold text-neutral-400 ml-1 uppercase tracking-[0.15em]">
                                 Admin Email
@@ -219,14 +227,7 @@ export default function AdminLoginPage() {
                         </Link>
                     </div>
 
-                    <div className="mt-6 md:mt-8 p-3 md:p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                        <div className="flex items-start gap-2 md:gap-3">
-                            <IoAlertCircleOutline className="text-red-500 mt-0.5 shrink-0" size={18} />
-                            <p className="text-[10px] md:text-xs text-neutral-400 leading-relaxed">
-                                This portal is restricted to authorized administrators only. Unauthorized access attempts are logged and monitored.
-                            </p>
-                        </div>
-                    </div>
+                   
                 </motion.div>
             </div>
         </div>

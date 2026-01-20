@@ -38,7 +38,7 @@ export async function getUserByIdentifier(identifier: string): Promise<User | nu
         // Note: This is not ideal for large user bases, but Supabase doesn't have a direct email search endpoint
         const { data: usersList, error: listError } = await supabaseAdmin.auth.admin.listUsers();
         if (!listError && usersList?.users) {
-            const user = usersList.users.find(u => 
+            const user = usersList.users.find(u =>
                 u.email?.toLowerCase() === identifier.toLowerCase()
             );
             if (user) return user;
@@ -81,9 +81,10 @@ export async function getGlobalAccuracy(): Promise<{
             if (record.predictions && Array.isArray(record.predictions)) {
                 record.predictions.forEach((p: any) => {
                     total++;
-                    if (p.result === 'Won') won++;
-                    else if (p.result === 'Lost') lost++;
-                    else if (p.result === 'Postponed') postponed++;
+                    const res = p.result ? p.result.toLowerCase() : '';
+                    if (res === 'won' || res === 'win') won++;
+                    else if (res === 'lost' || res === 'loss') lost++;
+                    else if (res === 'postponed') postponed++;
                     else pending++;
                 });
             }
@@ -188,7 +189,8 @@ export async function getPendingMatches(): Promise<Array<{
         historyData.forEach((record: any) => {
             if (record.predictions && Array.isArray(record.predictions)) {
                 record.predictions.forEach((p: any) => {
-                    if (p.result === 'Pending') {
+                    const res = p.result ? p.result.toLowerCase() : '';
+                    if (res === 'pending' || res === '' || !p.result) {
                         pendingMatches.push({
                             id: p.id,
                             homeTeam: p.homeTeam,

@@ -13,8 +13,6 @@ import {
     IoCloseOutline,
     IoChevronDownOutline,
     IoChevronForwardOutline,
-    IoSpeedometerOutline,
-    IoCheckmarkCircleOutline,
 } from 'react-icons/io5';
 
 interface AdminLayoutProps {
@@ -133,9 +131,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex min-h-screen flex-col md:flex-row">
                 {/* Sidebar */}
                 <aside
-                    className={`${
-                        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                    } md:translate-x-0 fixed md:static inset-y-0 left-0 z-40 w-64 bg-black border-r border-white/10 transition-transform duration-300 md:transition-none`}
+                    className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                        } md:translate-x-0 fixed inset-y-0 left-0 z-40 w-64 bg-black border-r border-white/10 transition-transform duration-300 md:transition-none`}
                 >
                     <div className="h-full flex flex-col">
                         {/* Desktop Header */}
@@ -183,11 +180,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                             {/* Group Header */}
                                             <button
                                                 onClick={() => toggleGroup(group.label)}
-                                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${
-                                                    hasActiveItem
+                                                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${hasActiveItem
                                                         ? 'text-white bg-white/5'
                                                         : 'text-neutral-400 hover:bg-white/5 hover:text-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <GroupIcon className="w-4 h-4" />
@@ -217,11 +213,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                                                     <Link
                                                                         href={item.href}
                                                                         onClick={() => setSidebarOpen(false)}
-                                                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                                                                            isActiveItem
+                                                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${isActiveItem
                                                                                 ? 'font-bold text-white bg-white/5 border border-white/10'
                                                                                 : 'text-neutral-400 hover:bg-white/5 hover:text-white'
-                                                                        }`}
+                                                                            }`}
                                                                     >
                                                                         <ItemIcon className="w-4 h-4" />
                                                                         <span>{item.label}</span>
@@ -274,7 +269,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </aside>
 
                 {/* Main Content */}
-                <main className="flex-1 px-4 md:px-8 py-6 md:py-8 overflow-y-auto">
+                <main className="flex-1 px-4 md:px-8 py-6 md:py-8 overflow-y-auto md:ml-64">
                     {children}
                 </main>
             </div>

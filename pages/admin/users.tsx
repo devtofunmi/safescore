@@ -2,7 +2,6 @@ import type { NextPage } from 'next';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
 import SEO from '../../components/SEO';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminAuthToken } from '@/lib/stores/admin-auth-store';
@@ -14,7 +13,6 @@ import {
     IoEyeOutline,
     IoChevronBackOutline,
     IoRocketOutline,
-    IoCheckmarkCircleOutline,
 } from 'react-icons/io5';
 
 interface User {
@@ -293,7 +291,7 @@ const AdminUsers: NextPage = () => {
                         </header>
 
                         {/* Search */}
-                        <div className="bg-[#161616] rounded-lg p-6 border border-white/10 space-y-4">
+                        <div className="bg-[#0a0a0a] rounded-lg p-6 border border-white/10 space-y-4">
                             <h3 className="text-xl font-bold flex items-center gap-3">
                                 <IoSearchOutline className="text-blue-500" />
                                 Search User
@@ -340,11 +338,10 @@ const AdminUsers: NextPage = () => {
                                                 <p className="text-lg font-bold text-white">{searchResult.email}</p>
                                                 <p className="text-sm text-neutral-500">ID: {searchResult.id}</p>
                                             </div>
-                                            <span className={`px-4 py-2 rounded-full text-xs font-bold uppercase ${
-                                                searchResult.planType === 'pro'
-                                                    ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
-                                                    : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
-                                            }`}>
+                                            <span className={`px-4 py-2 rounded-full text-xs font-bold uppercase ${searchResult.planType === 'pro'
+                                                ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                                                : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                                }`}>
                                                 {searchResult.planType}
                                             </span>
                                         </div>
@@ -406,11 +403,10 @@ const AdminUsers: NextPage = () => {
                                         setFilter(f);
                                         setPage(1);
                                     }}
-                                    className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                        filter === f
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
-                                    }`}
+                                    className={`px-4 py-2 rounded-lg font-bold transition-all ${filter === f
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-[#0a0a0a] border border-white/10 text-neutral-400 hover:text-white'
+                                        }`}
                                 >
                                     {f.charAt(0).toUpperCase() + f.slice(1)}
                                 </button>
@@ -418,7 +414,7 @@ const AdminUsers: NextPage = () => {
                         </div>
 
                         {/* Users List */}
-                        <div className="bg-[#161616] rounded-lg border border-white/10 overflow-hidden">
+                        <div className="bg-[#0a0a0a] rounded-lg border border-white/10 overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-[#0a0a0a] border-b border-white/10">
@@ -439,16 +435,15 @@ const AdminUsers: NextPage = () => {
                                                         <p className="text-xs text-neutral-500">{user.id}</p>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                                                            planType === 'pro'
-                                                                ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
-                                                                : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
-                                                        }`}>
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${planType === 'pro'
+                                                            ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                                                            : 'bg-neutral-500/10 text-neutral-400 border border-neutral-500/20'
+                                                            }`}>
                                                             {planType}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-neutral-400 text-sm hidden md:table-cell">
-                                                        {new Date(user.createdAt || user.created_at).toLocaleDateString()}
+                                                        {(user.createdAt || user.created_at) ? new Date(user.createdAt || user.created_at!).toLocaleDateString() : 'N/A'}
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <button
@@ -624,7 +619,7 @@ const AdminUsers: NextPage = () => {
                                 className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 max-w-md w-full"
                             >
                                 <h2 className="text-xl font-bold mb-4">Generate Predictions</h2>
-                                
+
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-bold text-neutral-400 mb-2">Risk Level</label>
@@ -633,11 +628,10 @@ const AdminUsers: NextPage = () => {
                                                 <button
                                                     key={level}
                                                     onClick={() => setGenerateForm({ ...generateForm, riskLevel: level })}
-                                                    className={`px-4 py-2 rounded-lg font-bold text-sm ${
-                                                        generateForm.riskLevel === level
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
+                                                    className={`px-4 py-2 rounded-lg font-bold text-sm ${generateForm.riskLevel === level
+                                                        ? 'bg-blue-600 text-white'
+                                                        : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
+                                                        }`}
                                                 >
                                                     {level}
                                                 </button>
@@ -652,11 +646,10 @@ const AdminUsers: NextPage = () => {
                                                 <button
                                                     key={day}
                                                     onClick={() => setGenerateForm({ ...generateForm, day })}
-                                                    className={`px-4 py-2 rounded-lg font-bold text-sm ${
-                                                        generateForm.day === day
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
+                                                    className={`px-4 py-2 rounded-lg font-bold text-sm ${generateForm.day === day
+                                                        ? 'bg-blue-600 text-white'
+                                                        : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
+                                                        }`}
                                                 >
                                                     {day}
                                                 </button>
@@ -676,11 +669,10 @@ const AdminUsers: NextPage = () => {
                                                             : [...generateForm.leagues, league];
                                                         setGenerateForm({ ...generateForm, leagues });
                                                     }}
-                                                    className={`px-3 py-2 rounded-lg font-bold text-xs ${
-                                                        generateForm.leagues.includes(league)
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
+                                                    className={`px-3 py-2 rounded-lg font-bold text-xs ${generateForm.leagues.includes(league)
+                                                        ? 'bg-blue-600 text-white'
+                                                        : 'bg-[#161616] border border-white/10 text-neutral-400 hover:text-white'
+                                                        }`}
                                                 >
                                                     {league}
                                                 </button>
