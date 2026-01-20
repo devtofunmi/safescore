@@ -8,6 +8,7 @@ import {
     IoPulseOutline,
     IoLogOutOutline,
     IoHelpCircleOutline,
+    IoShieldCheckmarkOutline,
 } from 'react-icons/io5';
 
 interface DashboardLayoutProps {
@@ -19,6 +20,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const router = useRouter();
 
     const isActive = (path: string) => router.pathname === path;
+    const isAdmin = user?.user_metadata?.is_admin === true;
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col md:flex-row h-screen overflow-hidden">
@@ -37,6 +39,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         <IoFootballOutline size={20} className={isActive('/home') ? '' : 'group-hover:text-blue-500 transition-colors'} />
                         Predictions
                     </Link>
+                    {isAdmin && (
+                        <Link href="/admin" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all group ${isActive('/admin') ? 'bg-blue-600/10 text-blue-500 border border-blue-500/20 font-bold' : 'text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent'}`}>
+                            <IoShieldCheckmarkOutline size={20} className={isActive('/admin') ? '' : 'group-hover:text-blue-500 transition-colors'} />
+                            Admin
+                        </Link>
+                    )}
                     <a
                         href="mailto:safescorepro@gmail.com"
                         className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent transition-all group"
